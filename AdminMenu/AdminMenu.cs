@@ -23,8 +23,6 @@ namespace AdminMenu
 
         private static string _adminsFilePath = string.Empty;
         private static string _bannedFilePath = string.Empty;
-        private const int _menuTimeoutSec = 10;
-        private bool mainMenuCloseCancelled = false;
 
         public override void Load(bool hotReload)
         {
@@ -133,6 +131,11 @@ namespace AdminMenu
                 player?.PrintToChat($"SteamID32: {player?.AuthorizedSteamID?.SteamId32}");
                 player?.PrintToChat($"SteamID64: {player?.AuthorizedSteamID?.SteamId64}");
             }
+            else if (@event?.Text.Trim().ToLower() == "!thetime")
+            {
+                Server.PrintToChatAll($"{DateTime.Now}");
+                return HookResult.Handled;
+            }
             else if (@event?.Text.Trim().ToLower() == "!status")
             {
                 foreach (var statusPlayer in Utilities.GetPlayers().Where(p => p.IsValid && !p.IsBot))
@@ -145,8 +148,7 @@ namespace AdminMenu
 
         private void ShowMainMenu(CCSPlayerController player)
         {
-            mainMenuCloseCancelled = false;
-            var mainMenu = new CenterHtmlMenu($"Choose an action in {_menuTimeoutSec}s", this);
+            var mainMenu = new CenterHtmlMenu($"Choose action", this);
 
             mainMenu.AddMenuOption("Ban", BanAction);
             mainMenu.AddMenuOption("Kick", KickAction);
@@ -155,32 +157,9 @@ namespace AdminMenu
             mainMenu.AddMenuOption("DropWeapon", DropWeaponAction);
             mainMenu.AddMenuOption("Respawn", RespawnAction);
             mainMenu.AddMenuOption("Set Team", SetTeamAction);
-            mainMenu.AddMenuOption("Mute", MuteAction);
-            mainMenu.AddMenuOption("UnMute", UnMuteAction);
             mainMenu.AddMenuOption("Bot menu", BotMenuAction);
 
             MenuManager.OpenCenterHtmlMenu(this, player, mainMenu);
-
-            Task.Run(() =>
-            {
-                for (int i = _menuTimeoutSec; i > 0; --i)
-                {
-                    if (!mainMenuCloseCancelled)
-                    {
-                        return;
-                    }
-
-                    mainMenu.Title = $"Choose a wire in {i}s";
-                    Task.Delay(1000).Wait();
-                }
-
-                if (!mainMenuCloseCancelled)
-                {
-                    return;
-                }
-
-                MenuManager.CloseActiveMenu(player);
-            });
         }
 
         private void DropWeaponAction(CCSPlayerController adminPlayer, ChatMenuOption option)
@@ -208,32 +187,13 @@ namespace AdminMenu
                 var newPosition = currentPos + new Vector(0, 0, offsetZ);
                 pawn.Teleport(newPosition, pawn.AbsRotation, null);
 
-                targetPlayer.EmitSound("Player.DamageTaken");
-            });
-        }
-
-        private void MuteAction(CCSPlayerController adminPlayer, ChatMenuOption option)
-        {
-            ShowPlayerListMenu(adminPlayer, (CCSPlayerController targetPlayer) =>
-            {
-                Server.ExecuteCommand($"sv_mute {targetPlayer.UserId}");
-                Server.PrintToChatAll($"You have muted {targetPlayer.PlayerName}.");
-            });
-        }
-
-        private void UnMuteAction(CCSPlayerController adminPlayer, ChatMenuOption option)
-        {
-            ShowPlayerListMenu(adminPlayer, (CCSPlayerController targetPlayer) =>
-            {
-                Server.ExecuteCommand($"sv_unmute {targetPlayer.UserId}");
-                Server.PrintToChatAll($"You have unmuted {targetPlayer.PlayerName}.");
+                targetPlayer.EmitSound("player/damage_taken");
             });
         }
 
         private void BotMenuAction(CCSPlayerController player, ChatMenuOption option)
         {
-            mainMenuCloseCancelled = true;
-            var menu = new CenterHtmlMenu($"Choose an action in {_menuTimeoutSec}s", this);
+            var menu = new CenterHtmlMenu($"Choose action", this);
 
             menu.AddMenuOption("Kick All", (controller, _) =>
                 { Server.ExecuteCommand("bot_kick all"); });
@@ -244,15 +204,6 @@ namespace AdminMenu
 
             MenuManager.OpenCenterHtmlMenu(this, player, menu);
 
-            Task.Run(() =>
-            {
-                for (int i = _menuTimeoutSec; i > 0; --i)
-                {
-                    menu.Title = $"Choose a wire in {i}s";
-                    Task.Delay(1000).Wait();
-                }
-                MenuManager.CloseActiveMenu(player);
-            });
         }
 
         #region Actions
@@ -279,8 +230,7 @@ namespace AdminMenu
 
         private void SetTeamAction(CCSPlayerController adminPlayer, ChatMenuOption option)
         {
-            mainMenuCloseCancelled = true;
-            var setTeamPlayerMenu = new CenterHtmlMenu($"Choose a player in {_menuTimeoutSec}s", this);
+            var setTeamPlayerMenu = new CenterHtmlMenu($"Choose player", this);
 
             foreach (var player in Utilities.GetPlayers().Where(p => p.IsValid && !p.IsBot))
             {
@@ -289,22 +239,13 @@ namespace AdminMenu
                     ShowTeamMenu(adminPlayer, player);
                 });
             }
+            setTeamPlayerMenu.PostSelectAction = PostSelectAction.Close;
             MenuManager.OpenCenterHtmlMenu(this, adminPlayer, setTeamPlayerMenu);
-
-            Task.Run(() =>
-            {
-                for (int i = _menuTimeoutSec; i > 0; --i)
-                {
-                    setTeamPlayerMenu.Title = $"Choose an player in {i}s";
-                    Task.Delay(1000).Wait();
-                }
-                MenuManager.GetActiveMenu(adminPlayer)?.Close();
-            });
         }
 
         private void ShowTeamMenu(CCSPlayerController adminPlayer, CCSPlayerController player)
         {
-            var teamsMenu = new CenterHtmlMenu($"Choose a team in {_menuTimeoutSec}s", this);
+            var teamsMenu = new CenterHtmlMenu($"Choose team", this);
 
             teamsMenu.AddMenuOption("Terrorist",
                 (CCSPlayerController controller, ChatMenuOption option) => { player.ChangeTeam(CsTeam.Terrorist); });
@@ -312,27 +253,16 @@ namespace AdminMenu
                 (CCSPlayerController controller, ChatMenuOption option) => { player.ChangeTeam(CsTeam.CounterTerrorist); });
             teamsMenu.AddMenuOption("Spectator",
                 (CCSPlayerController controller, ChatMenuOption option) => { player.ChangeTeam(CsTeam.Spectator); });
-
+            
+            teamsMenu.PostSelectAction = PostSelectAction.Close;
             MenuManager.OpenCenterHtmlMenu(this, adminPlayer, teamsMenu);
-
-            Task.Run(() =>
-            {
-                for (int i = _menuTimeoutSec; i > 0; --i)
-                {
-                    teamsMenu.Title = $"Choose an team in {i}s";
-                    Task.Delay(1000).Wait();
-                }
-                MenuManager.GetActiveMenu(adminPlayer)?.Close();
-            });
         }
 
         private void ShowPlayerListMenu(CCSPlayerController adminPlayer, Action<CCSPlayerController> playerAction)
         {
-            mainMenuCloseCancelled = true;
+            var playerListMenu = new CenterHtmlMenu($"Choose a player", this);
 
-            var playerListMenu = new CenterHtmlMenu($"Choose a player in {_menuTimeoutSec}s", this);
-
-            foreach (var player in Utilities.GetPlayers().Where(p => p.IsValid && !IsAdmin(p)))
+            foreach (var player in Utilities.GetPlayers().Where(p => p.IsValid))
             {
                 playerListMenu.AddMenuOption(player.PlayerName, (controller, option) =>
                 {
@@ -341,16 +271,6 @@ namespace AdminMenu
             }
 
             MenuManager.OpenCenterHtmlMenu(this, adminPlayer, playerListMenu);
-
-            Task.Run(() =>
-            {
-                for (int i = _menuTimeoutSec; i > 0; --i)
-                {
-                    playerListMenu.Title = $"Choose a player in {i}s";
-                    Task.Delay(1000).Wait();
-                }
-                MenuManager.GetActiveMenu(adminPlayer)?.Close();
-            });
         }
 
         private void BanPlayer(CCSPlayerController player)
