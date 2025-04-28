@@ -239,7 +239,6 @@ namespace AdminMenu
                     ShowTeamMenu(adminPlayer, player);
                 });
             }
-            setTeamPlayerMenu.PostSelectAction = PostSelectAction.Close;
             MenuManager.OpenCenterHtmlMenu(this, adminPlayer, setTeamPlayerMenu);
         }
 
