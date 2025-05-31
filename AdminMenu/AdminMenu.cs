@@ -1,14 +1,15 @@
 ﻿using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
-using CounterStrikeSharp.API.Modules.Menu;
-using Microsoft.Extensions.Logging;
-using CounterStrikeSharp.API.Modules.Events;
-using CounterStrikeSharp.API.Modules.Utils;
-using System.Text.Json;
-using CounterStrikeSharp.API.ValveConstants.Protobuf;
-using Vector = CounterStrikeSharp.API.Modules.Utils.Vector;
+using CounterStrikeSharp.API.Modules.Commands;
 using CounterStrikeSharp.API.Modules.Entities;
+using CounterStrikeSharp.API.Modules.Events;
+using CounterStrikeSharp.API.Modules.Menu;
+using CounterStrikeSharp.API.Modules.Utils;
+using CounterStrikeSharp.API.ValveConstants.Protobuf;
+using Microsoft.Extensions.Logging;
 using System.Numerics;
+using System.Text.Json;
+using Vector = CounterStrikeSharp.API.Modules.Utils.Vector;
 
 namespace AdminMenu
 {
@@ -19,7 +20,7 @@ namespace AdminMenu
         public override string ModuleAuthor => "Sinistral";
         public override string ModuleDescription => "AdminMenu";
 
-        public string PluginPrefix = $"[AdminMenu]";
+        public string PluginPrefix = $"[Admin]";
 
         private static string _adminsFilePath = string.Empty;
         private static string _bannedFilePath = string.Empty;
@@ -32,13 +33,56 @@ namespace AdminMenu
             RegisterEventHandler<EventPlayerChat>(OnPlayerChat);
             _adminsFilePath = Path.Combine(ModuleDirectory, "..", "..", "configs", "admins.json");
             _bannedFilePath = Path.Combine(ModuleDirectory, "..", "..", "configs", "banned.json");
+
+            AddCommandListenerButtons();
+        }
+
+        private void AddCommandListenerButtons()
+        {
+            AddCommandListener("1", OnKeyPress);
+            AddCommandListener("2", OnKeyPress);
+            AddCommandListener("3", OnKeyPress);
+            AddCommandListener("4", OnKeyPress);
+            AddCommandListener("5", OnKeyPress);
+            AddCommandListener("6", OnKeyPress);
+            AddCommandListener("7", OnKeyPress);
+            AddCommandListener("8", OnKeyPress);
+            AddCommandListener("9", OnKeyPress);
+        }
+
+        private HookResult OnKeyPress(CCSPlayerController? player, CommandInfo command)
+        {
+            if (player is not null)
+            {
+                var menu = MenuManager.GetActiveMenu(player);
+
+                if (menu is null)
+                {
+                    return HookResult.Continue;
+                }
+
+                switch (command.GetCommandString)
+                {
+                    case "1": menu.OnKeyPress(player, 1); break;
+                    case "2": menu.OnKeyPress(player, 2); break;
+                    case "3": menu.OnKeyPress(player, 3); break;
+                    case "4": menu.OnKeyPress(player, 4); break;
+                    case "5": menu.OnKeyPress(player, 5); break;
+                    case "6": menu.OnKeyPress(player, 6); break;
+                    case "7": menu.OnKeyPress(player, 7); break;
+                    case "8": menu.OnKeyPress(player, 8); break;
+                    case "9": menu.OnKeyPress(player, 9); break;
+                }
+            }
+
+            return HookResult.Continue;
         }
 
         private HookResult OnPlayerConnect(EventPlayerConnectFull @event, GameEventInfo info)
         {
             var player = @event.Userid;
 
-            if (player == null)
+            if (player is null)
             {
                 return HookResult.Continue;
             }
@@ -108,12 +152,12 @@ namespace AdminMenu
         {
             var player = Utilities.GetPlayerFromUserid(@event.Userid);
 
-            if (player == null)
+            if (player is null)
             {
                 return HookResult.Continue;
             }
 
-            if (@event?.Text.Trim().ToLower() == "!admin")
+            if (@event?.Text.Trim().ToLower() is "!admin")
             {
                 if (IsAdmin(player))
                 {
@@ -124,19 +168,19 @@ namespace AdminMenu
                     player.PrintToChat("You are not an admin.");
                 }
             }
-            else if (@event?.Text.Trim().ToLower() == "!mysteamid")
+            else if (@event?.Text.Trim().ToLower() is "!mysteamid")
             {
                 player?.PrintToChat($"SteamID2 : {player?.AuthorizedSteamID?.SteamId2}");
                 player?.PrintToChat($"SteamID3 : {player?.AuthorizedSteamID?.SteamId3}");
                 player?.PrintToChat($"SteamID32: {player?.AuthorizedSteamID?.SteamId32}");
                 player?.PrintToChat($"SteamID64: {player?.AuthorizedSteamID?.SteamId64}");
             }
-            else if (@event?.Text.Trim().ToLower() == "!thetime")
+            else if (@event?.Text.Trim().ToLower() is "!thetime")
             {
                 Server.PrintToChatAll($"{DateTime.Now}");
                 return HookResult.Handled;
             }
-            else if (@event?.Text.Trim().ToLower() == "!status")
+            else if (@event?.Text.Trim().ToLower() is "!status")
             {
                 foreach (var statusPlayer in Utilities.GetPlayers().Where(p => p.IsValid && !p.IsBot))
                 {
@@ -252,7 +296,7 @@ namespace AdminMenu
                 (CCSPlayerController controller, ChatMenuOption option) => { player.ChangeTeam(CsTeam.CounterTerrorist); });
             teamsMenu.AddMenuOption("Spectator",
                 (CCSPlayerController controller, ChatMenuOption option) => { player.ChangeTeam(CsTeam.Spectator); });
-            
+
             teamsMenu.PostSelectAction = PostSelectAction.Close;
             MenuManager.OpenCenterHtmlMenu(this, adminPlayer, teamsMenu);
         }
