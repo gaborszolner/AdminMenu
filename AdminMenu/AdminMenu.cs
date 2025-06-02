@@ -24,7 +24,6 @@ namespace AdminMenu
 
         private static string _adminsFilePath = string.Empty;
         private static string _bannedFilePath = string.Empty;
-        private static bool _isWarmup = false;
 
         public override void Load(bool hotReload)
         {
@@ -32,24 +31,10 @@ namespace AdminMenu
             Logger?.LogInformation(ModuleDescription);
             RegisterEventHandler<EventPlayerConnectFull>(OnPlayerConnect);
             RegisterEventHandler<EventPlayerChat>(OnPlayerChat);
-            RegisterEventHandler<EventWarmupEnd>(OnWarmupEnd);
-            RegisterEventHandler<EventRoundAnnounceWarmup>(OnRoundAnnounceWarmup);
             _adminsFilePath = Path.Combine(ModuleDirectory, "..", "..", "configs", "admins.json");
             _bannedFilePath = Path.Combine(ModuleDirectory, "..", "..", "configs", "banned.json");
 
             AddCommandListenerButtons();
-        }
-
-        private HookResult OnRoundAnnounceWarmup(EventRoundAnnounceWarmup @event, GameEventInfo info)
-        {
-            _isWarmup = true;
-            return HookResult.Continue;
-        }
-
-        private HookResult OnWarmupEnd(EventWarmupEnd @event, GameEventInfo info)
-        {
-            _isWarmup = false;
-            return HookResult.Continue;
         }
 
         private void AddCommandListenerButtons()
@@ -110,20 +95,6 @@ namespace AdminMenu
             else
             {
                 Server.PrintToChatAll($"{PluginPrefix} Welcome to the server {player.PlayerName}!");
-                try
-                {
-                    if (!_isWarmup)
-                    {
-                        var audioEvent = new EventTeamplayBroadcastAudio(true)
-                        {
-                            Sound = "./Resources/PleaseWelcome.wav",
-                            Team = -1
-                        };
-
-                        audioEvent.FireEvent(false);
-                    }
-                }
-                catch (Exception) { }
             }
 
             return HookResult.Continue;
@@ -259,11 +230,6 @@ namespace AdminMenu
 
                 var newPosition = currentPos + new Vector(0, 0, offsetZ);
                 pawn.Teleport(newPosition, pawn.AbsRotation, null);
-                try
-                {
-                    targetPlayer.EmitSound("./Resources/Slap.wav");
-                }
-                catch (Exception){}
             });
         }
 
