@@ -33,49 +33,6 @@ namespace AdminMenu
             RegisterEventHandler<EventPlayerChat>(OnPlayerChat);
             _adminsFilePath = Path.Combine(ModuleDirectory, "..", "..", "configs", "admins.json");
             _bannedFilePath = Path.Combine(ModuleDirectory, "..", "..", "configs", "banned.json");
-
-            AddCommandListenerButtons();
-        }
-
-        private void AddCommandListenerButtons()
-        {
-            AddCommandListener("1", OnKeyPress);
-            AddCommandListener("2", OnKeyPress);
-            AddCommandListener("3", OnKeyPress);
-            AddCommandListener("4", OnKeyPress);
-            AddCommandListener("5", OnKeyPress);
-            AddCommandListener("6", OnKeyPress);
-            AddCommandListener("7", OnKeyPress);
-            AddCommandListener("8", OnKeyPress);
-            AddCommandListener("9", OnKeyPress);
-        }
-
-        private HookResult OnKeyPress(CCSPlayerController? player, CommandInfo command)
-        {
-            if (player is not null)
-            {
-                var menu = MenuManager.GetActiveMenu(player);
-
-                if (menu is null)
-                {
-                    return HookResult.Continue;
-                }
-
-                switch (command.GetCommandString)
-                {
-                    case "1": menu.OnKeyPress(player, 1); break;
-                    case "2": menu.OnKeyPress(player, 2); break;
-                    case "3": menu.OnKeyPress(player, 3); break;
-                    case "4": menu.OnKeyPress(player, 4); break;
-                    case "5": menu.OnKeyPress(player, 5); break;
-                    case "6": menu.OnKeyPress(player, 6); break;
-                    case "7": menu.OnKeyPress(player, 7); break;
-                    case "8": menu.OnKeyPress(player, 8); break;
-                    case "9": menu.OnKeyPress(player, 9); break;
-                }
-            }
-
-            return HookResult.Continue;
         }
 
         private HookResult OnPlayerConnect(EventPlayerConnectFull @event, GameEventInfo info)
