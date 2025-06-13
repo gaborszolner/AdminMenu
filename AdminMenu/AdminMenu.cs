@@ -247,8 +247,12 @@ namespace AdminMenu
 
             teamsMenu.AddMenuOption("Terrorist",
                 (CCSPlayerController controller, ChatMenuOption option) => { player.ChangeTeam(CsTeam.Terrorist); });
+            teamsMenu.AddMenuOption("Terrorist + Respawn",
+                (CCSPlayerController controller, ChatMenuOption option) => { player.ChangeTeam(CsTeam.Terrorist); player.Respawn(); });
             teamsMenu.AddMenuOption("CounterTerrorist",
                 (CCSPlayerController controller, ChatMenuOption option) => { player.ChangeTeam(CsTeam.CounterTerrorist); });
+            teamsMenu.AddMenuOption("CounterTerrorist + Respawn",
+                (CCSPlayerController controller, ChatMenuOption option) => { player.ChangeTeam(CsTeam.CounterTerrorist); player.Respawn(); });
             teamsMenu.AddMenuOption("Spectator",
                 (CCSPlayerController controller, ChatMenuOption option) => { player.ChangeTeam(CsTeam.Spectator); });
 
