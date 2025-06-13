@@ -2,12 +2,10 @@
 
 namespace AdminMenu
 {
-    public class AdminEntry
+    public class AdminEntry : Entry
     {
-        [JsonPropertyName("identity")]
-        public string Identity { get; set; } = string.Empty;
+        [JsonPropertyName("level")] // Bigger is better, 1-3
+        public int Level { get; set; } = 0;
 
-        [JsonPropertyName("flags")]
-        public string[] Flags { get; set; } = Array.Empty<string>();
     }
 }

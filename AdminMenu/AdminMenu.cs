@@ -9,6 +9,7 @@ using CounterStrikeSharp.API.ValveConstants.Protobuf;
 using Microsoft.Extensions.Logging;
 using System.Numerics;
 using System.Text.Json;
+using System.Xml.Linq;
 using Vector = CounterStrikeSharp.API.Modules.Utils.Vector;
 
 namespace AdminMenu
@@ -25,14 +26,39 @@ namespace AdminMenu
         private static string _adminsFilePath = string.Empty;
         private static string _bannedFilePath = string.Empty;
 
+        private static IList<Player> _activePlayers = [];
+
         public override void Load(bool hotReload)
         {
             Logger?.LogInformation($"Plugin: {ModuleName} - Version: {ModuleVersion} by {ModuleAuthor}");
             Logger?.LogInformation(ModuleDescription);
             RegisterEventHandler<EventPlayerConnectFull>(OnPlayerConnect);
+            RegisterEventHandler<EventPlayerDisconnect>(OnPlayerDisconnect);
             RegisterEventHandler<EventPlayerChat>(OnPlayerChat);
             _adminsFilePath = Path.Combine(ModuleDirectory, "..", "..", "configs", "admins.json");
             _bannedFilePath = Path.Combine(ModuleDirectory, "..", "..", "configs", "banned.json");
+            _activePlayers = [];
+        }
+
+        private HookResult OnPlayerDisconnect(EventPlayerDisconnect @event, GameEventInfo info)
+        {
+            var player = @event.Userid;
+
+            if (player is null || player.IsBot || _activePlayers is null)
+            {
+                return HookResult.Continue;
+            }
+
+            Server.PrintToChatAll($"{PluginPrefix} By {player.PlayerName}!");
+            try
+            {
+                _activePlayers.Remove(_activePlayers.FirstOrDefault(p => p.Identity == player.AuthorizedSteamID.SteamId2));
+            }
+            catch (Exception ex)
+            {
+                Logger?.LogError($"Error removing player from active players list: {ex.Message}");
+            }
+            return HookResult.Continue;
         }
 
         private HookResult OnPlayerConnect(EventPlayerConnectFull @event, GameEventInfo info)
@@ -51,10 +77,75 @@ namespace AdminMenu
             }
             else
             {
+                _activePlayers.Add(new Player(player.AuthorizedSteamID.SteamId2, player.PlayerName, GetAdminLevelFromConfig(player)));
                 Server.PrintToChatAll($"{PluginPrefix} Welcome to the server {player.PlayerName}!");
             }
 
             return HookResult.Continue;
+        }
+
+        private int GetAdminLevelFromConfig(CCSPlayerController player)
+        {
+            if (player == null || player.AuthorizedSteamID == null)
+            {
+                return 0;
+            }
+
+            string steamId = player.AuthorizedSteamID.SteamId2;
+
+            if (!File.Exists(_adminsFilePath))
+            {
+                Logger?.LogError($"File not found: {_adminsFilePath}");
+                return 0;
+            }
+
+            try
+            {
+                string json = File.ReadAllText(_adminsFilePath);
+                Dictionary<string, AdminEntry>? entries = JsonSerializer.Deserialize<Dictionary<string, AdminEntry>>(json, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+
+                if (entries == null)
+                {
+                    Logger?.LogError($"Failed to deserialize {_adminsFilePath} file: {json}");
+                    return 0;
+                }
+
+                var possibleAdmin = entries.Values.Where(entry => entry.Identity.Equals(steamId, StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
+                return possibleAdmin is null ? 0 : possibleAdmin.Level;
+            }
+            catch (Exception ex)
+            {
+                Logger?.LogError($"Error reading {_adminsFilePath} file: {ex.Message}");
+                return 0;
+            }
+        }
+
+        private int GetAdminLevelFromList(CCSPlayerController player) 
+        {
+            if (player == null || player.AuthorizedSteamID == null)
+            {
+                return 0;
+            }
+
+            string steamId = player.AuthorizedSteamID.SteamId2;
+
+            try
+            {
+                var activePlayer = _activePlayers.Where(p => p.Identity == player.AuthorizedSteamID?.SteamId2).First();
+                if (activePlayer is not null)
+                {
+                    return activePlayer.AdminLevel;
+                }
+                else return 0;
+            }
+            catch (Exception ex)
+            {
+                Logger?.LogError($"Error checking admin status: {ex.Message}");
+                return 0;
+            }
         }
 
         private bool IsPlayerInList(CCSPlayerController? player, string filePath, string listName)
@@ -75,10 +166,23 @@ namespace AdminMenu
                 }
 
                 string json = File.ReadAllText(filePath);
-                var entries = JsonSerializer.Deserialize<Dictionary<string, AdminEntry>>(json, new JsonSerializerOptions
+                Dictionary<string, Entry>? entries = null;
+
+                if (listName == "Banned")
                 {
-                    PropertyNameCaseInsensitive = true
-                });
+                    entries = JsonSerializer.Deserialize<Dictionary<string, Entry>>(json, new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    });
+                }
+                else if (listName == "Admins")
+                {
+                    entries = JsonSerializer.Deserialize<Dictionary<string, Entry>>(json, new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    });
+                }
+
 
                 if (entries == null)
                 {
@@ -100,11 +204,6 @@ namespace AdminMenu
             return IsPlayerInList(player, _bannedFilePath, "Banned");
         }
 
-        private bool IsAdmin(CCSPlayerController? player)
-        {
-            return IsPlayerInList(player, _adminsFilePath, "Admins");
-        }
-
         public HookResult OnPlayerChat(EventPlayerChat @event, GameEventInfo info)
         {
             var player = Utilities.GetPlayerFromUserid(@event.Userid);
@@ -116,7 +215,7 @@ namespace AdminMenu
 
             if (@event?.Text.Trim().ToLower() is "!admin")
             {
-                if (IsAdmin(player))
+                if (GetAdminLevelFromList(player) > 0)
                 {
                     ShowMainMenu(player);
                 }
@@ -128,9 +227,6 @@ namespace AdminMenu
             else if (@event?.Text.Trim().ToLower() is "!mysteamid")
             {
                 player?.PrintToChat($"SteamID2 : {player?.AuthorizedSteamID?.SteamId2}");
-                player?.PrintToChat($"SteamID3 : {player?.AuthorizedSteamID?.SteamId3}");
-                player?.PrintToChat($"SteamID32: {player?.AuthorizedSteamID?.SteamId32}");
-                player?.PrintToChat($"SteamID64: {player?.AuthorizedSteamID?.SteamId64}");
             }
             else if (@event?.Text.Trim().ToLower() is "!thetime")
             {
@@ -150,17 +246,119 @@ namespace AdminMenu
         private void ShowMainMenu(CCSPlayerController player)
         {
             var mainMenu = new CenterHtmlMenu($"Choose action", this);
-
-            mainMenu.AddMenuOption("Ban", BanAction);
-            mainMenu.AddMenuOption("Kick", KickAction);
-            mainMenu.AddMenuOption("Kill", KillAction);
-            mainMenu.AddMenuOption("Slap", SlapAction);
-            mainMenu.AddMenuOption("DropWeapon", DropWeaponAction);
-            mainMenu.AddMenuOption("Respawn", RespawnAction);
-            mainMenu.AddMenuOption("Set Team", SetTeamAction);
-            mainMenu.AddMenuOption("Bot menu", BotMenuAction);
+            int adminLevel = GetAdminLevelFromList(player);
+            if (adminLevel > 1)
+            {
+                mainMenu.AddMenuOption("Ban", BanAction);
+                mainMenu.AddMenuOption("Kick", KickAction);
+                mainMenu.AddMenuOption("Kill", KillAction);
+                mainMenu.AddMenuOption("Slap", SlapAction);
+                mainMenu.AddMenuOption("Set Team", SetTeamAction);
+            }
+            if (adminLevel > 2)
+            {
+                mainMenu.AddMenuOption("DropWeapon", DropWeaponAction);
+                mainMenu.AddMenuOption("Respawn", RespawnAction);
+                mainMenu.AddMenuOption("Set Admin", SetAdminAction);
+            }
+            if (adminLevel > 0)
+            {
+                mainMenu.AddMenuOption("Bot menu", BotMenuAction);
+            }
 
             MenuManager.OpenCenterHtmlMenu(this, player, mainMenu);
+        }
+
+        private void SetAdminAction(CCSPlayerController adminPlayer, ChatMenuOption option)
+        {
+            ShowPlayerListMenu(adminPlayer, (CCSPlayerController targetPlayer) =>
+            {
+                var setAdminMenu = new CenterHtmlMenu($"Set admin level for {targetPlayer.PlayerName}", this);
+                setAdminMenu.AddMenuOption("Delete admin", (controller, _) =>
+                {
+                    SetAdminLevel(targetPlayer, 0);
+                });
+                setAdminMenu.AddMenuOption("Level 1", (controller, _) =>
+                {
+                    SetAdminLevel(targetPlayer, 1);
+                });
+                setAdminMenu.AddMenuOption("Level 2", (controller, _) =>
+                {
+                    SetAdminLevel(targetPlayer, 2);
+                });
+                setAdminMenu.AddMenuOption("Level 3", (controller, _) =>
+                {
+                    SetAdminLevel(targetPlayer, 3);
+                });
+                setAdminMenu.PostSelectAction = PostSelectAction.Close;
+                MenuManager.OpenCenterHtmlMenu(this, adminPlayer, setAdminMenu);
+            });
+        }
+
+        private void SetAdminLevel(CCSPlayerController targetPlayer, int adminLevel)
+        {
+            if (targetPlayer == null || targetPlayer.AuthorizedSteamID == null)
+            {
+                return;
+            }
+
+            UpdateConfig(targetPlayer, adminLevel);
+
+            UpdateActivePlayers(targetPlayer, adminLevel);
+
+            targetPlayer.PrintToChat($"Your admin level has been set to {adminLevel}.");
+
+        }
+
+        private static void UpdateActivePlayers(CCSPlayerController targetPlayer, int adminLevel)
+        {
+            _activePlayers = _activePlayers.Select(p =>
+            {
+                if (p.Identity == targetPlayer.AuthorizedSteamID?.SteamId2)
+                {
+                    p.AdminLevel = adminLevel;
+                }
+                return p;
+            }).ToList();
+        }
+
+        private static void UpdateConfig(CCSPlayerController targetPlayer, int adminLevel)
+        {
+            if (targetPlayer == null || targetPlayer.AuthorizedSteamID == null)
+            {
+                return;
+            }
+
+            var newEntry = new AdminEntry
+            {
+                Identity = targetPlayer.AuthorizedSteamID.SteamId2,
+                Level = adminLevel
+            };
+
+            string steamId = targetPlayer.AuthorizedSteamID.SteamId2;
+            Dictionary<string, AdminEntry> adminDictionary;
+            if (File.Exists(_adminsFilePath))
+            {
+                string json = File.ReadAllText(_adminsFilePath);
+                adminDictionary = JsonSerializer.Deserialize<Dictionary<string, AdminEntry>>(json, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                }) ?? new Dictionary<string, AdminEntry>();
+            }
+            else
+            {
+                adminDictionary = new Dictionary<string, AdminEntry>();
+            }
+
+            adminDictionary[targetPlayer.PlayerName] = newEntry;
+
+            var options = new JsonSerializerOptions
+            {
+                WriteIndented = true
+            };
+
+            string updatedJson = JsonSerializer.Serialize(adminDictionary, options);
+            File.WriteAllText(_adminsFilePath, updatedJson);
         }
 
         private void DropWeaponAction(CCSPlayerController adminPlayer, ChatMenuOption option)
@@ -202,10 +400,8 @@ namespace AdminMenu
                 { Server.ExecuteCommand("bot_add_ct"); });
 
             MenuManager.OpenCenterHtmlMenu(this, player, menu);
-
         }
 
-        #region Actions
 
         private void RespawnAction(CCSPlayerController adminPlayer, ChatMenuOption option)
         {
@@ -214,7 +410,7 @@ namespace AdminMenu
 
         private void BanAction(CCSPlayerController adminPlayer, ChatMenuOption option)
         {
-            ShowPlayerListMenu(adminPlayer, (CCSPlayerController player) => { BanPlayer(player); });
+            ShowPlayerListMenu(adminPlayer, (CCSPlayerController player) => { ChooseBanTimePlayer(adminPlayer, player); });
         }
 
         private void KillAction(CCSPlayerController adminPlayer, ChatMenuOption option)
@@ -268,14 +464,21 @@ namespace AdminMenu
             {
                 playerListMenu.AddMenuOption(player.PlayerName, (controller, option) =>
                 {
-                    playerAction(player);
+                    if (GetAdminLevelFromList(adminPlayer) < GetAdminLevelFromList(player))
+                    { 
+                        adminPlayer.PrintToCenter($"You cannot perform actions on {player.PlayerName} as they have a higher admin level than you.");
+                    } 
+                    else 
+                    {
+                        playerAction(player); 
+                    }
                 });
             }
 
             MenuManager.OpenCenterHtmlMenu(this, adminPlayer, playerListMenu);
         }
 
-        private void BanPlayer(CCSPlayerController player)
+        private void ChooseBanTimePlayer(CCSPlayerController adminPlayer, CCSPlayerController player)
         {
             if (player == null || player.AuthorizedSteamID == null)
             {
@@ -283,24 +486,49 @@ namespace AdminMenu
                 return;
             }
 
+            var banTimeMenu = new CenterHtmlMenu($"Expiration time?", this);
+            banTimeMenu.AddMenuOption("10 min", (CCSPlayerController controller, ChatMenuOption option) =>
+            {
+                BanPlayer(player, DateTime.Now.AddMinutes(10));
+            });
+            banTimeMenu.AddMenuOption("1 day", (CCSPlayerController controller, ChatMenuOption option) =>
+            {
+                BanPlayer(player, DateTime.Now.AddDays(1));
+            });
+            banTimeMenu.AddMenuOption("1 week", (CCSPlayerController controller, ChatMenuOption option) =>
+            {
+                BanPlayer(player, DateTime.Now.AddDays(7));
+            });
+            banTimeMenu.AddMenuOption("Permanent", (CCSPlayerController controller, ChatMenuOption option) =>
+            {
+                BanPlayer(player, DateTime.MaxValue);
+            });
+
+            banTimeMenu.PostSelectAction = PostSelectAction.Close;
+            MenuManager.OpenCenterHtmlMenu(this, adminPlayer, banTimeMenu);
+        }
+
+        private void BanPlayer(CCSPlayerController player, DateTime banTime)
+        {
             try
             {
                 string steamId = player.AuthorizedSteamID.SteamId2;
-                var bannedList = new Dictionary<string, AdminEntry>();
+                var bannedList = new Dictionary<string, BannedEntry>();
 
                 if (File.Exists(_bannedFilePath))
                 {
                     string json = File.ReadAllText(_bannedFilePath);
-                    bannedList = JsonSerializer.Deserialize<Dictionary<string, AdminEntry>>(json, new JsonSerializerOptions
+                    bannedList = JsonSerializer.Deserialize<Dictionary<string, BannedEntry>>(json, new JsonSerializerOptions
                     {
                         PropertyNameCaseInsensitive = true
-                    }) ?? new Dictionary<string, AdminEntry>();
+                    }) ?? new Dictionary<string, BannedEntry>();
                 }
 
-                var newEntry = new AdminEntry
+                var newEntry = new BannedEntry
                 {
                     Identity = steamId,
-                    Flags = new List<string> { $"{player.PlayerName}" }.ToArray()
+                    Flags = new List<string> { $"{player.PlayerName}" }.ToArray(),
+                    Expiration = banTime
                 };
 
                 bannedList.Add(steamId, newEntry);
@@ -315,7 +543,5 @@ namespace AdminMenu
                 Logger?.LogError($"Error banning player: {ex.Message}");
             }
         }
-
-        #endregion
     }
 }

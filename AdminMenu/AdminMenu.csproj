@@ -11,4 +11,17 @@
     <PackageReference Include="CounterStrikeSharp.API" Version="1.0.318" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Example\addons\counterstrikesharp\configs\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Example\addons\counterstrikesharp\configs\admins.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Example\addons\counterstrikesharp\configs\banned.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
