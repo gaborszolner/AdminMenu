@@ -1,15 +1,11 @@
 ﻿using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
-using CounterStrikeSharp.API.Modules.Commands;
-using CounterStrikeSharp.API.Modules.Entities;
 using CounterStrikeSharp.API.Modules.Events;
 using CounterStrikeSharp.API.Modules.Menu;
 using CounterStrikeSharp.API.Modules.Utils;
 using CounterStrikeSharp.API.ValveConstants.Protobuf;
 using Microsoft.Extensions.Logging;
-using System.Numerics;
 using System.Text.Json;
-using System.Xml.Linq;
 using Vector = CounterStrikeSharp.API.Modules.Utils.Vector;
 
 namespace AdminMenu
@@ -25,6 +21,7 @@ namespace AdminMenu
 
         private static string _adminsFilePath = string.Empty;
         private static string _bannedFilePath = string.Empty;
+        private static string _mapListFilePath = string.Empty;
 
         private static IList<Player> _activePlayers = [];
 
@@ -37,6 +34,7 @@ namespace AdminMenu
             RegisterEventHandler<EventPlayerChat>(OnPlayerChat);
             _adminsFilePath = Path.Combine(ModuleDirectory, "..", "..", "configs", "admins.json");
             _bannedFilePath = Path.Combine(ModuleDirectory, "..", "..", "configs", "banned.json");
+            _mapListFilePath = Path.Combine(ModuleDirectory, "..", "RockTheVote", "maplist.txt");
             _activePlayers = [];
         }
 
@@ -148,7 +146,7 @@ namespace AdminMenu
             }
         }
 
-        private bool IsPlayerInList(CCSPlayerController? player, string filePath, string listName)
+        private bool IsBanned(CCSPlayerController? player)
         {
             if (player == null || player.AuthorizedSteamID == null)
             {
@@ -159,49 +157,47 @@ namespace AdminMenu
             {
                 string steamId = player.AuthorizedSteamID.SteamId2;
 
-                if (!File.Exists(filePath))
+                if (!File.Exists(_bannedFilePath))
                 {
-                    Logger?.LogError($"{listName} file not found: {filePath}");
+                    Logger?.LogError($"File not found: {_bannedFilePath}");
                     return false;
                 }
 
-                string json = File.ReadAllText(filePath);
-                Dictionary<string, Entry>? entries = null;
-
-                if (listName == "Banned")
-                {
-                    entries = JsonSerializer.Deserialize<Dictionary<string, Entry>>(json, new JsonSerializerOptions
-                    {
-                        PropertyNameCaseInsensitive = true
-                    });
-                }
-                else if (listName == "Admins")
-                {
-                    entries = JsonSerializer.Deserialize<Dictionary<string, Entry>>(json, new JsonSerializerOptions
-                    {
-                        PropertyNameCaseInsensitive = true
-                    });
-                }
-
+                string json = File.ReadAllText(_bannedFilePath);
+                Dictionary<string, BannedEntry>?  entries = JsonSerializer.Deserialize
+                    <Dictionary<string, BannedEntry>>(json, new JsonSerializerOptions{ PropertyNameCaseInsensitive = true });
 
                 if (entries == null)
                 {
-                    Logger?.LogError($"Failed to deserialize {listName} file: {json}");
+                    Logger?.LogError($"Failed to deserialize file: {json}");
                     return false;
                 }
 
-                return entries.Values.Any(entry => entry.Identity.Equals(steamId, StringComparison.OrdinalIgnoreCase));
+                var possibleBanned = entries.Values.Where(entry => entry.Identity.Equals(steamId, StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
+                if (possibleBanned is null) 
+                {
+                    return false;
+                }
+                else 
+                {
+                    if (possibleBanned.Expiration < DateTime.Now) 
+                    { 
+                        entries.Remove(possibleBanned.Identity);
+                        string updatedJson = JsonSerializer.Serialize(entries, new JsonSerializerOptions { WriteIndented = true });
+                        File.WriteAllText(_bannedFilePath, updatedJson);
+                        return false;
+                    } 
+                    else 
+                    { 
+                        return true; 
+                    }
+                }
             }
             catch (Exception ex)
             {
-                Logger?.LogError($"Error reading {listName} file: {ex.Message}");
+                Logger?.LogError($"Error reading {_bannedFilePath} file: {ex.Message}");
                 return false;
             }
-        }
-
-        private bool IsBanned(CCSPlayerController? player)
-        {
-            return IsPlayerInList(player, _bannedFilePath, "Banned");
         }
 
         public HookResult OnPlayerChat(EventPlayerChat @event, GameEventInfo info)
@@ -254,12 +250,14 @@ namespace AdminMenu
                 mainMenu.AddMenuOption("Kill", KillAction);
                 mainMenu.AddMenuOption("Slap", SlapAction);
                 mainMenu.AddMenuOption("Set Team", SetTeamAction);
+                mainMenu.AddMenuOption("Rename", RanameAction);
             }
             if (adminLevel > 2)
             {
                 mainMenu.AddMenuOption("DropWeapon", DropWeaponAction);
                 mainMenu.AddMenuOption("Respawn", RespawnAction);
                 mainMenu.AddMenuOption("Set Admin", SetAdminAction);
+                mainMenu.AddMenuOption("Change map", ChangeMapAction);
             }
             if (adminLevel > 0)
             {
@@ -269,15 +267,79 @@ namespace AdminMenu
             MenuManager.OpenCenterHtmlMenu(this, player, mainMenu);
         }
 
+        private void ChangeMapAction(CCSPlayerController player, ChatMenuOption option)
+        {
+            Dictionary<string, string> mapList = GetMaps(_mapListFilePath);
+            var mapMenu = new CenterHtmlMenu($"Choose map", this);
+            foreach (var map in mapList)
+            {
+                mapMenu.AddMenuOption(map.Key, (CCSPlayerController player, ChatMenuOption menuOption) =>
+                {
+                    if (Server.IsMapValid(map.Key))
+                    {
+                        Server.ExecuteCommand($"changelevel {map.Key}");
+                    }
+                    else if (map.Value is not null)
+                    {
+                        Server.ExecuteCommand($"host_workshop_map {map.Value}");
+                    }
+                    else
+                    {
+                        Server.ExecuteCommand($"ds_workshop_changelevel {map.Key}");
+                    }
+                });
+            }
+
+            MenuManager.OpenCenterHtmlMenu(this, player, mapMenu);
+        }
+
+        private Dictionary<string, string> GetMaps(string mapListFilePath)
+        {
+            Dictionary<string, string> mapList = [];
+            if (File.Exists(mapListFilePath))
+            {
+                foreach (var line in File.ReadLines(mapListFilePath).Where(l => !l.StartsWith(@"//")))
+                {
+                    var parts = line.Split(':');
+
+                    if (parts.Length == 2)
+                    {
+                        var key = parts[0].Trim();
+                        var value = parts[1].Trim();
+
+                        mapList[key] = value;
+                    }
+                }
+            }
+            else
+            {
+                Logger?.LogError($"Map list file not found: {mapListFilePath}");
+            }
+            return mapList;
+        }
+
+        private void RanameAction(CCSPlayerController adminPlayer, ChatMenuOption option)
+        {
+            ShowPlayerListMenu(adminPlayer, (CCSPlayerController targetPlayer) =>
+            {
+                string oldName = targetPlayer.PlayerName;
+                targetPlayer.PlayerName = RandomString(12);
+                Server.PrintToChatAll($"{PluginPrefix} {oldName} name has been renamed to {targetPlayer.PlayerName}.");
+            });
+        }
+
+        private static string RandomString(int length)
+        {
+            Random random = new();
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            return new string([.. Enumerable.Repeat(chars, length).Select(s => s[random.Next(s.Length)])]);
+        }
+
         private void SetAdminAction(CCSPlayerController adminPlayer, ChatMenuOption option)
         {
             ShowPlayerListMenu(adminPlayer, (CCSPlayerController targetPlayer) =>
             {
                 var setAdminMenu = new CenterHtmlMenu($"Set admin level for {targetPlayer.PlayerName}", this);
-                setAdminMenu.AddMenuOption("Delete admin", (controller, _) =>
-                {
-                    SetAdminLevel(targetPlayer, 0);
-                });
                 setAdminMenu.AddMenuOption("Level 1", (controller, _) =>
                 {
                     SetAdminLevel(targetPlayer, 1);
@@ -290,12 +352,16 @@ namespace AdminMenu
                 {
                     SetAdminLevel(targetPlayer, 3);
                 });
+                setAdminMenu.AddMenuOption("Delete admin", (controller, _) =>
+                {
+                    SetAdminLevel(targetPlayer, 0);
+                });
                 setAdminMenu.PostSelectAction = PostSelectAction.Close;
                 MenuManager.OpenCenterHtmlMenu(this, adminPlayer, setAdminMenu);
             });
         }
 
-        private void SetAdminLevel(CCSPlayerController targetPlayer, int adminLevel)
+        private static void SetAdminLevel(CCSPlayerController targetPlayer, int adminLevel)
         {
             if (targetPlayer == null || targetPlayer.AuthorizedSteamID == null)
             {
@@ -401,7 +467,6 @@ namespace AdminMenu
 
             MenuManager.OpenCenterHtmlMenu(this, player, menu);
         }
-
 
         private void RespawnAction(CCSPlayerController adminPlayer, ChatMenuOption option)
         {
