@@ -1,9 +1,8 @@
 {
-  "STEAM_0:0:98765432": {
-    "identity": "STEAM_0:0:98765432",
-    "flags": [
-      "Arcos"
-    ],
-    "expiration": "01/01/2100"
+  "STEAM_0:0:123559502": {
+    "expiration": "2125-06-13T20:33:42.1093538+02:00",
+    "identity": "STEAM_0:0:123559502",
+    "name": "Sinistral",
+    "bannedby": "Sinistral"
   }
-}
+}     

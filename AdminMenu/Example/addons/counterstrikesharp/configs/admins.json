@@ -1,9 +1,7 @@
 {
-  "STEAM_0:0:123459502": {
-    "expiration": "2025-06-13T20:33:42.1093538+02:00",
-    "identity": "STEAM_0:0:123459502",
-    "flags": [
-      "Sinistral"
-    ]
+  "STEAM_0:0:123456789": {
+    "level": 3,
+    "identity": "STEAM_0:0:123456789",
+    "name": "Sinistral"
   }
 }               

@@ -13,7 +13,7 @@ namespace AdminMenu
     public class AdminMenu : BasePlugin
     {
         public override string ModuleName => "AdminMenu";
-        public override string ModuleVersion => "1.0";
+        public override string ModuleVersion => "2.0";
         public override string ModuleAuthor => "Sinistral";
         public override string ModuleDescription => "AdminMenu";
 
@@ -50,7 +50,7 @@ namespace AdminMenu
             Server.PrintToChatAll($"{PluginPrefix} By {player.PlayerName}!");
             try
             {
-                _activePlayers.Remove(_activePlayers.FirstOrDefault(p => p.Identity == player.AuthorizedSteamID.SteamId2));
+                _activePlayers.Remove(_activePlayers.First(p => p.Identity == player.AuthorizedSteamID?.SteamId2));
             }
             catch (Exception ex)
             {
@@ -111,7 +111,7 @@ namespace AdminMenu
                     return 0;
                 }
 
-                var possibleAdmin = entries.Values.Where(entry => entry.Identity.Equals(steamId, StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
+                var possibleAdmin = entries[steamId];
                 return possibleAdmin is null ? 0 : possibleAdmin.Level;
             }
             catch (Exception ex)
@@ -397,6 +397,7 @@ namespace AdminMenu
 
             var newEntry = new AdminEntry
             {
+                Name = targetPlayer.PlayerName,
                 Identity = targetPlayer.AuthorizedSteamID.SteamId2,
                 Level = adminLevel
             };
@@ -416,7 +417,7 @@ namespace AdminMenu
                 adminDictionary = new Dictionary<string, AdminEntry>();
             }
 
-            adminDictionary[targetPlayer.PlayerName] = newEntry;
+            adminDictionary[steamId] = newEntry;
 
             var options = new JsonSerializerOptions
             {
@@ -431,7 +432,16 @@ namespace AdminMenu
         {
             ShowPlayerListMenu(adminPlayer, (CCSPlayerController targetPlayer) =>
             {
+                string? weaponName = targetPlayer.Pawn.Value?.WeaponServices?.ActiveWeapon?.Value?.DesignerName;
                 targetPlayer.DropActiveWeapon();
+                if (weaponName != null)
+                {
+                    Server.PrintToChatAll($"{PluginPrefix} {targetPlayer.PlayerName} has dropped their weapon: {weaponName}");
+                }
+                else
+                {
+                    Server.PrintToChatAll($"{PluginPrefix} {targetPlayer.PlayerName} has dropped their weapon.");
+                }
             });
         }
 
@@ -554,26 +564,26 @@ namespace AdminMenu
             var banTimeMenu = new CenterHtmlMenu($"Expiration time?", this);
             banTimeMenu.AddMenuOption("10 min", (CCSPlayerController controller, ChatMenuOption option) =>
             {
-                BanPlayer(player, DateTime.Now.AddMinutes(10));
+                BanPlayer(adminPlayer, player, DateTime.Now.AddMinutes(10));
             });
             banTimeMenu.AddMenuOption("1 day", (CCSPlayerController controller, ChatMenuOption option) =>
             {
-                BanPlayer(player, DateTime.Now.AddDays(1));
+                BanPlayer(adminPlayer, player, DateTime.Now.AddDays(1));
             });
             banTimeMenu.AddMenuOption("1 week", (CCSPlayerController controller, ChatMenuOption option) =>
             {
-                BanPlayer(player, DateTime.Now.AddDays(7));
+                BanPlayer(adminPlayer, player, DateTime.Now.AddDays(7));
             });
             banTimeMenu.AddMenuOption("Permanent", (CCSPlayerController controller, ChatMenuOption option) =>
             {
-                BanPlayer(player, DateTime.MaxValue);
+                BanPlayer(adminPlayer, player, DateTime.MaxValue);
             });
 
             banTimeMenu.PostSelectAction = PostSelectAction.Close;
             MenuManager.OpenCenterHtmlMenu(this, adminPlayer, banTimeMenu);
         }
 
-        private void BanPlayer(CCSPlayerController player, DateTime banTime)
+        private void BanPlayer(CCSPlayerController adminPlayer, CCSPlayerController player, DateTime banTime)
         {
             try
             {
@@ -592,7 +602,8 @@ namespace AdminMenu
                 var newEntry = new BannedEntry
                 {
                     Identity = steamId,
-                    Flags = new List<string> { $"{player.PlayerName}" }.ToArray(),
+                    Name = player.PlayerName,
+                    BannedBy = adminPlayer.PlayerName,
                     Expiration = banTime
                 };
 
@@ -601,7 +612,8 @@ namespace AdminMenu
                 string updatedJson = JsonSerializer.Serialize(bannedList, new JsonSerializerOptions { WriteIndented = true });
                 File.WriteAllText(_bannedFilePath, updatedJson);
                 player.Disconnect(NetworkDisconnectionReason.NETWORK_DISCONNECT_KICKBANADDED);
-                Logger?.LogInformation($"Player {player.PlayerName} ({steamId}) has been added to the banned list.");
+                Server.PrintToChatAll($"{PluginPrefix} {player.PlayerName} has been banned by {adminPlayer.PlayerName} until {banTime}.");
+                Logger?.LogInformation($"{PluginPrefix} {player.PlayerName} has been banned by {adminPlayer.PlayerName} until {banTime}.");
             }
             catch (Exception ex)
             {

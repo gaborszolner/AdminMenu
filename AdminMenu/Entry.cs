@@ -7,7 +7,7 @@ namespace AdminMenu
         [JsonPropertyName("identity")]
         public string Identity { get; set; } = string.Empty;
 
-        [JsonPropertyName("flags")]
-        public string[] Flags { get; set; } = Array.Empty<string>();
+        [JsonPropertyName("name")]
+        public string Name { get; set; } = string.Empty;
     }
 }
