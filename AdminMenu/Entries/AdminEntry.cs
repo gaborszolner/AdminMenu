@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace AdminMenu
+namespace AdminMenu.Entries
 {
     public class AdminEntry : Entry
     {

@@ -1,6 +1,7 @@
-﻿using System.Text.Json.Serialization;
+﻿using CounterStrikeSharp.API.Core;
+using System.Text.Json.Serialization;
 
-namespace AdminMenu
+namespace AdminMenu.Entries
 {
     public class BannedEntry : Entry
     {
@@ -9,6 +10,5 @@ namespace AdminMenu
 
         [JsonPropertyName("expiration")]
         public DateTime Expiration { get; set; } = DateTime.MaxValue;
-
     }
 }

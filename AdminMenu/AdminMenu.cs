@@ -1,10 +1,14 @@
-﻿using CounterStrikeSharp.API;
+﻿using AdminMenu.Entries;
+using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
+using CounterStrikeSharp.API.Modules.Entities;
 using CounterStrikeSharp.API.Modules.Events;
 using CounterStrikeSharp.API.Modules.Menu;
 using CounterStrikeSharp.API.Modules.Utils;
 using CounterStrikeSharp.API.ValveConstants.Protobuf;
+using GameStatistic;
 using Microsoft.Extensions.Logging;
+using System.Numerics;
 using System.Text.Json;
 using Vector = CounterStrikeSharp.API.Modules.Utils.Vector;
 
@@ -21,6 +25,7 @@ namespace AdminMenu
 
         private static string _adminsFilePath = string.Empty;
         private static string _bannedFilePath = string.Empty;
+        private static string _statisticFilePath = string.Empty;
         private static string _mapListFilePath = string.Empty;
 
         private static IList<Player> _activePlayers = [];
@@ -34,7 +39,8 @@ namespace AdminMenu
             RegisterEventHandler<EventPlayerChat>(OnPlayerChat);
             _adminsFilePath = Path.Combine(ModuleDirectory, "..", "..", "configs", "admins.json");
             _bannedFilePath = Path.Combine(ModuleDirectory, "..", "..", "configs", "banned.json");
-            _mapListFilePath = Path.Combine(ModuleDirectory, "..", "RockTheVote", "maplist.txt");
+            _statisticFilePath = Path.Combine(ModuleDirectory, "..", "..", "GameStatistic", "statistic.json");
+            _mapListFilePath = Path.Combine(ModuleDirectory, "..", "..", "RockTheVote", "maplist.txt");
             _activePlayers = [];
         }
 
@@ -121,7 +127,7 @@ namespace AdminMenu
             }
         }
 
-        private int GetAdminLevelFromList(CCSPlayerController player) 
+        private int GetAdminLevelFromList(CCSPlayerController player)
         {
             if (player == null || player.AuthorizedSteamID == null)
             {
@@ -164,8 +170,8 @@ namespace AdminMenu
                 }
 
                 string json = File.ReadAllText(_bannedFilePath);
-                Dictionary<string, BannedEntry>?  entries = JsonSerializer.Deserialize
-                    <Dictionary<string, BannedEntry>>(json, new JsonSerializerOptions{ PropertyNameCaseInsensitive = true });
+                Dictionary<string, BannedEntry>? entries = JsonSerializer.Deserialize
+                    <Dictionary<string, BannedEntry>>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
                 if (entries == null)
                 {
@@ -174,22 +180,22 @@ namespace AdminMenu
                 }
 
                 var possibleBanned = entries.Values.Where(entry => entry.Identity.Equals(steamId, StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
-                if (possibleBanned is null) 
+                if (possibleBanned is null)
                 {
                     return false;
                 }
-                else 
+                else
                 {
-                    if (possibleBanned.Expiration < DateTime.Now) 
-                    { 
+                    if (possibleBanned.Expiration < DateTime.Now)
+                    {
                         entries.Remove(possibleBanned.Identity);
                         string updatedJson = JsonSerializer.Serialize(entries, new JsonSerializerOptions { WriteIndented = true });
                         File.WriteAllText(_bannedFilePath, updatedJson);
                         return false;
-                    } 
-                    else 
-                    { 
-                        return true; 
+                    }
+                    else
+                    {
+                        return true;
                     }
                 }
             }
@@ -257,7 +263,14 @@ namespace AdminMenu
                 mainMenu.AddMenuOption("DropWeapon", DropWeaponAction);
                 mainMenu.AddMenuOption("Respawn", RespawnAction);
                 mainMenu.AddMenuOption("Set Admin", SetAdminAction);
-                mainMenu.AddMenuOption("Change map", ChangeMapAction);
+                if (File.Exists(_mapListFilePath)) 
+                { 
+                    mainMenu.AddMenuOption("Change map", ChangeMapAction); 
+                }
+                if (File.Exists(_statisticFilePath)) 
+                {
+                    mainMenu.AddMenuOption("Team shuffle", TeamShuffle);
+                }
             }
             if (adminLevel > 0)
             {
@@ -265,6 +278,58 @@ namespace AdminMenu
             }
 
             MenuManager.OpenCenterHtmlMenu(this, player, mainMenu);
+        }
+
+        private void TeamShuffle(CCSPlayerController controller, ChatMenuOption option)
+        {
+            string json = File.ReadAllText(_statisticFilePath);
+            var stats = JsonSerializer.Deserialize<Dictionary<string, StatisticEntry>>(json);
+            if (stats == null) return;
+
+            var playerWithStats = _activePlayers.Select(p =>
+            {
+                stats.TryGetValue(p.Identity, out var s);
+                s ??= new StatisticEntry(p.Identity, p.Name, 0, 0, 0);
+                return new { Player = p, Stats = s, Score = s.Kill - s.Dead };
+            }).OrderByDescending(x => x.Score).ToList();
+
+            var teamT = new List<Player>();
+            var teamCT = new List<Player>();
+            int scoreA = 0, scoreB = 0;
+
+            foreach (var entry in playerWithStats)
+            {
+                if (scoreA <= scoreB)
+                {
+                    teamT.Add(entry.Player);
+                    scoreA += entry.Score;
+                }
+                else
+                {
+                    teamCT.Add(entry.Player);
+                    scoreB += entry.Score;
+                }
+            }
+
+            foreach (var player in teamT)
+            {
+                var t = Utilities.GetPlayers().FirstOrDefault(p => p.IsValid && p.AuthorizedSteamID?.SteamId2 == player.Identity);
+                if (t?.IsValid == true)
+                {
+                    t.SwitchTeam(CsTeam.Terrorist);
+                    t.Respawn();
+                }
+            }
+
+            foreach (var player in teamCT)
+            {
+                var ct = Utilities.GetPlayers().FirstOrDefault(p => p.IsValid && p.AuthorizedSteamID?.SteamId2 == player.Identity);
+                if (ct?.IsValid == true)
+                {
+                    ct.SwitchTeam(CsTeam.CounterTerrorist);
+                    ct.Respawn();
+                }
+            }
         }
 
         private void ChangeMapAction(CCSPlayerController player, ChatMenuOption option)
@@ -414,15 +479,12 @@ namespace AdminMenu
             }
             else
             {
-                adminDictionary = new Dictionary<string, AdminEntry>();
+                adminDictionary = [];
             }
 
             adminDictionary[steamId] = newEntry;
 
-            var options = new JsonSerializerOptions
-            {
-                WriteIndented = true
-            };
+            var options = new JsonSerializerOptions { WriteIndented = true };
 
             string updatedJson = JsonSerializer.Serialize(adminDictionary, options);
             File.WriteAllText(_adminsFilePath, updatedJson);
@@ -540,12 +602,12 @@ namespace AdminMenu
                 playerListMenu.AddMenuOption(player.PlayerName, (controller, option) =>
                 {
                     if (GetAdminLevelFromList(adminPlayer) < GetAdminLevelFromList(player))
-                    { 
-                        adminPlayer.PrintToCenter($"You cannot perform actions on {player.PlayerName} as they have a higher admin level than you.");
-                    } 
-                    else 
                     {
-                        playerAction(player); 
+                        adminPlayer.PrintToCenter($"You cannot perform actions on {player.PlayerName} as they have a higher admin level than you.");
+                    }
+                    else
+                    {
+                        playerAction(player);
                     }
                 });
             }
