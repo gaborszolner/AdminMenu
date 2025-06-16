@@ -39,8 +39,8 @@ namespace AdminMenu
             RegisterEventHandler<EventPlayerChat>(OnPlayerChat);
             _adminsFilePath = Path.Combine(ModuleDirectory, "..", "..", "configs", "admins.json");
             _bannedFilePath = Path.Combine(ModuleDirectory, "..", "..", "configs", "banned.json");
-            _statisticFilePath = Path.Combine(ModuleDirectory, "..", "..", "GameStatistic", "statistic.json");
-            _mapListFilePath = Path.Combine(ModuleDirectory, "..", "..", "RockTheVote", "maplist.txt");
+            _statisticFilePath = Path.Combine(ModuleDirectory, "..", "GameStatistic", "statistic.json");
+            _mapListFilePath = Path.Combine(ModuleDirectory, "..", "RockTheVote", "maplist.txt");
             _activePlayers = [];
         }
 
