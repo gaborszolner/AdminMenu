@@ -116,8 +116,12 @@ namespace AdminMenu
                     Logger?.LogError($"Failed to deserialize {_adminsFilePath} file: {json}");
                     return 0;
                 }
+                
+                if (!entries.TryGetValue(steamId, out AdminEntry? possibleAdmin))
+                {
+                    return 0;
+                }
 
-                var possibleAdmin = entries[steamId];
                 return possibleAdmin is null ? 0 : possibleAdmin.Level;
             }
             catch (Exception ex)
@@ -365,14 +369,22 @@ namespace AdminMenu
             {
                 foreach (var line in File.ReadLines(mapListFilePath).Where(l => !l.StartsWith(@"//")))
                 {
-                    var parts = line.Split(':');
-
-                    if (parts.Length == 2)
+                    try
                     {
-                        var key = parts[0].Trim();
-                        var value = parts[1].Trim();
 
-                        mapList[key] = value;
+                        var parts = line.Split(':');
+
+                        if (parts.Length == 2)
+                        {
+                            var key = parts[0].Trim();
+                            var value = parts[1].Trim();
+
+                            mapList[key] = value;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger?.LogError($"Error parsing line '{line}' in map list file: {ex.Message}");
                     }
                 }
             }
