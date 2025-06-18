@@ -17,7 +17,7 @@ namespace AdminMenu
     public class AdminMenu : BasePlugin
     {
         public override string ModuleName => "AdminMenu";
-        public override string ModuleVersion => "2.0";
+        public override string ModuleVersion => "2.1";
         public override string ModuleAuthor => "Sinistral";
         public override string ModuleDescription => "AdminMenu";
 
@@ -589,15 +589,26 @@ namespace AdminMenu
         private void ShowTeamMenu(CCSPlayerController adminPlayer, CCSPlayerController player)
         {
             var teamsMenu = new CenterHtmlMenu($"Choose team", this);
+            int adminLevel = GetAdminLevelFromList(adminPlayer);
 
             teamsMenu.AddMenuOption("Terrorist",
                 (CCSPlayerController controller, ChatMenuOption option) => { player.ChangeTeam(CsTeam.Terrorist); });
-            teamsMenu.AddMenuOption("Terrorist + Respawn",
+
+            if (adminLevel > 2)
+            {
+                teamsMenu.AddMenuOption("Terrorist + Respawn",
                 (CCSPlayerController controller, ChatMenuOption option) => { player.ChangeTeam(CsTeam.Terrorist); player.Respawn(); });
+            }
+
             teamsMenu.AddMenuOption("CounterTerrorist",
                 (CCSPlayerController controller, ChatMenuOption option) => { player.ChangeTeam(CsTeam.CounterTerrorist); });
-            teamsMenu.AddMenuOption("CounterTerrorist + Respawn",
+
+            if (adminLevel > 2)
+            {
+                teamsMenu.AddMenuOption("CounterTerrorist + Respawn",
                 (CCSPlayerController controller, ChatMenuOption option) => { player.ChangeTeam(CsTeam.CounterTerrorist); player.Respawn(); });
+            }
+
             teamsMenu.AddMenuOption("Spectator",
                 (CCSPlayerController controller, ChatMenuOption option) => { player.ChangeTeam(CsTeam.Spectator); });
 
