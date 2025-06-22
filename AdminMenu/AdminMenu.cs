@@ -1,6 +1,7 @@
 ﻿using AdminMenu.Entries;
 using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
+using CounterStrikeSharp.API.Modules.Commands;
 using CounterStrikeSharp.API.Modules.Entities;
 using CounterStrikeSharp.API.Modules.Events;
 using CounterStrikeSharp.API.Modules.Menu;
@@ -37,6 +38,7 @@ namespace AdminMenu
             RegisterEventHandler<EventPlayerConnectFull>(OnPlayerConnect);
             RegisterEventHandler<EventPlayerDisconnect>(OnPlayerDisconnect);
             RegisterEventHandler<EventPlayerChat>(OnPlayerChat);
+            AddCommandListener("!admin", OpenAdminMenu);
             _adminsFilePath = Path.Combine(ModuleDirectory, "..", "..", "configs", "admins.json");
             _bannedFilePath = Path.Combine(ModuleDirectory, "..", "..", "configs", "banned.json");
             _statisticFilePath = Path.Combine(ModuleDirectory, "..", "GameStatistic", "statistic.json");
@@ -208,6 +210,28 @@ namespace AdminMenu
                 Logger?.LogError($"Error reading {_bannedFilePath} file: {ex.Message}");
                 return false;
             }
+        }
+
+        private HookResult OpenAdminMenu(CCSPlayerController? player, CommandInfo commandInfo)
+        {
+            if (player is null || !player.IsValid)
+            {
+                return HookResult.Continue;
+            }
+
+            if (commandInfo.GetCommandString is "!admin")
+            {
+                if (GetAdminLevelFromList(player) > 0)
+                {
+                    ShowMainMenu(player);
+                }
+                else
+                {
+                    player.PrintToChat("You are not an admin.");
+                }
+            }
+
+            return HookResult.Continue;
         }
 
         public HookResult OnPlayerChat(EventPlayerChat @event, GameEventInfo info)

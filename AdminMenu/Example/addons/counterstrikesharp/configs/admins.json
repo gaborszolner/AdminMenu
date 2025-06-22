@@ -2,6 +2,7 @@
   "STEAM_0:0:123456789": {
     "level": 3,
     "identity": "STEAM_0:0:123456789",
-    "name": "Sinistral"
+    "name": "Sinistral",
+    "flags": [ "@css/root" ]
   }
 }               
