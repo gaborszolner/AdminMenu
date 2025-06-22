@@ -2,8 +2,14 @@
 
 namespace GameStatistic
 {
-    internal class StatisticEntry(string identity, string name, int kill, int dead, int selfKill)
+    internal class StatisticEntry(string identity, string name, int kill = 0, int dead = 0, int selfKill = 0, int teamkill = 0, int assister = 0)
     {
+        [JsonPropertyName("identity")]
+        public string Identity { get; set; } = identity;
+
+        [JsonPropertyName("name")]
+        public string Name { get; set; } = name;
+
         [JsonPropertyName("kill")]
         public int Kill { get; set; } = kill;
 
@@ -13,6 +19,12 @@ namespace GameStatistic
         [JsonPropertyName("selfkill")]
         public int SelfKill { get; set; } = selfKill;
 
-        public int Score => Kill - Dead;
+        [JsonPropertyName("teamkill")]
+        public int TeamKill { get; set; } = teamkill;
+
+        [JsonPropertyName("assister")]
+        public int Assister { get; set; } = assister;
+
+        internal double Score => (Kill + (0.5 * Assister) - SelfKill - (0.5 * TeamKill)) / (Dead + 1);
     }
 }

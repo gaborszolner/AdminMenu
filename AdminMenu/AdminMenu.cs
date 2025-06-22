@@ -48,7 +48,7 @@ namespace AdminMenu
         {
             var player = @event.Userid;
 
-            if (player is null || player.IsBot || _activePlayers is null)
+            if (player is null || player.IsBot || _activePlayers is null || !_activePlayers.Any())
             {
                 return HookResult.Continue;
             }
@@ -287,37 +287,37 @@ namespace AdminMenu
         private void TeamShuffle(CCSPlayerController controller, ChatMenuOption option)
         {
             string json = File.ReadAllText(_statisticFilePath);
-            var stats = JsonSerializer.Deserialize<Dictionary<string, StatisticEntry>>(json);
+            Dictionary<string, StatisticEntry>? stats = JsonSerializer.Deserialize<Dictionary<string, StatisticEntry>>(json);
             if (stats == null) return;
 
-            var playerWithStats = _activePlayers.Select(p =>
+            var teamT = new List<string>();
+            var teamCT = new List<string>();
+            double scoreA = 0, scoreB = 0;
+
+            var players = _activePlayers.Select(p =>
             {
                 stats.TryGetValue(p.Identity, out var s);
-                s ??= new StatisticEntry(p.Identity, p.Name, 0, 0, 0);
-                return new { Player = p, Stats = s, Score = s.Kill - s.Dead };
-            }).OrderByDescending(x => x.Score).ToList();
+                s ??= new StatisticEntry(p.Identity, p.Name);
+                return new  { p.Identity, s };
+            }).OrderByDescending(p => p.s.Score).ToList();
 
-            var teamT = new List<Player>();
-            var teamCT = new List<Player>();
-            int scoreA = 0, scoreB = 0;
-
-            foreach (var entry in playerWithStats)
+            foreach (var p in players)
             {
-                if (scoreA <= scoreB)
+                if (teamT.Count <= teamCT.Count && scoreA <= scoreB)
                 {
-                    teamT.Add(entry.Player);
-                    scoreA += entry.Score;
+                    teamT.Add(p.Identity);
+                    scoreA += p.s.Score;
                 }
                 else
                 {
-                    teamCT.Add(entry.Player);
-                    scoreB += entry.Score;
+                    teamCT.Add(p.Identity);
+                    scoreB += p.s.Score;
                 }
             }
 
             foreach (var player in teamT)
             {
-                var t = Utilities.GetPlayers().FirstOrDefault(p => p.IsValid && p.AuthorizedSteamID?.SteamId2 == player.Identity);
+                var t = Utilities.GetPlayers().FirstOrDefault(p => p.IsValid && p.AuthorizedSteamID?.SteamId2 == player);
                 if (t?.IsValid == true)
                 {
                     t.SwitchTeam(CsTeam.Terrorist);
@@ -327,13 +327,14 @@ namespace AdminMenu
 
             foreach (var player in teamCT)
             {
-                var ct = Utilities.GetPlayers().FirstOrDefault(p => p.IsValid && p.AuthorizedSteamID?.SteamId2 == player.Identity);
+                var ct = Utilities.GetPlayers().FirstOrDefault(p => p.IsValid && p.AuthorizedSteamID?.SteamId2 == player);
                 if (ct?.IsValid == true)
                 {
                     ct.SwitchTeam(CsTeam.CounterTerrorist);
                     ct.Respawn();
                 }
             }
+
         }
 
         private void ChangeMapAction(CCSPlayerController player, ChatMenuOption option)
