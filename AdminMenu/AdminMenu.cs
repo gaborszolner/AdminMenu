@@ -33,8 +33,6 @@ namespace AdminMenu
 
         public override void Load(bool hotReload)
         {
-            Logger?.LogInformation($"Plugin: {ModuleName} - Version: {ModuleVersion} by {ModuleAuthor}");
-            Logger?.LogInformation(ModuleDescription);
             RegisterEventHandler<EventPlayerConnectFull>(OnPlayerConnect);
             RegisterEventHandler<EventPlayerDisconnect>(OnPlayerDisconnect);
             RegisterEventHandler<EventPlayerChat>(OnPlayerChat);
@@ -83,6 +81,10 @@ namespace AdminMenu
             }
             else
             {
+                if (_activePlayers.Any(p => p.Identity == player.AuthorizedSteamID?.SteamId2))
+                {
+                    return HookResult.Continue;
+                }
                 _activePlayers.Add(new Player(player.AuthorizedSteamID.SteamId2, player.PlayerName, GetAdminLevelFromConfig(player)));
                 Server.PrintToChatAll($"{PluginPrefix} Welcome to the server {player.PlayerName}!");
             }
@@ -221,14 +223,7 @@ namespace AdminMenu
 
             if (commandInfo.GetCommandString is "!admin")
             {
-                if (GetAdminLevelFromList(player) > 0)
-                {
-                    ShowMainMenu(player);
-                }
-                else
-                {
-                    player.PrintToChat("You are not an admin.");
-                }
+                ShowMainMenu(player);
             }
 
             return HookResult.Continue;
@@ -245,14 +240,7 @@ namespace AdminMenu
 
             if (@event?.Text.Trim().ToLower() is "!admin")
             {
-                if (GetAdminLevelFromList(player) > 0)
-                {
-                    ShowMainMenu(player);
-                }
-                else
-                {
-                    player.PrintToChat("You are not an admin.");
-                }
+                ShowMainMenu(player);
             }
             else if (@event?.Text.Trim().ToLower() is "!mysteamid")
             {
@@ -275,8 +263,15 @@ namespace AdminMenu
 
         private void ShowMainMenu(CCSPlayerController player)
         {
-            var mainMenu = new CenterHtmlMenu($"Choose action", this);
             int adminLevel = GetAdminLevelFromList(player);
+
+            if (adminLevel == 0)
+            {
+                player.PrintToChat("You are not an admin.");
+                return;
+            }
+
+            var mainMenu = new CenterHtmlMenu($"Choose action", this);
             if (adminLevel > 1)
             {
                 mainMenu.AddMenuOption("Ban", BanAction);
@@ -426,7 +421,7 @@ namespace AdminMenu
             {
                 string oldName = targetPlayer.PlayerName;
                 targetPlayer.PlayerName = RandomString(12);
-                Server.PrintToChatAll($"{PluginPrefix} {oldName} name has been renamed to {targetPlayer.PlayerName}.");
+                Server.PrintToChatAll($"{PluginPrefix} {oldName} name has been renamed to {targetPlayer.PlayerName} by {adminPlayer.PlayerName}.");
             });
         }
 
@@ -548,6 +543,7 @@ namespace AdminMenu
         {
             ShowPlayerListMenu(adminPlayer, (CCSPlayerController targetPlayer) =>
             {
+                Server.PrintToChatAll($"{PluginPrefix} {targetPlayer.PlayerName} has been slapped by {adminPlayer.PlayerName}.");
                 var pawn = targetPlayer.PlayerPawn.Value;
                 if (pawn == null)
                 {
@@ -565,7 +561,7 @@ namespace AdminMenu
 
         private void BotMenuAction(CCSPlayerController player, ChatMenuOption option)
         {
-            var menu = new CenterHtmlMenu($"Choose action", this);
+            var menu = new CenterHtmlMenu($"Choose bot action", this);
 
             menu.AddMenuOption("Kick All", (controller, _) =>
                 { Server.ExecuteCommand("bot_kick all"); });
@@ -579,22 +575,36 @@ namespace AdminMenu
 
         private void RespawnAction(CCSPlayerController adminPlayer, ChatMenuOption option)
         {
-            ShowPlayerListMenu(adminPlayer, (CCSPlayerController player) => { player.Respawn(); });
+            ShowPlayerListMenu(adminPlayer, (CCSPlayerController targetPlayer) => 
+            {
+                Server.PrintToChatAll($"{PluginPrefix} {targetPlayer.PlayerName} has been respawned by {adminPlayer.PlayerName}.");
+                targetPlayer.Respawn(); 
+            });
         }
 
         private void BanAction(CCSPlayerController adminPlayer, ChatMenuOption option)
         {
-            ShowPlayerListMenu(adminPlayer, (CCSPlayerController player) => { ChooseBanTimePlayer(adminPlayer, player); });
+            ShowPlayerListMenu(adminPlayer, (CCSPlayerController targetPlayer) => { ChooseBanTimePlayer(adminPlayer, targetPlayer); });
         }
 
         private void KillAction(CCSPlayerController adminPlayer, ChatMenuOption option)
         {
-            ShowPlayerListMenu(adminPlayer, (CCSPlayerController player) => { player.CommitSuicide(true, true); });
+            ShowPlayerListMenu(adminPlayer, (CCSPlayerController targetPlayer) => 
+            {
+                Server.PrintToChatAll($"{PluginPrefix} {targetPlayer.PlayerName} has been killed by {adminPlayer.PlayerName}.");
+                targetPlayer.CommitSuicide(true, true);
+            });
         }
 
         private void KickAction(CCSPlayerController adminPlayer, ChatMenuOption option)
         {
-            ShowPlayerListMenu(adminPlayer, (CCSPlayerController player) => { player.Disconnect(NetworkDisconnectionReason.NETWORK_DISCONNECT_KICKED); });
+            ShowPlayerListMenu(adminPlayer, (CCSPlayerController targetPlayer) => 
+            {
+                Server.PrintToChatAll($"{PluginPrefix} {targetPlayer.PlayerName} has been kicked by {adminPlayer.PlayerName}.");
+                targetPlayer.Disconnect(NetworkDisconnectionReason.NETWORK_DISCONNECT_KICKED); 
+            });
+
+
         }
 
         private void SetTeamAction(CCSPlayerController adminPlayer, ChatMenuOption option)
