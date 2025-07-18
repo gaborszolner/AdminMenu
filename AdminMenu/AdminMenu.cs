@@ -28,40 +28,30 @@ namespace AdminMenu
         private static string _bannedFilePath = string.Empty;
         private static string _statisticFilePath = string.Empty;
         private static string _mapListFilePath = string.Empty;
-
-        private static IList<Player> _activePlayers = [];
+        private static bool _isWarmup = false;
 
         public override void Load(bool hotReload)
         {
             RegisterEventHandler<EventPlayerConnectFull>(OnPlayerConnect);
-            RegisterEventHandler<EventPlayerDisconnect>(OnPlayerDisconnect);
             RegisterEventHandler<EventPlayerChat>(OnPlayerChat);
+            RegisterEventHandler<EventRoundAnnounceWarmup>(OnRoundAnnounceWarmup);
+            RegisterEventHandler<EventWarmupEnd>(OnWarmupEnd);
             AddCommandListener("!admin", OpenAdminMenu);
             _adminsFilePath = Path.Combine(ModuleDirectory, "..", "..", "configs", "admins.json");
             _bannedFilePath = Path.Combine(ModuleDirectory, "..", "..", "configs", "banned.json");
-            _statisticFilePath = Path.Combine(ModuleDirectory, "..", "GameStatistic", "statistic.json");
+            _statisticFilePath = Path.Combine(ModuleDirectory, "..", "GameStatistic", "playerStatistic.json");
             _mapListFilePath = Path.Combine(ModuleDirectory, "..", "RockTheVote", "maplist.txt");
-            _activePlayers = [];
         }
 
-        private HookResult OnPlayerDisconnect(EventPlayerDisconnect @event, GameEventInfo info)
+        private HookResult OnWarmupEnd(EventWarmupEnd @event, GameEventInfo info)
         {
-            var player = @event.Userid;
+            _isWarmup = false;
+            return HookResult.Continue;
+        }
 
-            if (player is null || player.IsBot || _activePlayers is null || !_activePlayers.Any())
-            {
-                return HookResult.Continue;
-            }
-
-            Server.PrintToChatAll($"{PluginPrefix} By {player.PlayerName}!");
-            try
-            {
-                _activePlayers.Remove(_activePlayers.First(p => p.Identity == player.AuthorizedSteamID?.SteamId2));
-            }
-            catch (Exception ex)
-            {
-                Logger?.LogError($"Error removing player from active players list: {ex.Message}");
-            }
+        private HookResult OnRoundAnnounceWarmup(EventRoundAnnounceWarmup @event, GameEventInfo info)
+        {
+            _isWarmup = true;
             return HookResult.Continue;
         }
 
@@ -81,12 +71,10 @@ namespace AdminMenu
             }
             else
             {
-                if (_activePlayers.Any(p => p.Identity == player.AuthorizedSteamID?.SteamId2))
+                if (!_isWarmup)
                 {
-                    return HookResult.Continue;
+                    Server.PrintToChatAll($"{PluginPrefix} Welcome to the server {player.PlayerName}!"); 
                 }
-                _activePlayers.Add(new Player(player.AuthorizedSteamID.SteamId2, player.PlayerName, GetAdminLevelFromConfig(player)));
-                Server.PrintToChatAll($"{PluginPrefix} Welcome to the server {player.PlayerName}!");
             }
 
             return HookResult.Continue;
@@ -131,31 +119,6 @@ namespace AdminMenu
             catch (Exception ex)
             {
                 Logger?.LogError($"Error reading {_adminsFilePath} file: {ex.Message}");
-                return 0;
-            }
-        }
-
-        private int GetAdminLevelFromList(CCSPlayerController player)
-        {
-            if (player == null || player.AuthorizedSteamID == null)
-            {
-                return 0;
-            }
-
-            string steamId = player.AuthorizedSteamID.SteamId2;
-
-            try
-            {
-                var activePlayer = _activePlayers.Where(p => p.Identity == player.AuthorizedSteamID?.SteamId2).First();
-                if (activePlayer is not null)
-                {
-                    return activePlayer.AdminLevel;
-                }
-                else return 0;
-            }
-            catch (Exception ex)
-            {
-                Logger?.LogError($"Error checking admin status: {ex.Message}");
                 return 0;
             }
         }
@@ -214,16 +177,16 @@ namespace AdminMenu
             }
         }
 
-        private HookResult OpenAdminMenu(CCSPlayerController? player, CommandInfo commandInfo)
+        private HookResult OpenAdminMenu(CCSPlayerController? adminPlayer, CommandInfo commandInfo)
         {
-            if (player is null || !player.IsValid)
+            if (adminPlayer is null || !adminPlayer.IsValid)
             {
                 return HookResult.Continue;
             }
 
             if (commandInfo.GetCommandString is "!admin")
             {
-                ShowMainMenu(player);
+                ShowMainMenu(adminPlayer);
             }
 
             return HookResult.Continue;
@@ -253,7 +216,7 @@ namespace AdminMenu
             }
             else if (@event?.Text.Trim().ToLower() is "!status")
             {
-                foreach (var statusPlayer in Utilities.GetPlayers().Where(p => p.IsValid && !p.IsBot))
+                foreach (var statusPlayer in GetAllPlayers())
                 {
                     Server.PrintToConsole($"Player: {statusPlayer.PlayerName} - {statusPlayer.AuthorizedSteamID?.SteamId2}");
                 }
@@ -261,13 +224,18 @@ namespace AdminMenu
             return HookResult.Continue;
         }
 
-        private void ShowMainMenu(CCSPlayerController player)
+        private static IEnumerable<CCSPlayerController> GetAllPlayers()
         {
-            int adminLevel = GetAdminLevelFromList(player);
+            return Utilities.GetPlayers().Where(p => p.IsValid && !p.IsBot);
+        }
+
+        private void ShowMainMenu(CCSPlayerController adminPlayer)
+        {
+            int adminLevel = GetAdminLevelFromConfig(adminPlayer);
 
             if (adminLevel == 0)
             {
-                player.PrintToChat("You are not an admin.");
+                adminPlayer.PrintToChat("You are not an admin.");
                 return;
             }
 
@@ -300,7 +268,7 @@ namespace AdminMenu
                 mainMenu.AddMenuOption("Bot menu", BotMenuAction);
             }
 
-            MenuManager.OpenCenterHtmlMenu(this, player, mainMenu);
+            MenuManager.OpenCenterHtmlMenu(this, adminPlayer, mainMenu);
         }
 
         private void TeamShuffle(CCSPlayerController controller, ChatMenuOption option)
@@ -313,23 +281,23 @@ namespace AdminMenu
             var teamCT = new List<string>();
             double scoreA = 0, scoreB = 0;
 
-            var players = _activePlayers.Select(p =>
+            var players = GetAllPlayers().Select(p =>
             {
-                stats.TryGetValue(p.Identity, out var s);
-                s ??= new StatisticEntry(p.Identity, p.Name);
-                return new  { p.Identity, s };
+                stats.TryGetValue(p.AuthorizedSteamID.SteamId2, out var s);
+                s ??= new StatisticEntry(p.AuthorizedSteamID.SteamId2, p.PlayerName);
+                return new  { p.AuthorizedSteamID.SteamId2, s };
             }).OrderByDescending(p => p.s.Score).ToList();
 
             foreach (var p in players)
             {
                 if (teamT.Count <= teamCT.Count && scoreA <= scoreB)
                 {
-                    teamT.Add(p.Identity);
+                    teamT.Add(p.SteamId2);
                     scoreA += p.s.Score;
                 }
                 else
                 {
-                    teamCT.Add(p.Identity);
+                    teamCT.Add(p.SteamId2);
                     scoreB += p.s.Score;
                 }
             }
@@ -467,22 +435,8 @@ namespace AdminMenu
 
             UpdateConfig(targetPlayer, adminLevel);
 
-            UpdateActivePlayers(targetPlayer, adminLevel);
-
             targetPlayer.PrintToChat($"Your admin level has been set to {adminLevel}.");
 
-        }
-
-        private static void UpdateActivePlayers(CCSPlayerController targetPlayer, int adminLevel)
-        {
-            _activePlayers = _activePlayers.Select(p =>
-            {
-                if (p.Identity == targetPlayer.AuthorizedSteamID?.SteamId2)
-                {
-                    p.AdminLevel = adminLevel;
-                }
-                return p;
-            }).ToList();
         }
 
         private static void UpdateConfig(CCSPlayerController targetPlayer, int adminLevel)
@@ -624,7 +578,7 @@ namespace AdminMenu
         private void ShowTeamMenu(CCSPlayerController adminPlayer, CCSPlayerController player)
         {
             var teamsMenu = new CenterHtmlMenu($"Choose team", this);
-            int adminLevel = GetAdminLevelFromList(adminPlayer);
+            int adminLevel = GetAdminLevelFromConfig(adminPlayer);
 
             teamsMenu.AddMenuOption("Terrorist",
                 (CCSPlayerController controller, ChatMenuOption option) => { player.ChangeTeam(CsTeam.Terrorist); });
@@ -659,7 +613,7 @@ namespace AdminMenu
             {
                 playerListMenu.AddMenuOption(player.PlayerName, (controller, option) =>
                 {
-                    if (GetAdminLevelFromList(adminPlayer) < GetAdminLevelFromList(player))
+                    if (GetAdminLevelFromConfig(adminPlayer) < GetAdminLevelFromConfig(player))
                     {
                         adminPlayer.PrintToCenter($"You cannot perform actions on {player.PlayerName} as they have a higher admin level than you.");
                     }
