@@ -29,9 +29,12 @@ namespace AdminMenu
         private static string _statisticFilePath = string.Empty;
         private static string _mapListFilePath = string.Empty;
         private static bool _isWarmup = false;
+        private static bool _isRoundEnded = false;
 
         public override void Load(bool hotReload)
         {
+            RegisterEventHandler<EventRoundEnd>(OnRoundEnd);
+            RegisterEventHandler<EventRoundStart>(OnRoundStart);
             RegisterEventHandler<EventPlayerConnectFull>(OnPlayerConnect);
             RegisterEventHandler<EventPlayerChat>(OnPlayerChat);
             RegisterEventHandler<EventRoundAnnounceWarmup>(OnRoundAnnounceWarmup);
@@ -41,6 +44,18 @@ namespace AdminMenu
             _bannedFilePath = Path.Combine(ModuleDirectory, "..", "..", "configs", "banned.json");
             _statisticFilePath = Path.Combine(ModuleDirectory, "..", "GameStatistic", "playerStatistic.json");
             _mapListFilePath = Path.Combine(ModuleDirectory, "..", "RockTheVote", "maplist.txt");
+        }
+
+        private HookResult OnRoundStart(EventRoundStart @event, GameEventInfo info)
+        {
+            _isRoundEnded = false;
+            return HookResult.Continue;
+        }
+
+        private HookResult OnRoundEnd(EventRoundEnd @event, GameEventInfo info)
+        {
+            _isRoundEnded = true;
+            return HookResult.Continue;
         }
 
         private HookResult OnWarmupEnd(EventWarmupEnd @event, GameEventInfo info)
@@ -71,7 +86,7 @@ namespace AdminMenu
             }
             else
             {
-                if (!_isWarmup)
+                if (!_isWarmup && !_isRoundEnded)
                 {
                     Server.PrintToChatAll($"{PluginPrefix} Welcome to the server {player.PlayerName}!"); 
                 }
