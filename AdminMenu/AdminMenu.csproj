@@ -12,11 +12,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Example\addons\counterstrikesharp\configs\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Update="Example\addons\counterstrikesharp\configs\admins.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Example\addons\counterstrikesharp\configs\weaponRestrict.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Example\addons\counterstrikesharp\configs\banned.json">

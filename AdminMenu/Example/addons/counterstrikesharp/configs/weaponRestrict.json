@@ -1,0 +1,14 @@
+{
+  "weapon_awp": {
+    "maps": [ "*" ]
+  },
+  "weapon_g3sg1": {
+    "maps": [ "*" ]
+  },
+  "weapon_scar20": {
+    "maps": [ "*" ]
+  },
+  "weapon_ssg08": {
+    "maps": [ "de_lake", "de_dolls", "de_piranesi", "de_westwood2_cs2", "de_westwood", "de_rats_1337", "de_treehouse", "de_drachenschanze" ]
+  }
+}                                                     
