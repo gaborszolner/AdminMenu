@@ -7,13 +7,17 @@ This plugin allowes to the admins:
 - ban (with time or permanent)
 - kick
 - kill
+- slap
 - respawn
 - rename
 - set team for a player (and respawn if you need)
+- respawn
 - drop weapon
 - change map (RockTheVote addon or its maplist.txt file needed)
+- team shuffle (GameStatistic addon stat file needed. See addon here: https://github.com/gaborszolner/GameStatistic)
 - bot add, kick
 - set admin with level
+- weapon (un)restrict - current map or all maps
 
 There are 3 level for admins, lower can't use action on higher admins.
 
