@@ -44,12 +44,13 @@ namespace AdminMenu
             RegisterEventHandler<EventItemPickup>(OnItemPickup);
             RegisterEventHandler<EventItemEquip>(OnItemEquip);
             AddCommandListener("!admin", OpenAdminMenu);
+
             _adminsFilePath = Path.Combine(ModuleDirectory, "..", "..", "configs", "admins.json");
             _bannedFilePath = Path.Combine(ModuleDirectory, "..", "..", "configs", "banned.json");
             _weaponRestrictFilePath = Path.Combine(ModuleDirectory, "..", "..", "configs", "weaponRestrict.json");
             _statisticFilePath = Path.Combine(ModuleDirectory, "..", "GameStatistic", "playerStatistic.json");
             _mapListFilePath = Path.Combine(ModuleDirectory, "..", "RockTheVote", "maplist.txt");
-
+            
             _adminEntry = LoadDataFromFile<AdminEntry>(_adminsFilePath);
             _bannedEntry = LoadDataFromFile<BannedEntry>(_bannedFilePath);
             _weaponRestrictEntry = LoadDataFromFile<WeaponRestrictEntry>(_weaponRestrictFilePath);
@@ -117,7 +118,7 @@ namespace AdminMenu
         {
             var pawn = player?.PlayerPawn.Value;
 
-            if (player is null || !player.IsValid || pawn is null || _weaponRestrictEntry is null)
+            if (player is null || !player.IsValid || pawn is null || _weaponRestrictEntry is null || _isWarmup)
             {
                 return;
             }
@@ -212,8 +213,7 @@ namespace AdminMenu
                     if (possibleBanned.Expiration < DateTime.Now)
                     {
                         _bannedEntry.Remove(possibleBanned.Identity);
-                        string updatedJson = JsonSerializer.Serialize(_bannedEntry, new JsonSerializerOptions { WriteIndented = true });
-                        File.WriteAllText(_bannedFilePath, updatedJson);
+                        WriteToFile(_bannedEntry, _bannedFilePath);
                         return false;
                     }
                     else
@@ -486,7 +486,7 @@ namespace AdminMenu
             });
         }
 
-        private static void SetAdminLevel(CCSPlayerController targetPlayer, int adminLevel)
+        private void SetAdminLevel(CCSPlayerController targetPlayer, int adminLevel)
         {
             if (targetPlayer == null || targetPlayer.AuthorizedSteamID == null)
             {
@@ -499,7 +499,7 @@ namespace AdminMenu
 
         }
 
-        private static void UpdateAdminConfig(CCSPlayerController targetPlayer, int adminLevel)
+        private void UpdateAdminConfig(CCSPlayerController targetPlayer, int adminLevel)
         {
             if (targetPlayer == null || targetPlayer.AuthorizedSteamID == null)
             {
@@ -517,9 +517,7 @@ namespace AdminMenu
             _adminEntry ??= [];
             _adminEntry[steamId] = newEntry;
 
-            var options = new JsonSerializerOptions { WriteIndented = true };
-            string updatedJson = JsonSerializer.Serialize(_adminEntry, options);
-            File.WriteAllText(_adminsFilePath, updatedJson);
+            WriteToFile(_adminEntry, _adminsFilePath);
         }
 
         private void WeaponRestrictAction(CCSPlayerController adminPlayer, ChatMenuOption option)
@@ -531,7 +529,7 @@ namespace AdminMenu
             restrictMenu.AddMenuOption("Unrestrict - this map", (controller, _) => { ShowRestrictWeaponsMenu(adminPlayer, false, mapName); });
             restrictMenu.AddMenuOption("Restrict - all maps", (controller, _) => { ShowRestrictWeaponsMenu(adminPlayer, true, "*"); });
             restrictMenu.AddMenuOption("Unrestrict - all maps", (controller, _) => { ShowRestrictWeaponsMenu(adminPlayer, false, "*"); });
-            restrictMenu.AddMenuOption("Show restricted weapons", ShowRestrictedWeapons(adminPlayer, mapName));
+            restrictMenu.AddMenuOption("Show restricted weapons", ShowRestrictedWeapons(mapName));
             MenuManager.OpenCenterHtmlMenu(this, adminPlayer, restrictMenu);
         }
 
@@ -592,11 +590,9 @@ namespace AdminMenu
                 return;
             }
 
-            var options = new JsonSerializerOptions { WriteIndented = true };
-            string updatedJson = JsonSerializer.Serialize(_weaponRestrictEntry, options);
-            File.WriteAllText(_weaponRestrictFilePath, updatedJson);
+            WriteToFile(_weaponRestrictEntry, _weaponRestrictFilePath);
 
-            adminPlayer.PrintToChat($"{PluginPrefix} {weapon} has been unrestricted on map {unrestrictMapName}.");
+            Server.PrintToChatAll($"{PluginPrefix} {weapon} has been unrestricted on map {unrestrictMapName} by {adminPlayer.PlayerName}.");
             MenuManager.GetActiveMenu(adminPlayer)?.Close();
         }
 
@@ -628,17 +624,30 @@ namespace AdminMenu
                 ThrowForbiddenWeapon(currentPlayer);
             }
 
-            var options = new JsonSerializerOptions { WriteIndented = true };
-            string updatedJson = JsonSerializer.Serialize(_weaponRestrictEntry, options);
-            File.WriteAllText(_weaponRestrictFilePath, updatedJson);
+            WriteToFile(_weaponRestrictEntry, _weaponRestrictFilePath);
 
-            adminPlayer.PrintToChat($"{PluginPrefix} {weapon.Replace("weapon_", "")} has been restricted on map {restrictMapName}.");
+            Server.PrintToChatAll($"{PluginPrefix} {weapon.Replace("weapon_", "")} has been restricted on map {restrictMapName} by {adminPlayer.PlayerName}.");
             MenuManager.GetActiveMenu(adminPlayer)?.Close();
         }
 
-        private Action<CCSPlayerController, ChatMenuOption> ShowRestrictedWeapons(CCSPlayerController adminPlayer, string mapName)
+        private void WriteToFile<T>(T entry, string fileName)
         {
-            Action<CCSPlayerController, ChatMenuOption> returnAction = (controller, option) =>
+            try
+            {
+                var options = new JsonSerializerOptions { WriteIndented = true };
+                string updatedJson = JsonSerializer.Serialize(entry, options);
+                File.WriteAllText(fileName, updatedJson);
+            }
+            catch (Exception ex)
+            {
+                Logger?.LogError($"Error writing to file {fileName}: {ex.Message}");
+                Server.PrintToConsole($"Error writing to file {fileName}");
+            }
+        }
+
+        private Action<CCSPlayerController, ChatMenuOption> ShowRestrictedWeapons(string mapName)
+        {
+            return (controller, option) =>
             {
                 string weaponList = string.Empty;
                 foreach (var weapon in _weaponRestrictEntry ?? [])
@@ -649,9 +658,8 @@ namespace AdminMenu
                     }
                 }
                 weaponList = string.IsNullOrWhiteSpace(weaponList) ? "No restricted weapon." : weaponList.TrimEnd(' ', ',');
-                controller.PrintToChat($"{PluginPrefix} Restricted weapon on map {mapName}: {weaponList.Replace("weapon_", "")}");
+                Server.PrintToChatAll($"{PluginPrefix} Restricted weapon on map {mapName}: {weaponList.Replace("weapon_", "")}");
             };
-            return returnAction;
         }
 
         private void DropWeaponAction(CCSPlayerController adminPlayer, ChatMenuOption option)
@@ -858,8 +866,8 @@ namespace AdminMenu
 
                 bannedList.Add(steamId, newEntry);
 
-                string updatedJson = JsonSerializer.Serialize(bannedList, new JsonSerializerOptions { WriteIndented = true });
-                File.WriteAllText(_bannedFilePath, updatedJson);
+                WriteToFile(bannedList, _bannedFilePath);
+
                 player.Disconnect(NetworkDisconnectionReason.NETWORK_DISCONNECT_KICKBANADDED);
                 Server.PrintToChatAll($"{PluginPrefix} {player.PlayerName} has been banned by {adminPlayer.PlayerName} until {banTime}.");
                 Logger?.LogInformation($"{PluginPrefix} {player.PlayerName} has been banned by {adminPlayer.PlayerName} until {banTime}.");
