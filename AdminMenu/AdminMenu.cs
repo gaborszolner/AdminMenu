@@ -200,7 +200,7 @@ namespace AdminMenu
             {
                 return false;
             }
-
+            
             try
             {
                 string steamId = player.AuthorizedSteamID.SteamId2;
@@ -864,8 +864,9 @@ namespace AdminMenu
                     Expiration = banTime
                 };
 
+                _bannedEntry ??= [];
+                _bannedEntry.Add(steamId, newEntry);
                 bannedList.Add(steamId, newEntry);
-
                 WriteToFile(bannedList, _bannedFilePath);
 
                 player.Disconnect(NetworkDisconnectionReason.NETWORK_DISCONNECT_KICKBANADDED);
