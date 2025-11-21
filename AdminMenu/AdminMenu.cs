@@ -169,13 +169,14 @@ namespace AdminMenu
                 if (!_isWarmup && !_isRoundEnded)
                 {
                     Server.PrintToChatAll($"{PluginPrefix} Welcome to the server {player.PlayerName}!");
+                    player.PrintToChat($"{PluginPrefix} Type !help to see available commands.");
                 }
             }
 
             return HookResult.Continue;
         }
 
-        private int GetAdminLevel(CCSPlayerController player)
+        private static int GetAdminLevel(CCSPlayerController player)
         {
             if (player is null || player.AuthorizedSteamID is null)
             {
@@ -261,6 +262,16 @@ namespace AdminMenu
             {
                 ShowMainMenu(player);
             }
+            if (@event?.Text.Trim().ToLower() is "!admins")
+            {
+                string adminList = "Admins online: ";
+                foreach (var adminPlayer in GetAllPlayers().Where(p => GetAdminLevel(p) > 0))
+                {
+                    adminList += $"{adminPlayer.PlayerName} ({GetAdminLevel(adminPlayer)}), ";
+                }
+                adminList = adminList.TrimEnd(' ', ',');
+                Server.PrintToChatAll($"{PluginPrefix} {adminList}");
+            }
             else if (@event?.Text.Trim().ToLower() is "!mysteamid")
             {
                 player?.PrintToChat($"SteamID2 : {player?.AuthorizedSteamID?.SteamId2}");
@@ -272,9 +283,33 @@ namespace AdminMenu
             }
             else if (@event?.Text.Trim().ToLower() is "!status")
             {
-                foreach (var statusPlayer in GetAllPlayers())
+                int adminLevel = GetAdminLevel(player);
+
+                if (adminLevel > 2)
                 {
-                    Server.PrintToConsole($"Player: {statusPlayer.PlayerName} - {statusPlayer.AuthorizedSteamID?.SteamId2}");
+                    foreach (var statusPlayer in GetAllPlayers())
+                    {
+                        Server.PrintToConsole($"Player: {statusPlayer.PlayerName} - {statusPlayer.AuthorizedSteamID?.SteamId2}");
+                    }
+                }
+            }
+            else if (@event?.Text.Trim().ToLower() is "!weapons")
+            {
+                string mapName = Server.MapName.Trim() ?? string.Empty;
+                string weaponList = GetRestrictedWeapons(mapName);
+                Server.PrintToChatAll($"{PluginPrefix} Restricted weapon on map {mapName}: {weaponList.Replace("weapon_", "")}");
+            }
+            else if (@event?.Text.Trim().ToLower() is "!help")
+            {
+                int adminLevel = GetAdminLevel(player);
+
+                if (adminLevel > 2)
+                {
+                    Server.PrintToChatAll($"{PluginPrefix} Available commands: !admin, !admins, !mysteamid, !thetime, !weapons, !status, !help");
+                }
+                else
+                {
+                    Server.PrintToChatAll($"{PluginPrefix} Available commands: !admin, !admins, !mysteamid, !thetime, !weapons, !help");
                 }
             }
             return HookResult.Continue;
@@ -381,7 +416,6 @@ namespace AdminMenu
                     ct.Respawn();
                 }
             }
-
         }
 
         private void ChangeMapAction(CCSPlayerController player, ChatMenuOption option)
@@ -445,7 +479,7 @@ namespace AdminMenu
 
         private void RanameAction(CCSPlayerController adminPlayer, ChatMenuOption option)
         {
-            ShowPlayerListMenu(adminPlayer, (CCSPlayerController targetPlayer) =>
+            ShowPlayerListMenu(adminPlayer, false, false, (CCSPlayerController targetPlayer) =>
             {
                 string oldName = targetPlayer.PlayerName;
                 targetPlayer.PlayerName = RandomString(12);
@@ -462,7 +496,7 @@ namespace AdminMenu
 
         private void SetAdminAction(CCSPlayerController adminPlayer, ChatMenuOption option)
         {
-            ShowPlayerListMenu(adminPlayer, (CCSPlayerController targetPlayer) =>
+            ShowPlayerListMenu(adminPlayer, false, false, (CCSPlayerController targetPlayer) =>
             {
                 var setAdminMenu = new CenterHtmlMenu($"Set admin level for {targetPlayer.PlayerName}", this);
                 setAdminMenu.AddMenuOption("Level 1", (controller, _) =>
@@ -649,22 +683,28 @@ namespace AdminMenu
         {
             return (controller, option) =>
             {
-                string weaponList = string.Empty;
-                foreach (var weapon in _weaponRestrictEntry ?? [])
-                {
-                    if (weapon.Value.Maps.Contains("*") || weapon.Value.Maps.Contains(mapName))
-                    {
-                        weaponList += $"{weapon.Key}, ";
-                    }
-                }
-                weaponList = string.IsNullOrWhiteSpace(weaponList) ? "No restricted weapon." : weaponList.TrimEnd(' ', ',');
+                string weaponList = GetRestrictedWeapons(mapName);
                 Server.PrintToChatAll($"{PluginPrefix} Restricted weapon on map {mapName}: {weaponList.Replace("weapon_", "")}");
             };
         }
 
+        private static string GetRestrictedWeapons(string mapName)
+        {
+            string weaponList = string.Empty;
+            foreach (var weapon in _weaponRestrictEntry ?? [])
+            {
+                if (weapon.Value.Maps.Contains("*") || weapon.Value.Maps.Contains(mapName))
+                {
+                    weaponList += $"{weapon.Key}, ";
+                }
+            }
+            weaponList = string.IsNullOrWhiteSpace(weaponList) ? "No restricted weapon." : weaponList.TrimEnd(' ', ',');
+            return weaponList;
+        }
+
         private void DropWeaponAction(CCSPlayerController adminPlayer, ChatMenuOption option)
         {
-            ShowPlayerListMenu(adminPlayer, (CCSPlayerController targetPlayer) =>
+            ShowPlayerListMenu(adminPlayer, true, true, (CCSPlayerController targetPlayer) =>
             {
                 string? weaponName = targetPlayer.Pawn.Value?.WeaponServices?.ActiveWeapon?.Value?.DesignerName;
                 targetPlayer.DropActiveWeapon();
@@ -674,7 +714,7 @@ namespace AdminMenu
 
         private void SlapAction(CCSPlayerController adminPlayer, ChatMenuOption option)
         {
-            ShowPlayerListMenu(adminPlayer, (CCSPlayerController targetPlayer) =>
+            ShowPlayerListMenu(adminPlayer, true, true, (CCSPlayerController targetPlayer) =>
             {
                 Server.PrintToChatAll($"{PluginPrefix} {targetPlayer.PlayerName} has been slapped by {adminPlayer.PlayerName}.");
                 var pawn = targetPlayer.PlayerPawn.Value;
@@ -708,7 +748,7 @@ namespace AdminMenu
 
         private void RespawnAction(CCSPlayerController adminPlayer, ChatMenuOption option)
         {
-            ShowPlayerListMenu(adminPlayer, (CCSPlayerController targetPlayer) =>
+            ShowPlayerListMenu(adminPlayer, false, false, (CCSPlayerController targetPlayer) =>
             {
                 Server.PrintToChatAll($"{PluginPrefix} {targetPlayer.PlayerName} has been respawned by {adminPlayer.PlayerName}.");
                 targetPlayer.Respawn();
@@ -717,12 +757,12 @@ namespace AdminMenu
 
         private void BanAction(CCSPlayerController adminPlayer, ChatMenuOption option)
         {
-            ShowPlayerListMenu(adminPlayer, (CCSPlayerController targetPlayer) => { ChooseBanTimePlayer(adminPlayer, targetPlayer); });
+            ShowPlayerListMenu(adminPlayer, false, false, (CCSPlayerController targetPlayer) => { ChooseBanTimePlayer(adminPlayer, targetPlayer); });
         }
 
         private void KillAction(CCSPlayerController adminPlayer, ChatMenuOption option)
         {
-            ShowPlayerListMenu(adminPlayer, (CCSPlayerController targetPlayer) =>
+            ShowPlayerListMenu(adminPlayer, true, true, (CCSPlayerController targetPlayer) =>
             {
                 Server.PrintToChatAll($"{PluginPrefix} {targetPlayer.PlayerName} has been killed by {adminPlayer.PlayerName}.");
                 targetPlayer.CommitSuicide(true, true);
@@ -731,13 +771,11 @@ namespace AdminMenu
 
         private void KickAction(CCSPlayerController adminPlayer, ChatMenuOption option)
         {
-            ShowPlayerListMenu(adminPlayer, (CCSPlayerController targetPlayer) =>
+            ShowPlayerListMenu(adminPlayer, false, false, (CCSPlayerController targetPlayer) =>
             {
                 Server.PrintToChatAll($"{PluginPrefix} {targetPlayer.PlayerName} has been kicked by {adminPlayer.PlayerName}.");
                 targetPlayer.Disconnect(NetworkDisconnectionReason.NETWORK_DISCONNECT_KICKED);
             });
-
-
         }
 
         private void SetTeamAction(CCSPlayerController adminPlayer, ChatMenuOption option)
@@ -784,11 +822,17 @@ namespace AdminMenu
             MenuManager.OpenCenterHtmlMenu(this, adminPlayer, teamsMenu);
         }
 
-        private void ShowPlayerListMenu(CCSPlayerController adminPlayer, Action<CCSPlayerController> playerAction)
+        private void ShowPlayerListMenu(CCSPlayerController adminPlayer, bool showOnlyAlive, bool showBots, Action<CCSPlayerController> playerAction)
         {
             var playerListMenu = new CenterHtmlMenu($"Choose a player", this);
 
-            foreach (var player in Utilities.GetPlayers().Where(p => p.IsValid))
+            var players = Utilities
+                .GetPlayers()
+                .Where(p => p.IsValid)
+                .Where(p => showBots || !p.IsBot)
+                .Where(p => !showOnlyAlive || p.PawnIsAlive == true);
+
+            foreach (var player in players)
             {
                 playerListMenu.AddMenuOption(player.PlayerName, (controller, option) =>
                 {
