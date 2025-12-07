@@ -166,7 +166,7 @@ namespace AdminMenu
             }
             else
             {
-                if (!_isWarmup && !_isRoundEnded)
+                if (!_isWarmup)
                 {
                     Server.PrintToChatAll($"{PluginPrefix} Welcome to the server {player.PlayerName}!");
                     player.PrintToChat($"{PluginPrefix} Type !help to see available commands.");
@@ -267,7 +267,7 @@ namespace AdminMenu
                 string adminList = "Admins online: ";
                 foreach (var adminPlayer in GetAllPlayers().Where(p => GetAdminLevel(p) > 0))
                 {
-                    adminList += $"{adminPlayer.PlayerName} ({GetAdminLevel(adminPlayer)}), ";
+                    adminList += $"{adminPlayer.PlayerName}, ";
                 }
                 adminList = adminList.TrimEnd(' ', ',');
                 Server.PrintToChatAll($"{PluginPrefix} {adminList}");
@@ -305,7 +305,7 @@ namespace AdminMenu
 
                 if (adminLevel > 2)
                 {
-                    Server.PrintToChatAll($"{PluginPrefix} Available commands: !admin, !admins, !mysteamid, !thetime, !weapons, !status, !help");
+                    Server.PrintToChatAll($"{PluginPrefix} Available commands: !admin, !admins, !mysteamid, !thetime, !weapons, !status (only level 3 admin), !help");
                 }
                 else
                 {
@@ -372,10 +372,6 @@ namespace AdminMenu
                 return;
             }
 
-            var teamT = new List<string>();
-            var teamCT = new List<string>();
-            double scoreA = 0, scoreB = 0;
-
             var players = GetAllPlayers().Select(p =>
             {
                 statEntry.TryGetValue(p.AuthorizedSteamID.SteamId2, out var s);
@@ -383,17 +379,46 @@ namespace AdminMenu
                 return new { p.AuthorizedSteamID.SteamId2, s };
             }).OrderByDescending(p => p.s.Score).ToList();
 
-            foreach (var p in players)
+            int totalPlayers = players.Count();
+            int maxTeamSizeT = totalPlayers / 2 + (totalPlayers % 2);
+            int maxTeamSizeCT = totalPlayers / 2;
+
+            var sorted = players.OrderByDescending(p => p.s.Score).ToList();
+
+            double sumScoreT = 0;
+            double sumScoreCT = 0;
+
+            List<string> teamT = new();
+            List<string> teamCT = new();
+
+            foreach (var p in sorted)
             {
-                if (teamT.Count <= teamCT.Count && scoreA <= scoreB)
+                bool teamTHasSpace = teamT.Count < maxTeamSizeT;
+                bool teamCTHasSpace = teamCT.Count < maxTeamSizeCT;
+
+                if (!teamTHasSpace)
+                {
+                    teamCT.Add(p.SteamId2);
+                    sumScoreCT += p.s.Score;
+                    continue;
+                }
+
+                if (!teamCTHasSpace)
                 {
                     teamT.Add(p.SteamId2);
-                    scoreA += p.s.Score;
+                    sumScoreT += p.s.Score;
+                    continue;
+                }
+
+                if (sumScoreT <= sumScoreCT)
+                {
+                    teamT.Add(p.SteamId2);
+                    sumScoreT += p.s.Score;
                 }
                 else
                 {
                     teamCT.Add(p.SteamId2);
-                    scoreB += p.s.Score;
+                    sumScoreCT += p.s.Score;
                 }
             }
 
