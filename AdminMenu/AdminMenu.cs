@@ -211,7 +211,7 @@ namespace AdminMenu
                 if (_bannedEntry is not null && _bannedEntry.ContainsKey(steamId))
                 {
                     possibleBanned = _bannedEntry[steamId];
-                    if (possibleBanned.Expiration < DateTime.Now)
+                    if (possibleBanned.Expiration < GetServerTime())
                     {
                         _bannedEntry.Remove(possibleBanned.Identity);
                         WriteToFile(_bannedEntry, _bannedFilePath);
@@ -278,7 +278,7 @@ namespace AdminMenu
             }
             else if (@event?.Text.Trim().ToLower() is "!thetime")
             {
-                Server.PrintToChatAll($"{DateTime.Now}");
+                Server.PrintToChatAll($"{GetServerTime()}");
                 return HookResult.Handled;
             }
             else if (@event?.Text.Trim().ToLower() is "!status")
@@ -313,6 +313,23 @@ namespace AdminMenu
                 }
             }
             return HookResult.Continue;
+        }
+
+        private static DateTime GetServerTime()
+        {
+            TimeZoneInfo tz;
+
+            if (OperatingSystem.IsWindows())
+            {
+                tz = TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time");
+            }
+            else
+            {
+                tz = TimeZoneInfo.FindSystemTimeZoneById("Europe/Budapest");
+            }
+
+            DateTime time = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, tz);
+            return time;
         }
 
         private static IEnumerable<CCSPlayerController> GetAllPlayers()
@@ -886,19 +903,19 @@ namespace AdminMenu
             var banTimeMenu = new CenterHtmlMenu($"Expiration time?", this);
             banTimeMenu.AddMenuOption("1 min", (CCSPlayerController controller, ChatMenuOption option) =>
             {
-                BanPlayer(adminPlayer, player, DateTime.Now.AddMinutes(1));
+                BanPlayer(adminPlayer, player, GetServerTime().AddMinutes(1));
             });
             banTimeMenu.AddMenuOption("10 min", (CCSPlayerController controller, ChatMenuOption option) =>
             {
-                BanPlayer(adminPlayer, player, DateTime.Now.AddMinutes(10));
+                BanPlayer(adminPlayer, player, GetServerTime().AddMinutes(10));
             });
             banTimeMenu.AddMenuOption("1 day", (CCSPlayerController controller, ChatMenuOption option) =>
             {
-                BanPlayer(adminPlayer, player, DateTime.Now.AddDays(1));
+                BanPlayer(adminPlayer, player, GetServerTime().AddDays(1));
             });
             banTimeMenu.AddMenuOption("1 week", (CCSPlayerController controller, ChatMenuOption option) =>
             {
-                BanPlayer(adminPlayer, player, DateTime.Now.AddDays(7));
+                BanPlayer(adminPlayer, player, GetServerTime().AddDays(7));
             });
             banTimeMenu.AddMenuOption("Permanent", (CCSPlayerController controller, ChatMenuOption option) =>
             {
