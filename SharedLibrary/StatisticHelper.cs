@@ -136,10 +136,10 @@ namespace SharedLibrary
             }
         }
 
-        public static void PrintTeamStat(Dictionary<string, PlayerStatEntry> storedStatistic)
+        public static void PrintTeamStat(Dictionary<string, PlayerStatEntry> storedStatistic, bool aliveOnly = false)
         {
-            double ctSumScore = Math.Round(StatisticHelper.GetSumScores(storedStatistic, PlayerHelper.GetAllCounterTerrorist()), 1);
-            double tSumScore = Math.Round(StatisticHelper.GetSumScores(storedStatistic, PlayerHelper.GetAllTerrorist()), 1);
+            double ctSumScore = Math.Round(StatisticHelper.GetSumScores(storedStatistic, aliveOnly ? PlayerHelper.GetAllCounterTerroristAlive() : PlayerHelper.GetAllCounterTerrorist()), 1);
+            double tSumScore = Math.Round(StatisticHelper.GetSumScores(storedStatistic, aliveOnly ? PlayerHelper.GetAllTerroristAlive() : PlayerHelper.GetAllTerrorist()), 1);
 
             if (ctSumScore == 0 || tSumScore == 0)
             {

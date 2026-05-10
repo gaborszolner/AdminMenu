@@ -2,6 +2,7 @@ using AdminMenu.Entries;
 using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Menu;
+using CounterStrikeSharp.API.Modules.Utils;
 using SharedLibrary;
 
 namespace AdminMenu
@@ -147,7 +148,8 @@ namespace AdminMenu
                 return;
             }
 
-            if (GetAdminLevel(player) > 2) { return; }
+            bool isAdminAboveRestrictionLevel = false;
+            if (GetAdminLevel(player) > 2) { isAdminAboveRestrictionLevel = true; }
 
             var weapon = pawn.WeaponServices?.ActiveWeapon.Value;
             string weaponName = weapon?.DesignerName ?? string.Empty;
@@ -161,9 +163,16 @@ namespace AdminMenu
                 if (restrictedWeaponMapList is not null &&
                     (restrictedWeaponMapList.Maps.Contains("*") || restrictedWeaponMapList.Maps.Contains(mapName)))
                 {
-                    player.DropActiveWeapon();
-                    weapon?.Remove();
-                    player.PrintToChat($"{PluginPrefix} You cannot use {weaponName}.");
+                    if (isAdminAboveRestrictionLevel) 
+                    { 
+                        player.PrintToChat($"{PluginPrefix} {ChatColors.Red}WARNING: You are using a FORBIDDEN weapon: {weaponName}."); 
+                    }
+                    else
+                    {
+                        player.DropActiveWeapon();
+                        weapon?.Remove();
+                        player.PrintToChat($"{PluginPrefix} You cannot use {weaponName}.");
+                    }
                 }
             }
             else

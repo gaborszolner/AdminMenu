@@ -119,13 +119,13 @@ namespace AdminMenu
 
             var currentDifferentPercentage = StatisticHelper.GetPercentageDifference(ctSumScore, tSumScore);
 
-            if (PlayerHelper.HasEnoughPlayer &&
+            if (PlayerHelper.GetAllNonSpecPlayers().Count() >= _config.MinimumPlayerCountToStatistic &&
                 _config.AutoTeamShuffleOnRoundStart &&
                 _config.AutoTeamShuffleMinDifferentPercentage <= currentDifferentPercentage)
             {
                 Server.PrintToChatAll($"{PluginPrefix} {ChatColors.Yellow}Current diff is {ChatColors.Red}{currentDifferentPercentage:F2}%{ChatColors.Yellow}, auto team shuffle activated");
                 TeamShuffleAction(null, null);
-                StatisticHelper.PrintTeamStat(StatisticHelper.LoadMonthsStats(ModuleDirectory, _config.DateRangeForStatisticsInMonth));
+                StatisticHelper.PrintTeamStat(StatisticHelper.LoadMonthsStats(_playerStatDirectory, _config.DateRangeForStatisticsInMonth));
             }
 
             return HookResult.Continue;
@@ -462,6 +462,7 @@ namespace AdminMenu
                 mainMenu.AddMenuOption("Weapon (Un)Restrict", WeaponRestrictAction);
                 mainMenu.AddMenuOption("Respawn", RespawnAction);
                 mainMenu.AddMenuOption("Set Admin", SetAdminAction);
+                mainMenu.AddMenuOption("Set HP", SetHPAction);
                 if (File.Exists(_mapListFilePath))
                 {
                     mainMenu.AddMenuOption("Change map", ChangeMapAction);

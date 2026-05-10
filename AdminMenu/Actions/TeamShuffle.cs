@@ -28,12 +28,16 @@ namespace AdminMenu
             var method1Result = Shuffle.GetShuffleResult(sortedPlayers, 1);
             var method2Result = Shuffle.GetShuffleResult(sortedPlayers, 2);
             var method3Result = Shuffle.GetShuffleResult(sortedPlayers, 3);
+            var method4Result = Shuffle.GetShuffleResult(sortedPlayers, 4);
 
             var bestMethod = method1Result.Difference <= method2Result.Difference &&
-                             method1Result.Difference <= method3Result.Difference ? method1Result :
-                             method2Result.Difference <= method3Result.Difference ? method2Result : method3Result;
+                             method1Result.Difference <= method3Result.Difference &&
+                             method1Result.Difference <= method4Result.Difference ? method1Result :
+                             method2Result.Difference <= method3Result.Difference &&
+                             method2Result.Difference <= method4Result.Difference ? method2Result :
+                             method3Result.Difference <= method4Result.Difference ? method3Result : method4Result;
 
-            Logger?.LogInformation($"Used shuffle method {bestMethod.MethodNumber} with difference {bestMethod.Difference:F2}% (Method1: {method1Result.Difference:F2}%, Method2: {method2Result.Difference:F2}%, Method3: {method3Result.Difference:F2}%)");
+            Logger?.LogInformation($"Used shuffle method {bestMethod.MethodNumber} with difference {bestMethod.Difference:F2}% (Method1: {method1Result.Difference:F2}%, Method2: {method2Result.Difference:F2}%, Method3: {method3Result.Difference:F2}%, Method4: {method4Result.Difference:F2}%)");
 
             Shuffle.ReOrganizeTeams(bestMethod.TeamTSteamId2List, bestMethod.TeamCTSteamId2List);
 
@@ -90,6 +94,7 @@ namespace AdminMenu
                     1 => ShuffleMethod1(sortedPlayers, maxTeamSizeT, maxTeamSizeCT, teamTSteamId2List, teamCTSteamId2List),
                     2 => ShuffleMethod2(sortedPlayers, maxTeamSizeT, maxTeamSizeCT, teamTSteamId2List, teamCTSteamId2List),
                     3 => ShuffleMethod3(sortedPlayers, maxTeamSizeT, maxTeamSizeCT, teamTSteamId2List, teamCTSteamId2List),
+                    4 => ShuffleMethod4(sortedPlayers, maxTeamSizeT, maxTeamSizeCT, teamTSteamId2List, teamCTSteamId2List),
                     _ => double.MaxValue
                 };
 
@@ -139,37 +144,39 @@ namespace AdminMenu
             {
                 double sumScoreT = 0;
                 double sumScoreCT = 0;
-                bool switchTeam = true;
 
                 foreach (var player in sortedPlayers)
                 {
-                    if (switchTeam)
+                    bool teamTHasSpace = teamTSteamId2List.Count < maxTeamSizeT;
+                    bool teamCTHasSpace = teamCTSteamId2List.Count < maxTeamSizeCT;
+
+                    if (!teamTHasSpace)
                     {
-                        if (teamTSteamId2List.Count < maxTeamSizeT)
-                        {
-                            teamTSteamId2List.Add(player.SteamId2);
-                            sumScoreT += player.Stats.Score;
-                        }
-                        else
-                        {
-                            teamCTSteamId2List.Add(player.SteamId2);
-                            sumScoreCT += player.Stats.Score;
-                        }
+                        teamCTSteamId2List.Add(player.SteamId2);
+                        sumScoreCT += player.Stats.Score;
+                        continue;
+                    }
+
+                    if (!teamCTHasSpace)
+                    {
+                        teamTSteamId2List.Add(player.SteamId2);
+                        sumScoreT += player.Stats.Score;
+                        continue;
+                    }
+
+                    double teamTAverage = teamTSteamId2List.Count > 0 ? sumScoreT / teamTSteamId2List.Count : 0;
+                    double teamCTAverage = teamCTSteamId2List.Count > 0 ? sumScoreCT / teamCTSteamId2List.Count : 0;
+
+                    if (teamTAverage <= teamCTAverage)
+                    {
+                        teamTSteamId2List.Add(player.SteamId2);
+                        sumScoreT += player.Stats.Score;
                     }
                     else
                     {
-                        if (teamCTSteamId2List.Count < maxTeamSizeCT)
-                        {
-                            teamCTSteamId2List.Add(player.SteamId2);
-                            sumScoreCT += player.Stats.Score;
-                        }
-                        else
-                        {
-                            teamTSteamId2List.Add(player.SteamId2);
-                            sumScoreT += player.Stats.Score;
-                        }
+                        teamCTSteamId2List.Add(player.SteamId2);
+                        sumScoreCT += player.Stats.Score;
                     }
-                    switchTeam = !switchTeam;
                 }
 
                 return StatisticHelper.GetPercentageDifference(sumScoreCT, sumScoreT);
@@ -234,6 +241,47 @@ namespace AdminMenu
                             teamCTSteamId2List.Add(player.SteamId2);
                             sumScoreCT += player.Stats.Score;
                         }
+                    }
+
+                    assignToT = !assignToT;
+                }
+
+                return StatisticHelper.GetPercentageDifference(sumScoreCT, sumScoreT);
+            }
+
+            public static double ShuffleMethod4(List<PlayerShuffleData> sortedPlayers, int maxTeamSizeT, int maxTeamSizeCT, List<string> teamTSteamId2List, List<string> teamCTSteamId2List)
+            {
+                double sumScoreT = 0;
+                double sumScoreCT = 0;
+
+                int currentIndex = 0;
+                bool assignToT = true;
+
+                while (currentIndex < sortedPlayers.Count)
+                {
+                    if (assignToT && teamTSteamId2List.Count < maxTeamSizeT)
+                    {
+                        teamTSteamId2List.Add(sortedPlayers[currentIndex].SteamId2);
+                        sumScoreT += sortedPlayers[currentIndex].Stats.Score;
+                        currentIndex++;
+                    }
+                    else if (!assignToT && teamCTSteamId2List.Count < maxTeamSizeCT)
+                    {
+                        teamCTSteamId2List.Add(sortedPlayers[currentIndex].SteamId2);
+                        sumScoreCT += sortedPlayers[currentIndex].Stats.Score;
+                        currentIndex++;
+                    }
+                    else if (teamTSteamId2List.Count >= maxTeamSizeT && teamCTSteamId2List.Count < maxTeamSizeCT)
+                    {
+                        teamCTSteamId2List.Add(sortedPlayers[currentIndex].SteamId2);
+                        sumScoreCT += sortedPlayers[currentIndex].Stats.Score;
+                        currentIndex++;
+                    }
+                    else if (teamCTSteamId2List.Count >= maxTeamSizeCT && teamTSteamId2List.Count < maxTeamSizeT)
+                    {
+                        teamTSteamId2List.Add(sortedPlayers[currentIndex].SteamId2);
+                        sumScoreT += sortedPlayers[currentIndex].Stats.Score;
+                        currentIndex++;
                     }
 
                     assignToT = !assignToT;

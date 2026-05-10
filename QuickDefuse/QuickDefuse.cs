@@ -4,7 +4,6 @@ using CounterStrikeSharp.API.Modules.Menu;
 using CounterStrikeSharp.API.Modules.Utils;
 using Microsoft.Extensions.Logging;
 using SharedLibrary;
-using static CounterStrikeSharp.API.Core.Listeners;
 
 namespace QuickDefuse
 {
@@ -44,18 +43,6 @@ namespace QuickDefuse
             RegisterEventHandler<EventBombDefused>(OnBombDefused);
             RegisterEventHandler<EventRoundStart>(OnRoundStart);
             RegisterEventHandler<EventRoundEnd>(OnRoundEnd);
-        }
-
-        private HookResult OnItemEquip(EventItemEquip @event, GameEventInfo info)
-        {
-            if (_defuserPlayer is null || _isRoundEnded || _plantedBomb is null)
-            {
-                return HookResult.Continue;
-            }
-
-            Logger.LogInformation($"Player {@event.Userid?.PlayerName} OnItemEquip {@event.Item}");
-            //CutBombWithWeaponChange(@event.Item);
-            return HookResult.Continue;
         }
 
         private void CutBombWithWeaponChange(string weapon)

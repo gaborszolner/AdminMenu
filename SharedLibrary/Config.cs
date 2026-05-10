@@ -11,9 +11,14 @@ namespace SharedLibrary
 
         public int DateRangeForStatisticsInMonth { get; set; } = 3;
 
+        public int MinimumKillCountToShowInTop { get; set; } = 300;
+
+        public int MinimumPlayerCountToStatistic { get; set; } = 4;
+
         public bool AllowSameName { get; set; } = true;
 
         public int MuteAfterDeathInSecounds { get; set; } = 0;
+
 
         public static Config LoadConfig(string configFile)
         {

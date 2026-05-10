@@ -64,9 +64,13 @@ namespace GameStatistic
             {
                 StatisticHelper.PrintTeamStat(StatisticHelper.LoadMonthsStats(ModuleDirectory, _config.DateRangeForStatisticsInMonth));
             }
+            else if (@event?.Text.Trim().ToLower() is "!chance")
+            {
+                StatisticHelper.PrintTeamStat(StatisticHelper.LoadMonthsStats(ModuleDirectory, _config.DateRangeForStatisticsInMonth), true);
+            }
             else if (@event?.Text.Trim().ToLower() is "!help")
             {
-                Server.PrintToChatAll($"{PluginPrefix} Available commands: !mapstat, !mystat, !top, !bottom, !teamstat, !help");
+                Server.PrintToChatAll($"{PluginPrefix} Available commands: !mapstat, !mystat, !top, !bottom, !teamstat, !chance, !help");
             }
 
             return HookResult.Continue;
@@ -101,7 +105,7 @@ namespace GameStatistic
 
         private HookResult OnPlayerDeath(EventPlayerDeath @event, GameEventInfo info)
         {
-            if (_isWarmup || _isRoundEnded || !PlayerHelper.HasEnoughPlayer)
+            if (_isWarmup || _isRoundEnded || !(PlayerHelper.GetAllNonSpecPlayers().Count() >= _config.MinimumPlayerCountToStatistic))
             {
                 return HookResult.Continue;
             }
@@ -170,7 +174,7 @@ namespace GameStatistic
         {
             _isRoundEnded = true;
 
-            if (!_isWarmup && PlayerHelper.HasEnoughPlayer)
+            if (!_isWarmup && PlayerHelper.GetAllNonSpecPlayers().Count() >= _config.MinimumPlayerCountToStatistic)
             {
                 CreatePlayerStatistic();
                 CreateMapStatisticRoundEnd(@event.Winner);
@@ -198,7 +202,7 @@ namespace GameStatistic
         {
             List<KeyValuePair<string, PlayerStatEntry>> storedStats =
                 StatisticHelper.LoadMonthsStats(ModuleDirectory, _config.DateRangeForStatisticsInMonth)
-                .Where(p => p.Value.Kill > 200)
+                .Where(p => p.Value.Kill > _config.MinimumKillCountToShowInTop)
                 .OrderByDescending(p => p.Value.Score).ToList()
                 ?? [];
 

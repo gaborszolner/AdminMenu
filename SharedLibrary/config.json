@@ -4,5 +4,7 @@
   "AutoTeamShuffleOnRoundStart": true,
   "DateRangeForStatisticsInMonth": 3,
   "AllowSameName": false,
-  "MuteAfterDeathInSecounds": 0
+  "MuteAfterDeathInSecounds": 0,
+  "MinimumPlayerCountToStatistic": 4,
+  "MinimumKillCountToShowInTop" : 300
 }
