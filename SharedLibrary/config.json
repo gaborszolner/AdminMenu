@@ -6,5 +6,9 @@
   "AllowSameName": false,
   "MuteAfterDeathInSecounds": 0,
   "MinimumPlayerCountToStatistic": 4,
-  "MinimumKillCountToShowInTop" : 300
+  "MinimumKillCountToShowInTop": 300,
+  "CanReviveTeammate": false,
+  "ReviveHoldDurationSeconds": 10.0,
+  "ReviveDeathWindowSeconds": 30.0,
+  "ReviveHP": 10
 }
