@@ -125,13 +125,19 @@ namespace SharedLibrary
                 double ctWinPercentage = (double)ctWin / fullRoundCount * 100;
                 if (CacheLastPlayedActualMap.Year == DateTime.MinValue.Year)
                 {
-                    Server.PrintToChatAll($"On this map {ChatColors.Red} T win: {tWinPercentage:F2}%, {ChatColors.Blue}CT win: {ctWinPercentage:F2}%, {ChatColors.Green}Never played before");
+                    Server.PrintToChatAll(Msg.Get("MapStatsNeverPlayed",
+                        (object)ChatColors.Red, $"{tWinPercentage:F2}",
+                        (object)ChatColors.Blue, $"{ctWinPercentage:F2}",
+                        (object)ChatColors.Green));
                 }
                 else
                 {
                     TimeSpan difference = Utils.GetServerTime() - CacheLastPlayedActualMap;
                     var daysPassed = difference.TotalDays;
-                    Server.PrintToChatAll($"On this map {ChatColors.Red} T win: {tWinPercentage:F2}%, {ChatColors.Blue}CT win: {ctWinPercentage:F2}%, {ChatColors.Green}Last played {daysPassed:F1} day(s) ago");
+                    Server.PrintToChatAll(Msg.Get("MapStatsLastPlayed",
+                        (object)ChatColors.Red, $"{tWinPercentage:F2}",
+                        (object)ChatColors.Blue, $"{ctWinPercentage:F2}",
+                        (object)ChatColors.Green, $"{daysPassed:F1}"));
                 }
             }
         }
@@ -151,16 +157,16 @@ namespace SharedLibrary
             string comparisonText;
             if (ctSumScore == tSumScore)
             {
-                comparisonText = $"{ChatColors.Green}Teams are equal";
+                comparisonText = $"{ChatColors.Green}{Msg.Get("TeamsEqual")}";
             }
             else
             {
                 comparisonText = ctSumScore > tSumScore
-                        ? $"{ChatColors.Blue} CT {percentDiff:F1}% stronger"
-                        : $"{ChatColors.Red} T {percentDiff:F1}% stronger";
+                        ? $"{ChatColors.Blue} {Msg.Get("CTStronger", $"{percentDiff:F1}")}"
+                        : $"{ChatColors.Red} {Msg.Get("TStronger", $"{percentDiff:F1}")}";
             }
 
-            Server.PrintToChatAll($"{ChatColors.Green} Team Scores: {comparisonText}");
+            Server.PrintToChatAll($"{ChatColors.Green} {Msg.Get("TeamScores", comparisonText)}");
         }
 
         public static DateTime CacheLastPlayedActualMap { get; set; } = DateTime.MinValue;

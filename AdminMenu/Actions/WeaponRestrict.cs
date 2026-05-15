@@ -12,19 +12,19 @@ namespace AdminMenu
         private void WeaponRestrictAction(CCSPlayerController adminPlayer, ChatMenuOption option)
         {
             string mapName = Server.MapName.Trim() ?? string.Empty;
-            var restrictMenu = new CenterHtmlMenu($"Choose an action", this);
+            var restrictMenu = new CenterHtmlMenu(Msg.Get("WeaponRestrictMenuTitle"), this);
 
-            restrictMenu.AddMenuOption("Restrict - this map", (controller, _) => { ShowRestrictWeaponsMenu(adminPlayer, true, mapName); });
-            restrictMenu.AddMenuOption("Unrestrict - this map", (controller, _) => { ShowRestrictWeaponsMenu(adminPlayer, false, mapName); });
-            restrictMenu.AddMenuOption("Restrict - all maps", (controller, _) => { ShowRestrictWeaponsMenu(adminPlayer, true, "*"); });
-            restrictMenu.AddMenuOption("Unrestrict - all maps", (controller, _) => { ShowRestrictWeaponsMenu(adminPlayer, false, "*"); });
-            restrictMenu.AddMenuOption("Show restricted weapons", ShowRestrictedWeapons(mapName));
+            restrictMenu.AddMenuOption(Msg.Get("RestrictThisMap"), (controller, _) => { ShowRestrictWeaponsMenu(adminPlayer, true, mapName); });
+            restrictMenu.AddMenuOption(Msg.Get("UnrestrictThisMap"), (controller, _) => { ShowRestrictWeaponsMenu(adminPlayer, false, mapName); });
+            restrictMenu.AddMenuOption(Msg.Get("RestrictAllMaps"), (controller, _) => { ShowRestrictWeaponsMenu(adminPlayer, true, "*"); });
+            restrictMenu.AddMenuOption(Msg.Get("UnrestrictAllMaps"), (controller, _) => { ShowRestrictWeaponsMenu(adminPlayer, false, "*"); });
+            restrictMenu.AddMenuOption(Msg.Get("ShowRestrictedWeapons"), ShowRestrictedWeapons(mapName));
             MenuManager.OpenCenterHtmlMenu(this, adminPlayer, restrictMenu);
         }
 
         private void ShowRestrictWeaponsMenu(CCSPlayerController adminPlayer, bool isRestrict, string mapName)
         {
-            var weaponMenu = new CenterHtmlMenu($"Choose weapon", this);
+            var weaponMenu = new CenterHtmlMenu(Msg.Get("ChooseWeapon"), this);
 
             foreach (var weaponName in WeaponHelper.AllWeapon)
             {
@@ -56,7 +56,7 @@ namespace AdminMenu
                     {
                         if (_weaponRestrictEntry[weapon].Maps.First() == "*")
                         {
-                            adminPlayer.PrintToChat($"{PluginPrefix} Unrestrict from all map first.");
+                            adminPlayer.PrintToChat($"{PluginPrefix} {Msg.Get("UnrestrictAllFirst")}");
                             return;
                         }
                         else
@@ -72,13 +72,13 @@ namespace AdminMenu
             }
             else
             {
-                adminPlayer.PrintToChat($"{PluginPrefix} {weapon} is not restricted on map {unrestrictMapName}.");
+                adminPlayer.PrintToChat($"{PluginPrefix} {Msg.Get("WeaponNotRestricted", weapon, unrestrictMapName)}");
                 return;
             }
 
             Utils.WriteToFile(_weaponRestrictEntry, _weaponRestrictFilePath);
 
-            Server.PrintToChatAll($"{PluginPrefix} {weapon} has been unrestricted on map {unrestrictMapName} by {adminPlayer.PlayerName}.");
+            Server.PrintToChatAll($"{PluginPrefix} {Msg.Get("WeaponUnrestricted", weapon, unrestrictMapName, adminPlayer.PlayerName)}");
             MenuManager.GetActiveMenu(adminPlayer)?.Close();
         }
 
@@ -112,7 +112,7 @@ namespace AdminMenu
 
             Utils.WriteToFile(_weaponRestrictEntry, _weaponRestrictFilePath);
 
-            Server.PrintToChatAll($"{PluginPrefix} {weapon.Replace("weapon_", "")} has been restricted on map {restrictMapName} by {adminPlayer.PlayerName}.");
+            Server.PrintToChatAll($"{PluginPrefix} {Msg.Get("WeaponRestricted", weapon.Replace("weapon_", ""), restrictMapName, adminPlayer.PlayerName)}");
             MenuManager.GetActiveMenu(adminPlayer)?.Close();
         }
 
@@ -135,7 +135,7 @@ namespace AdminMenu
                     weaponList += $"{weapon.Key}, ";
                 }
             }
-            weaponList = string.IsNullOrWhiteSpace(weaponList) ? "No restricted weapon." : weaponList.TrimEnd(' ', ',');
+            weaponList = string.IsNullOrWhiteSpace(weaponList) ? Msg.Get("NoRestrictedWeapon") : weaponList.TrimEnd(' ', ',');
             return weaponList;
         }
 
@@ -165,13 +165,13 @@ namespace AdminMenu
                 {
                     if (isAdminAboveRestrictionLevel) 
                     { 
-                        player.PrintToChat($"{PluginPrefix} {ChatColors.Red}WARNING: You are using a FORBIDDEN weapon: {weaponName}."); 
+                        player.PrintToChat($"{PluginPrefix} {ChatColors.Red}{Msg.Get("WeaponForbiddenWarning", weaponName)}"); 
                     }
                     else
                     {
                         player.DropActiveWeapon();
                         weapon?.Remove();
-                        player.PrintToChat($"{PluginPrefix} You cannot use {weaponName}.");
+                        player.PrintToChat($"{PluginPrefix} {Msg.Get("WeaponCannotUse", weaponName)}");
                     }
                 }
             }

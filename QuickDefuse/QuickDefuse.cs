@@ -34,6 +34,9 @@ namespace QuickDefuse
 
         public override void Load(bool hotReload)
         {
+            var config = Config.LoadConfig(Path.Combine(ModuleDirectory, "config.json"));
+            SharedLibrary.Localizer.Initialize(config.Language);
+
             RegisterEventHandler<EventBombBegindefuse>(OnBombBeginDefuse);
             RegisterEventHandler<EventBombAbortdefuse>(OnBombAbortDefuse);
             RegisterEventHandler<EventBombPlanted>(OnBombPlantedCommand);
@@ -51,26 +54,22 @@ namespace QuickDefuse
 
             if (slot == WeaponHelper.WeaponSlot.Primary)
             {
-                Server.PrintToChatAll($"Player changed weapon {weapon} to primary, cutting green wire");
-                //Logger.LogInformation("IsPrimary + cut green");
+                Server.PrintToChatAll(Msg.Get("WeaponChangedPrimary", weapon));
                 CutBombWire(Wire.Green);
             }
             else if (slot == WeaponHelper.WeaponSlot.Secondary)
             {
-                Server.PrintToChatAll($"Player changed weapon {weapon} to secondary, cutting yellow wire");
-                //Logger.LogInformation("IsSecondary + cut yellow");
+                Server.PrintToChatAll(Msg.Get("WeaponChangedSecondary", weapon));
                 CutBombWire(Wire.Yellow);
             }
             else if (slot == WeaponHelper.WeaponSlot.Knife)
             {
-                Server.PrintToChatAll($"Player changed weapon {weapon} to knife, cutting red wire");
-                //Logger.LogInformation("IsKnife + cut red");
+                Server.PrintToChatAll(Msg.Get("WeaponChangedKnife", weapon));
                 CutBombWire(Wire.Red);
             }
             else if (slot == WeaponHelper.WeaponSlot.Grenade)
             {
-                Server.PrintToChatAll($"Player changed weapon {weapon} to grenade, cutting blue wire");
-                //Logger.LogInformation("IsGrenade + cut blue");
+                Server.PrintToChatAll(Msg.Get("WeaponChangedGrenade", weapon));
                 CutBombWire(Wire.Blue);
             }
             else
@@ -134,26 +133,26 @@ namespace QuickDefuse
             }
 
             int menuTimeoutSec = 10;
-            var menu = new CenterHtmlMenu($"Choose a wire in {menuTimeoutSec}s", this);
+            var menu = new CenterHtmlMenu(Msg.Get("WireMenuTitle", menuTimeoutSec), this);
 
-            menu.AddMenuOption(Wire.Green.ToString(), isPlant ? GreenPlantAction : GreenDefuseAction);
-            menu.AddMenuOption(Wire.Yellow.ToString(), isPlant ? YellowPlantAction : YellowDefuseAction);
-            menu.AddMenuOption(Wire.Red.ToString(), isPlant ? RedPlantAction : RedDefuseAction);
-            menu.AddMenuOption(Wire.Blue.ToString(), isPlant ? BluePlantAction : BlueDefuseAction);
-            menu.AddMenuOption(Wire.Random.ToString(), isPlant ? RandomPlantAction : RandomDefuseAction);
+            menu.AddMenuOption(Msg.Get("WireGreen"), isPlant ? GreenPlantAction : GreenDefuseAction);
+            menu.AddMenuOption(Msg.Get("WireYellow"), isPlant ? YellowPlantAction : YellowDefuseAction);
+            menu.AddMenuOption(Msg.Get("WireRed"), isPlant ? RedPlantAction : RedDefuseAction);
+            menu.AddMenuOption(Msg.Get("WireBlue"), isPlant ? BluePlantAction : BlueDefuseAction);
+            menu.AddMenuOption(Msg.Get("WireRandom"), isPlant ? RandomPlantAction : RandomDefuseAction);
             MenuManager.OpenCenterHtmlMenu(this, player, menu);
 
             Task.Run(() =>
             {
                 for (int i = menuTimeoutSec; i > 0; --i)
                 {
-                    menu.Title = $"Choose a wire in {i}s";
+                    menu.Title = Msg.Get("WireMenuTitle", i);
                     Task.Delay(1000).Wait();
                 }
                 MenuManager.CloseActiveMenu(player);
                 if (isPlant)
                 {
-                    player.PrintToChat($"You chose {_rightWire}!");
+                    player.PrintToChat(Msg.Get("WireChosen", GetWireName(_rightWire)));
                 }
             });
         }
@@ -167,6 +166,19 @@ namespace QuickDefuse
                 Wire.Red => ChatColors.Red,
                 Wire.Blue => ChatColors.Blue,
                 _ => ChatColors.Default,
+            };
+        }
+
+        private static string GetWireName(Wire wire)
+        {
+            return wire switch
+            {
+                Wire.Green => Msg.Get("WireGreen"),
+                Wire.Yellow => Msg.Get("WireYellow"),
+                Wire.Red => Msg.Get("WireRed"),
+                Wire.Blue => Msg.Get("WireBlue"),
+                Wire.Random => Msg.Get("WireRandom"),
+                _ => wire.ToString()
             };
         }
 
@@ -188,7 +200,7 @@ namespace QuickDefuse
 
         private HookResult OnBombPlantedCommand(EventBombPlanted @event, GameEventInfo info)
         {
-            Server.PrintToChatAll($"The bomb can be defused by cutting the correct wire.");
+            Server.PrintToChatAll(Msg.Get("BombDefusable"));
             return HookResult.Continue;
         }
 
@@ -230,8 +242,7 @@ namespace QuickDefuse
         private static void PrintYouChose(CCSPlayerController player, Wire rightWire)
         {
             char color = GetChatColor(rightWire);
-
-            player.PrintToChat($"You chose {color}{_rightWire}{ChatColors.Default}!");
+            player.PrintToChat(Msg.Get("WireChosen", $"{color}{GetWireName(rightWire)}{ChatColors.Default}"));
         }
 
         private HookResult OnBombAbortPlant(EventBombAbortplant @event, GameEventInfo info)
@@ -340,14 +351,16 @@ namespace QuickDefuse
             {
                 Server.NextFrame(() =>
                 {
-                    Server.PrintToChatAll($"Bomb has been defused by cutting the right {GetChatColor(_rightWire)}{_rightWire}{ChatColors.Default} wire!");
+                    Server.PrintToChatAll(Msg.Get("BombDefusedSuccess", $"{GetChatColor(_rightWire)}{GetWireName(_rightWire)}{ChatColors.Default}"));
                     _plantedBomb.DefuseCountDown = 0;
                     _plantedBomb.BombDefused = true;
                 });
             }
             else
             {
-                Server.PrintToChatAll($"Tried wire was {GetChatColor(_triedWire)}{_triedWire}{ChatColors.Default}, but the right wire was {GetChatColor(_rightWire)}{_rightWire}{ChatColors.Default}");
+                Server.PrintToChatAll(Msg.Get("BombDefusedFailed",
+                    $"{GetChatColor(_triedWire)}{GetWireName(_triedWire)}{ChatColors.Default}",
+                    $"{GetChatColor(_rightWire)}{GetWireName(_rightWire)}{ChatColors.Default}"));
                 _plantedBomb.CannotBeDefused = true;
                 _plantedBomb.C4Blow = 1;
             }

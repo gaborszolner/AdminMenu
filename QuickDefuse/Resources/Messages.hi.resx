@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+
+  <data name="WireMenuTitle" xml:space="preserve"><value>{0}s में एक तार चुनें</value></data>
+  <data name="WireGreen" xml:space="preserve"><value>हरा</value></data>
+  <data name="WireYellow" xml:space="preserve"><value>पीला</value></data>
+  <data name="WireRed" xml:space="preserve"><value>लाल</value></data>
+  <data name="WireBlue" xml:space="preserve"><value>नीला</value></data>
+  <data name="WireRandom" xml:space="preserve"><value>यादृच्छिक</value></data>
+  <data name="WireChosen" xml:space="preserve"><value>आपने {0} चुना!</value></data>
+  <data name="BombDefusable" xml:space="preserve"><value>सही तार काटकर बम निष्क्रिय किया जा सकता है।</value></data>
+  <data name="BombDefusedSuccess" xml:space="preserve"><value>{0} तार काटकर बम निष्क्रिय किया गया!</value></data>
+  <data name="BombDefusedFailed" xml:space="preserve"><value>काटा गया तार {0} था, लेकिन सही तार {1} था</value></data>
+  <data name="WeaponChangedPrimary" xml:space="preserve"><value>खिलाड़ी ने हथियार {0} को प्राइमरी में बदला, हरा तार काट रहा है</value></data>
+  <data name="WeaponChangedSecondary" xml:space="preserve"><value>खिलाड़ी ने हथियार {0} को सेकेंडरी में बदला, पीला तार काट रहा है</value></data>
+  <data name="WeaponChangedKnife" xml:space="preserve"><value>खिलाड़ी ने हथियार {0} को चाकू में बदला, लाल तार काट रहा है</value></data>
+  <data name="WeaponChangedGrenade" xml:space="preserve"><value>खिलाड़ी ने हथियार {0} को ग्रेनेड में बदला, नीला तार काट रहा है</value></data>
+</root>

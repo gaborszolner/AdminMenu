@@ -27,24 +27,24 @@ namespace AdminMenu
                 return;
             }
 
-            var banTimeMenu = new CenterHtmlMenu($"Expiration time?", this);
-            banTimeMenu.AddMenuOption("1 min", (CCSPlayerController controller, ChatMenuOption option) =>
+            var banTimeMenu = new CenterHtmlMenu(Msg.Get("BanMenuTitle"), this);
+            banTimeMenu.AddMenuOption(Msg.Get("Ban1Min"), (CCSPlayerController controller, ChatMenuOption option) =>
             {
                 BanPlayer(adminPlayer, player, Utils.GetServerTime().AddMinutes(1));
             });
-            banTimeMenu.AddMenuOption("10 min", (CCSPlayerController controller, ChatMenuOption option) =>
+            banTimeMenu.AddMenuOption(Msg.Get("Ban10Min"), (CCSPlayerController controller, ChatMenuOption option) =>
             {
                 BanPlayer(adminPlayer, player, Utils.GetServerTime().AddMinutes(10));
             });
-            banTimeMenu.AddMenuOption("1 day", (CCSPlayerController controller, ChatMenuOption option) =>
+            banTimeMenu.AddMenuOption(Msg.Get("Ban1Day"), (CCSPlayerController controller, ChatMenuOption option) =>
             {
                 BanPlayer(adminPlayer, player, Utils.GetServerTime().AddDays(1));
             });
-            banTimeMenu.AddMenuOption("1 week", (CCSPlayerController controller, ChatMenuOption option) =>
+            banTimeMenu.AddMenuOption(Msg.Get("Ban1Week"), (CCSPlayerController controller, ChatMenuOption option) =>
             {
                 BanPlayer(adminPlayer, player, Utils.GetServerTime().AddDays(7));
             });
-            banTimeMenu.AddMenuOption("Permanent", (CCSPlayerController controller, ChatMenuOption option) =>
+            banTimeMenu.AddMenuOption(Msg.Get("BanPermanent"), (CCSPlayerController controller, ChatMenuOption option) =>
             {
                 BanPlayer(adminPlayer, player, DateTime.MaxValue);
             });
@@ -83,7 +83,7 @@ namespace AdminMenu
                 Utils.WriteToFile(bannedList, _bannedFilePath);
 
                 player.Disconnect(NetworkDisconnectionReason.NETWORK_DISCONNECT_KICKBANADDED);
-                Server.PrintToChatAll($"{PluginPrefix} {player.PlayerName} has been banned by {adminPlayer.PlayerName} until {banTime}.");
+                Server.PrintToChatAll($"{PluginPrefix} {Msg.Get("PlayerBanned", player.PlayerName, adminPlayer.PlayerName, banTime)}");
                 Logger?.LogInformation($"{PluginPrefix} {player.PlayerName} has been banned by {adminPlayer.PlayerName} until {banTime}.");
             }
             catch (Exception ex)

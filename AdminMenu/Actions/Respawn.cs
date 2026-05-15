@@ -10,7 +10,7 @@ namespace AdminMenu
         {
             ShowPlayerListMenu(adminPlayer, false, false, (CCSPlayerController targetPlayer) =>
             {
-                Server.PrintToChatAll($"{PluginPrefix} {targetPlayer.PlayerName} has been respawned by {adminPlayer.PlayerName}.");
+                Server.PrintToChatAll($"{PluginPrefix} {Msg.Get("PlayerRespawned", targetPlayer.PlayerName, adminPlayer.PlayerName)}");
                 targetPlayer.Respawn();
                 MenuManager.GetActiveMenu(adminPlayer)?.Close();
             });

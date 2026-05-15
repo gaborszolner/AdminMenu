@@ -49,7 +49,7 @@ namespace AdminMenu
                     if (progress.TargetSteamId != target.SteamID)
                     {
                         _reviveProgress[player.SteamID] = (target.SteamID, Utils.GetServerTime());
-                        player.PrintToCenter($"Reviving {target.PlayerName}... {_config.ReviveHoldDurationSeconds}s");
+                        player.PrintToCenter(Msg.Get("ReviveProgressStart", target.PlayerName, _config.ReviveHoldDurationSeconds));
                     }
                     else
                     {
@@ -65,14 +65,14 @@ namespace AdminMenu
                         {
                             int filled = (int)(elapsed / _config.ReviveHoldDurationSeconds * 10);
                             string bar = new string('|', filled) + new string('.', 10 - filled);
-                            player.PrintToCenter($"Reviving {target.PlayerName}... [{bar}] {remaining:F1}s");
+                            player.PrintToCenter(Msg.Get("ReviveProgressBar", target.PlayerName, bar, $"{remaining:F1}"));
                         }
                     }
                 }
                 else
                 {
                     _reviveProgress[player.SteamID] = (target.SteamID, Utils.GetServerTime());
-                    player.PrintToCenter($"Reviving {target.PlayerName}... {_config.ReviveHoldDurationSeconds}s");
+                    player.PrintToCenter(Msg.Get("ReviveProgressStart", target.PlayerName, _config.ReviveHoldDurationSeconds));
                 }
             }
         }
@@ -161,8 +161,8 @@ namespace AdminMenu
                 }
             });
 
-            reviverPlayer.PrintToCenter("Revive successful!");
-            Server.PrintToChatAll($"{reviverPlayer.PlayerName} revived {targetPlayer.PlayerName} with 10 HP!");
+            reviverPlayer.PrintToCenter(Msg.Get("ReviveSuccessful"));
+            Server.PrintToChatAll(Msg.Get("PlayerRevived", reviverPlayer.PlayerName, targetPlayer.PlayerName, _config.ReviveHP));
         }
     }
 }

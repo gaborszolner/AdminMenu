@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+
+  <data name="NotAdminError" xml:space="preserve"><value>你不是管理员。</value></data>
+  <data name="MainMenuTitle" xml:space="preserve"><value>选择操作</value></data>
+  <data name="MenuBan" xml:space="preserve"><value>封禁</value></data>
+  <data name="MenuKick" xml:space="preserve"><value>踢出</value></data>
+  <data name="MenuKill" xml:space="preserve"><value>击杀</value></data>
+  <data name="MenuSlap" xml:space="preserve"><value>拍打</value></data>
+  <data name="MenuDropWeapon" xml:space="preserve"><value>丢弃武器</value></data>
+  <data name="MenuSetTeam" xml:space="preserve"><value>设置队伍</value></data>
+  <data name="MenuRename" xml:space="preserve"><value>改名</value></data>
+  <data name="MenuMute" xml:space="preserve"><value>禁言</value></data>
+  <data name="MenuUnMute" xml:space="preserve"><value>解除禁言</value></data>
+  <data name="MenuWeaponRestrict" xml:space="preserve"><value>武器限制</value></data>
+  <data name="MenuRespawn" xml:space="preserve"><value>重生</value></data>
+  <data name="MenuSetAdmin" xml:space="preserve"><value>设置管理员</value></data>
+  <data name="MenuSetHP" xml:space="preserve"><value>设置血量</value></data>
+  <data name="MenuChangeMap" xml:space="preserve"><value>更换地图</value></data>
+  <data name="MenuTeamShuffle" xml:space="preserve"><value>随机分队</value></data>
+  <data name="MenuBotHandle" xml:space="preserve"><value>机器人菜单</value></data>
+  <data name="ChoosePlayer" xml:space="preserve"><value>选择玩家</value></data>
+  <data name="ActionDeniedHigherAdmin" xml:space="preserve"><value>你无法对{0}执行操作，因为他们的管理员级别高于你。</value></data>
+  <data name="PlayerBannedFromServer" xml:space="preserve"><value>{0}已被封禁。（封禁名：{1}）</value></data>
+  <data name="TypeHelpHint" xml:space="preserve"><value>输入!help查看可用命令。</value></data>
+  <data name="JoinSuffixAdmin" xml:space="preserve"><value>（管理员）</value></data>
+  <data name="JoinSuffixNotAdmin" xml:space="preserve"><value>（非管理员）</value></data>
+  <data name="SteamIdDisplay" xml:space="preserve"><value>SteamID2 : {0}</value></data>
+  <data name="RestrictedWeaponsOnMap" xml:space="preserve"><value>地图{0}限制武器: {1}</value></data>
+  <data name="HelpCommandsAdmin" xml:space="preserve"><value>可用命令: !admin, !admins, !mysteamid, !thetime, !weapons, !help. 仅限3级管理员: !status, !reload</value></data>
+  <data name="HelpCommandsPlayer" xml:space="preserve"><value>可用命令: !admin, !admins, !mysteamid, !thetime, !weapons, !help</value></data>
+  <data name="AdminsOnlinePrefix" xml:space="preserve"><value>在线管理员: </value></data>
+  <data name="ConfigsReloaded" xml:space="preserve"><value>配置已重新加载。</value></data>
+  <data name="AutoShuffleCurrentDiff" xml:space="preserve"><value>当前差距为</value></data>
+  <data name="AutoShuffleActivated" xml:space="preserve"><value>自动队伍随机已激活</value></data>
+  <data name="RenameExpired" xml:space="preserve"><value>改名请求已过期。</value></data>
+  <data name="TargetDisconnected" xml:space="preserve"><value>目标玩家已断线。</value></data>
+  <data name="RenameApplyError" xml:space="preserve"><value>应用改名时出错: {0}</value></data>
+  <data name="PlayerRenamed" xml:space="preserve"><value>{0}已被{2}改名为{1}。</value></data>
+  <data name="RenameStartError" xml:space="preserve"><value>无法开始改名：缺少SteamID。</value></data>
+  <data name="RenamePrompt" xml:space="preserve"><value>请在30秒内在聊天中输入{0}的新名字。</value></data>
+  <data name="BanMenuTitle" xml:space="preserve"><value>封禁时长？</value></data>
+  <data name="Ban1Min" xml:space="preserve"><value>1分钟</value></data>
+  <data name="Ban10Min" xml:space="preserve"><value>10分钟</value></data>
+  <data name="Ban1Day" xml:space="preserve"><value>1天</value></data>
+  <data name="Ban1Week" xml:space="preserve"><value>1周</value></data>
+  <data name="BanPermanent" xml:space="preserve"><value>永久</value></data>
+  <data name="PlayerBanned" xml:space="preserve"><value>{0}已被{1}封禁至{2}。</value></data>
+  <data name="PlayerKicked" xml:space="preserve"><value>{0}已被{1}踢出。</value></data>
+  <data name="PlayerKilled" xml:space="preserve"><value>{0}已被{1}击杀。</value></data>
+  <data name="PlayerMuted" xml:space="preserve"><value>{0}已被{1}禁言。</value></data>
+  <data name="PlayerUnmuted" xml:space="preserve"><value>{0}已被{1}解除禁言。</value></data>
+  <data name="PlayerSlapped" xml:space="preserve"><value>{0}被{1}拍了一下。</value></data>
+  <data name="PlayerRespawned" xml:space="preserve"><value>{0}已被{1}重生。</value></data>
+  <data name="PlayerDroppedWeapon" xml:space="preserve"><value>{0}丢弃了武器: {1}</value></data>
+  <data name="SetHPMenuTitle" xml:space="preserve"><value>为所有人设置血量</value></data>
+  <data name="HPSetForAll" xml:space="preserve"><value>管理员{0}将所有人血量设置为{1}。</value></data>
+  <data name="ChooseTeam" xml:space="preserve"><value>选择队伍</value></data>
+  <data name="TeamTerrorist" xml:space="preserve"><value>恐怖分子</value></data>
+  <data name="TeamTerroristRespawn" xml:space="preserve"><value>恐怖分子 + 重生</value></data>
+  <data name="TeamCounterTerrorist" xml:space="preserve"><value>反恐精英</value></data>
+  <data name="TeamCounterTerroristRespawn" xml:space="preserve"><value>反恐精英 + 重生</value></data>
+  <data name="TeamSpectator" xml:space="preserve"><value>观察者</value></data>
+  <data name="PlayerAssignedTerrorist" xml:space="preserve"><value>{0}已被{1}分配到恐怖分子队。</value></data>
+  <data name="PlayerAssignedTerroristRespawn" xml:space="preserve"><value>{0}已被{1}分配到恐怖分子队并重生。</value></data>
+  <data name="PlayerAssignedCT" xml:space="preserve"><value>{0}已被{1}分配到反恐精英队。</value></data>
+  <data name="PlayerAssignedCTRespawn" xml:space="preserve"><value>{0}已被{1}分配到反恐精英队并重生。</value></data>
+  <data name="PlayerAssignedSpectator" xml:space="preserve"><value>{0}已被{1}设为观察者。</value></data>
+  <data name="SetAdminMenuTitle" xml:space="preserve"><value>设置{0}的管理员级别</value></data>
+  <data name="AdminLevel1" xml:space="preserve"><value>级别1（最低）</value></data>
+  <data name="AdminLevel2" xml:space="preserve"><value>级别2</value></data>
+  <data name="AdminLevel3" xml:space="preserve"><value>级别3（最高）</value></data>
+  <data name="AdminLevelDelete" xml:space="preserve"><value>删除管理员</value></data>
+  <data name="AdminLevelSet" xml:space="preserve"><value>你的管理员级别已设置为{0}。</value></data>
+  <data name="ChooseMap" xml:space="preserve"><value>选择地图</value></data>
+  <data name="MapChangeInitiated" xml:space="preserve"><value>{0}发起了地图更换。</value></data>
+  <data name="BotMenuTitle" xml:space="preserve"><value>选择机器人操作</value></data>
+  <data name="BotKickAll" xml:space="preserve"><value>踢出全部</value></data>
+  <data name="BotAddT" xml:space="preserve"><value>添加T方</value></data>
+  <data name="BotAddCT" xml:space="preserve"><value>添加CT方</value></data>
+  <data name="AllBotsKicked" xml:space="preserve"><value>所有机器人已被{0}踢出。</value></data>
+  <data name="TerroristBotAdded" xml:space="preserve"><value>{0}添加了一个恐怖分子机器人。</value></data>
+  <data name="CTBotAdded" xml:space="preserve"><value>{0}添加了一个反恐精英机器人。</value></data>
+  <data name="WeaponRestrictMenuTitle" xml:space="preserve"><value>选择操作</value></data>
+  <data name="RestrictThisMap" xml:space="preserve"><value>限制 - 本地图</value></data>
+  <data name="UnrestrictThisMap" xml:space="preserve"><value>解除限制 - 本地图</value></data>
+  <data name="RestrictAllMaps" xml:space="preserve"><value>限制 - 所有地图</value></data>
+  <data name="UnrestrictAllMaps" xml:space="preserve"><value>解除限制 - 所有地图</value></data>
+  <data name="ShowRestrictedWeapons" xml:space="preserve"><value>显示限制武器</value></data>
+  <data name="ChooseWeapon" xml:space="preserve"><value>选择武器</value></data>
+  <data name="UnrestrictAllFirst" xml:space="preserve"><value>请先从所有地图解除限制。</value></data>
+  <data name="WeaponNotRestricted" xml:space="preserve"><value>{0}在地图{1}上未受限制。</value></data>
+  <data name="WeaponUnrestricted" xml:space="preserve"><value>{0}已被{2}在地图{1}上解除限制。</value></data>
+  <data name="WeaponRestricted" xml:space="preserve"><value>{0}已被{2}在地图{1}上限制。</value></data>
+  <data name="NoRestrictedWeapon" xml:space="preserve"><value>没有限制武器。</value></data>
+  <data name="WeaponForbiddenWarning" xml:space="preserve"><value>警告：你正在使用禁止武器：{0}。</value></data>
+  <data name="WeaponCannotUse" xml:space="preserve"><value>你不能使用{0}。</value></data>
+  <data name="ReviveProgressStart" xml:space="preserve"><value>正在复活{0}... {1}秒</value></data>
+  <data name="ReviveProgressBar" xml:space="preserve"><value>正在复活{0}... [{1}] {2}秒</value></data>
+  <data name="ReviveSuccessful" xml:space="preserve"><value>复活成功！</value></data>
+  <data name="PlayerRevived" xml:space="preserve"><value>{0}以{2}HP复活了{1}！</value></data>
+</root>

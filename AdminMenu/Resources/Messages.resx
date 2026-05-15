@@ -1,0 +1,360 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+
+  <!-- Main menu -->
+  <data name="NotAdminError" xml:space="preserve">
+    <value>You are not admin.</value>
+  </data>
+  <data name="MainMenuTitle" xml:space="preserve">
+    <value>Choose action</value>
+  </data>
+  <data name="MenuBan" xml:space="preserve">
+    <value>Ban</value>
+  </data>
+  <data name="MenuKick" xml:space="preserve">
+    <value>Kick</value>
+  </data>
+  <data name="MenuKill" xml:space="preserve">
+    <value>Kill</value>
+  </data>
+  <data name="MenuSlap" xml:space="preserve">
+    <value>Slap</value>
+  </data>
+  <data name="MenuDropWeapon" xml:space="preserve">
+    <value>DropWeapon</value>
+  </data>
+  <data name="MenuSetTeam" xml:space="preserve">
+    <value>Set Team</value>
+  </data>
+  <data name="MenuRename" xml:space="preserve">
+    <value>Rename</value>
+  </data>
+  <data name="MenuMute" xml:space="preserve">
+    <value>Mute</value>
+  </data>
+  <data name="MenuUnMute" xml:space="preserve">
+    <value>UnMute</value>
+  </data>
+  <data name="MenuWeaponRestrict" xml:space="preserve">
+    <value>Weapon (Un)Restrict</value>
+  </data>
+  <data name="MenuRespawn" xml:space="preserve">
+    <value>Respawn</value>
+  </data>
+  <data name="MenuSetAdmin" xml:space="preserve">
+    <value>Set Admin</value>
+  </data>
+  <data name="MenuSetHP" xml:space="preserve">
+    <value>Set HP</value>
+  </data>
+  <data name="MenuChangeMap" xml:space="preserve">
+    <value>Change map</value>
+  </data>
+  <data name="MenuTeamShuffle" xml:space="preserve">
+    <value>Team shuffle</value>
+  </data>
+  <data name="MenuBotHandle" xml:space="preserve">
+    <value>Bot menu</value>
+  </data>
+
+  <!-- Player list -->
+  <data name="ChoosePlayer" xml:space="preserve">
+    <value>Choose a player</value>
+  </data>
+  <!-- {0}=target player name -->
+  <data name="ActionDeniedHigherAdmin" xml:space="preserve">
+    <value>You cannot perform actions on {0} as they have a higher admin level than you.</value>
+  </data>
+
+  <!-- Connect / join messages -->
+  <!-- {0}=player name, {1}=banned name -->
+  <data name="PlayerBannedFromServer" xml:space="preserve">
+    <value>{0} banned from this server. (Banned name: {1})</value>
+  </data>
+  <data name="TypeHelpHint" xml:space="preserve">
+    <value>Type !help to see available commands.</value>
+  </data>
+  <data name="JoinSuffixAdmin" xml:space="preserve">
+    <value>(Admin)</value>
+  </data>
+  <data name="JoinSuffixNotAdmin" xml:space="preserve">
+    <value>(Not admin)</value>
+  </data>
+
+  <!-- Chat commands -->
+  <!-- {0}=SteamID2 -->
+  <data name="SteamIdDisplay" xml:space="preserve">
+    <value>SteamID2 : {0}</value>
+  </data>
+  <!-- {0}=map name, {1}=weapon list -->
+  <data name="RestrictedWeaponsOnMap" xml:space="preserve">
+    <value>Restricted weapon on map {0}: {1}</value>
+  </data>
+  <data name="HelpCommandsAdmin" xml:space="preserve">
+    <value>Available commands: !admin, !admins, !mysteamid, !thetime, !weapons, !help. Only for Level 3 admin: !status, !reload</value>
+  </data>
+  <data name="HelpCommandsPlayer" xml:space="preserve">
+    <value>Available commands: !admin, !admins, !mysteamid, !thetime, !weapons, !help</value>
+  </data>
+  <data name="AdminsOnlinePrefix" xml:space="preserve">
+    <value>Admins online: </value>
+  </data>
+  <data name="ConfigsReloaded" xml:space="preserve">
+    <value>Configs reloaded.</value>
+  </data>
+
+  <!-- Auto shuffle: {0}=ChatColors.Red, {1}=diff%, {2}=ChatColors.Yellow -->
+  <data name="AutoShuffleCurrentDiff" xml:space="preserve">
+    <value>Current diff is</value>
+  </data>
+  <data name="AutoShuffleActivated" xml:space="preserve">
+    <value>auto team shuffle activated</value>
+  </data>
+
+  <!-- Rename -->
+  <data name="RenameExpired" xml:space="preserve">
+    <value>Rename request expired.</value>
+  </data>
+  <data name="TargetDisconnected" xml:space="preserve">
+    <value>Target player is no longer connected.</value>
+  </data>
+  <!-- {0}=error message -->
+  <data name="RenameApplyError" xml:space="preserve">
+    <value>Error applying rename: {0}</value>
+  </data>
+  <!-- {0}=old name, {1}=new name, {2}=admin name -->
+  <data name="PlayerRenamed" xml:space="preserve">
+    <value>{0} has been renamed to {1} by {2}.</value>
+  </data>
+  <data name="RenameStartError" xml:space="preserve">
+    <value>Unable to start rename: missing SteamID.</value>
+  </data>
+  <!-- {0}=target player name -->
+  <data name="RenamePrompt" xml:space="preserve">
+    <value>Type the new name for {0} in chat within 30 seconds.</value>
+  </data>
+
+  <!-- Ban menu -->
+  <data name="BanMenuTitle" xml:space="preserve">
+    <value>Expiration time?</value>
+  </data>
+  <data name="Ban1Min" xml:space="preserve">
+    <value>1 min</value>
+  </data>
+  <data name="Ban10Min" xml:space="preserve">
+    <value>10 min</value>
+  </data>
+  <data name="Ban1Day" xml:space="preserve">
+    <value>1 day</value>
+  </data>
+  <data name="Ban1Week" xml:space="preserve">
+    <value>1 week</value>
+  </data>
+  <data name="BanPermanent" xml:space="preserve">
+    <value>Permanent</value>
+  </data>
+  <!-- {0}=player name, {1}=admin name, {2}=ban expiry -->
+  <data name="PlayerBanned" xml:space="preserve">
+    <value>{0} has been banned by {1} until {2}.</value>
+  </data>
+
+  <!-- Action notifications: {0}=target, {1}=admin -->
+  <data name="PlayerKicked" xml:space="preserve">
+    <value>{0} has been kicked by {1}.</value>
+  </data>
+  <data name="PlayerKilled" xml:space="preserve">
+    <value>{0} has been killed by {1}.</value>
+  </data>
+  <data name="PlayerMuted" xml:space="preserve">
+    <value>{0} has been muted by {1}.</value>
+  </data>
+  <data name="PlayerUnmuted" xml:space="preserve">
+    <value>{0} has been unmuted by {1}.</value>
+  </data>
+  <data name="PlayerSlapped" xml:space="preserve">
+    <value>{0} has been slapped by {1}.</value>
+  </data>
+  <data name="PlayerRespawned" xml:space="preserve">
+    <value>{0} has been respawned by {1}.</value>
+  </data>
+  <!-- {0}=player name, {1}=weapon name -->
+  <data name="PlayerDroppedWeapon" xml:space="preserve">
+    <value>{0} has dropped their weapon: {1}</value>
+  </data>
+
+  <!-- Set HP -->
+  <data name="SetHPMenuTitle" xml:space="preserve">
+    <value>Set HP level for everyone</value>
+  </data>
+  <!-- {0}=admin name, {1}=HP value -->
+  <data name="HPSetForAll" xml:space="preserve">
+    <value>Admin {0} set HP to {1} for everyone.</value>
+  </data>
+
+  <!-- Set Team -->
+  <data name="ChooseTeam" xml:space="preserve">
+    <value>Choose team</value>
+  </data>
+  <data name="TeamTerrorist" xml:space="preserve">
+    <value>Terrorist</value>
+  </data>
+  <data name="TeamTerroristRespawn" xml:space="preserve">
+    <value>Terrorist + Respawn</value>
+  </data>
+  <data name="TeamCounterTerrorist" xml:space="preserve">
+    <value>CounterTerrorist</value>
+  </data>
+  <data name="TeamCounterTerroristRespawn" xml:space="preserve">
+    <value>CounterTerrorist + Respawn</value>
+  </data>
+  <data name="TeamSpectator" xml:space="preserve">
+    <value>Spectator</value>
+  </data>
+  <!-- {0}=target, {1}=admin -->
+  <data name="PlayerAssignedTerrorist" xml:space="preserve">
+    <value>{0} assigned to Terrorist team by {1}.</value>
+  </data>
+  <data name="PlayerAssignedTerroristRespawn" xml:space="preserve">
+    <value>{0} assigned to Terrorist team and Respawned by {1}.</value>
+  </data>
+  <data name="PlayerAssignedCT" xml:space="preserve">
+    <value>{0} assigned to CounterTerrorist team by {1}.</value>
+  </data>
+  <data name="PlayerAssignedCTRespawn" xml:space="preserve">
+    <value>{0} assigned to CounterTerrorist team and Respawned by {1}.</value>
+  </data>
+  <data name="PlayerAssignedSpectator" xml:space="preserve">
+    <value>{0} assigned to Spectator by {1}.</value>
+  </data>
+
+  <!-- Set Admin -->
+  <!-- {0}=target player name -->
+  <data name="SetAdminMenuTitle" xml:space="preserve">
+    <value>Set admin level for {0}</value>
+  </data>
+  <data name="AdminLevel1" xml:space="preserve">
+    <value>Level 1 (Lowest)</value>
+  </data>
+  <data name="AdminLevel2" xml:space="preserve">
+    <value>Level 2</value>
+  </data>
+  <data name="AdminLevel3" xml:space="preserve">
+    <value>Level 3 (Highest)</value>
+  </data>
+  <data name="AdminLevelDelete" xml:space="preserve">
+    <value>Delete admin</value>
+  </data>
+  <!-- {0}=admin level number -->
+  <data name="AdminLevelSet" xml:space="preserve">
+    <value>Your admin level has been set to {0}.</value>
+  </data>
+
+  <!-- Change map -->
+  <data name="ChooseMap" xml:space="preserve">
+    <value>Choose map</value>
+  </data>
+  <!-- {0}=admin name -->
+  <data name="MapChangeInitiated" xml:space="preserve">
+    <value>Map change initiated by {0}.</value>
+  </data>
+
+  <!-- Bot handle -->
+  <data name="BotMenuTitle" xml:space="preserve">
+    <value>Choose bot action</value>
+  </data>
+  <data name="BotKickAll" xml:space="preserve">
+    <value>Kick All</value>
+  </data>
+  <data name="BotAddT" xml:space="preserve">
+    <value>Add T</value>
+  </data>
+  <data name="BotAddCT" xml:space="preserve">
+    <value>Add CT</value>
+  </data>
+  <!-- {0}=admin name -->
+  <data name="AllBotsKicked" xml:space="preserve">
+    <value>All bots have been kicked by {0}.</value>
+  </data>
+  <data name="TerroristBotAdded" xml:space="preserve">
+    <value>Terrorist bot has been added by {0}.</value>
+  </data>
+  <data name="CTBotAdded" xml:space="preserve">
+    <value>CounterTerrorist bot has been added by {0}.</value>
+  </data>
+
+  <!-- Weapon restrict -->
+  <data name="WeaponRestrictMenuTitle" xml:space="preserve">
+    <value>Choose an action</value>
+  </data>
+  <data name="RestrictThisMap" xml:space="preserve">
+    <value>Restrict - this map</value>
+  </data>
+  <data name="UnrestrictThisMap" xml:space="preserve">
+    <value>Unrestrict - this map</value>
+  </data>
+  <data name="RestrictAllMaps" xml:space="preserve">
+    <value>Restrict - all maps</value>
+  </data>
+  <data name="UnrestrictAllMaps" xml:space="preserve">
+    <value>Unrestrict - all maps</value>
+  </data>
+  <data name="ShowRestrictedWeapons" xml:space="preserve">
+    <value>Show restricted weapons</value>
+  </data>
+  <data name="ChooseWeapon" xml:space="preserve">
+    <value>Choose weapon</value>
+  </data>
+  <data name="UnrestrictAllFirst" xml:space="preserve">
+    <value>Unrestrict from all map first.</value>
+  </data>
+  <!-- {0}=weapon name, {1}=map name -->
+  <data name="WeaponNotRestricted" xml:space="preserve">
+    <value>{0} is not restricted on map {1}.</value>
+  </data>
+  <!-- {0}=weapon, {1}=map, {2}=admin -->
+  <data name="WeaponUnrestricted" xml:space="preserve">
+    <value>{0} has been unrestricted on map {1} by {2}.</value>
+  </data>
+  <data name="WeaponRestricted" xml:space="preserve">
+    <value>{0} has been restricted on map {1} by {2}.</value>
+  </data>
+  <data name="NoRestrictedWeapon" xml:space="preserve">
+    <value>No restricted weapon.</value>
+  </data>
+  <!-- {0}=weapon name -->
+  <data name="WeaponForbiddenWarning" xml:space="preserve">
+    <value>WARNING: You are using a FORBIDDEN weapon: {0}.</value>
+  </data>
+  <data name="WeaponCannotUse" xml:space="preserve">
+    <value>You cannot use {0}.</value>
+  </data>
+
+  <!-- Revive teammate -->
+  <!-- {0}=target name, {1}=duration seconds -->
+  <data name="ReviveProgressStart" xml:space="preserve">
+    <value>Reviving {0}... {1}s</value>
+  </data>
+  <!-- {0}=target name, {1}=progress bar string, {2}=remaining seconds -->
+  <data name="ReviveProgressBar" xml:space="preserve">
+    <value>Reviving {0}... [{1}] {2}s</value>
+  </data>
+  <data name="ReviveSuccessful" xml:space="preserve">
+    <value>Revive successful!</value>
+  </data>
+  <!-- {0}=reviver name, {1}=target name, {2}=HP amount -->
+  <data name="PlayerRevived" xml:space="preserve">
+    <value>{0} revived {1} with {2} HP!</value>
+  </data>
+</root>

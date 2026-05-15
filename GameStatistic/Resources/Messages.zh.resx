@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+
+  <data name="HelpCommands" xml:space="preserve">
+    <value>可用命令: !mapstat, !mystat, !top, !bottom, !teamstat, !chance, !help</value>
+  </data>
+  <data name="PlayerStatHeader" xml:space="preserve">
+    <value>过去{0}个月:</value>
+  </data>
+  <data name="PlayerStatDetails" xml:space="preserve">
+    <value>击杀:{0}, 死亡:{1}, 助攻:{2}, 自杀:{3}, 队友击杀:{4}</value>
+  </data>
+  <data name="CurrentPosition" xml:space="preserve">
+    <value>你当前的排名是第{0}位</value>
+  </data>
+</root>

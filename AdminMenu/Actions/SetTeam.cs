@@ -17,48 +17,48 @@ namespace AdminMenu
 
         private void ShowTeamMenu(CCSPlayerController adminPlayer, CCSPlayerController targetPlayer)
         {
-            var teamsMenu = new CenterHtmlMenu($"Choose team", this);
+            var teamsMenu = new CenterHtmlMenu(Msg.Get("ChooseTeam"), this);
             int adminLevel = GetAdminLevel(adminPlayer);
 
-            teamsMenu.AddMenuOption("Terrorist",
+            teamsMenu.AddMenuOption(Msg.Get("TeamTerrorist"),
                 (CCSPlayerController controller, ChatMenuOption option) =>
                 {
                     targetPlayer.SwitchTeam(CsTeam.Terrorist);
-                    Server.PrintToChatAll($"{PluginPrefix} {targetPlayer.PlayerName} assigned to {ChatColors.Red}Terrorist {ChatColors.Default}team by {adminPlayer.PlayerName}.");
+                    Server.PrintToChatAll($"{PluginPrefix} {Msg.Get("PlayerAssignedTerrorist", targetPlayer.PlayerName, adminPlayer.PlayerName)}");
                 });
 
             if (adminLevel > 2)
             {
-                teamsMenu.AddMenuOption("Terrorist + Respawn",
+                teamsMenu.AddMenuOption(Msg.Get("TeamTerroristRespawn"),
                 (CCSPlayerController controller, ChatMenuOption option) =>
                 {
                     targetPlayer.SwitchTeam(CsTeam.Terrorist); targetPlayer.Respawn();
-                    Server.PrintToChatAll($"{PluginPrefix} {targetPlayer.PlayerName} assigned to {ChatColors.Red}Terrorist {ChatColors.Default}team and Respawned by {adminPlayer.PlayerName}.");
+                    Server.PrintToChatAll($"{PluginPrefix} {Msg.Get("PlayerAssignedTerroristRespawn", targetPlayer.PlayerName, adminPlayer.PlayerName)}");
                 });
             }
 
-            teamsMenu.AddMenuOption("CounterTerrorist",
+            teamsMenu.AddMenuOption(Msg.Get("TeamCounterTerrorist"),
                 (CCSPlayerController controller, ChatMenuOption option) =>
                 {
                     targetPlayer.SwitchTeam(CsTeam.CounterTerrorist);
-                    Server.PrintToChatAll($"{PluginPrefix} {targetPlayer.PlayerName} assigned to {ChatColors.Blue}CounterTerrorist {ChatColors.Default}team by {adminPlayer.PlayerName}.");
+                    Server.PrintToChatAll($"{PluginPrefix} {Msg.Get("PlayerAssignedCT", targetPlayer.PlayerName, adminPlayer.PlayerName)}");
                 });
 
             if (adminLevel > 2)
             {
-                teamsMenu.AddMenuOption("CounterTerrorist + Respawn",
+                teamsMenu.AddMenuOption(Msg.Get("TeamCounterTerroristRespawn"),
                 (CCSPlayerController controller, ChatMenuOption option) =>
                 {
                     targetPlayer.SwitchTeam(CsTeam.CounterTerrorist); targetPlayer.Respawn();
-                    Server.PrintToChatAll($"{PluginPrefix} {targetPlayer.PlayerName} assigned to {ChatColors.Blue}CounterTerrorist {ChatColors.Default}team and Respawned by {adminPlayer.PlayerName}.");
+                    Server.PrintToChatAll($"{PluginPrefix} {Msg.Get("PlayerAssignedCTRespawn", targetPlayer.PlayerName, adminPlayer.PlayerName)}");
                 });
             }
 
-            teamsMenu.AddMenuOption("Spectator",
+            teamsMenu.AddMenuOption(Msg.Get("TeamSpectator"),
                 (CCSPlayerController controller, ChatMenuOption option) =>
                 {
                     targetPlayer.ChangeTeam(CsTeam.Spectator);
-                    Server.PrintToChatAll($"{PluginPrefix} {targetPlayer.PlayerName} assigned to {ChatColors.Grey}Spectator {ChatColors.Default}by {adminPlayer.PlayerName}.");
+                    Server.PrintToChatAll($"{PluginPrefix} {Msg.Get("PlayerAssignedSpectator", targetPlayer.PlayerName, adminPlayer.PlayerName)}");
                 });
 
             teamsMenu.PostSelectAction = PostSelectAction.Close;

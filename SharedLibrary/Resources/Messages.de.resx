@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+
+  <data name="MapStatsNeverPlayed" xml:space="preserve">
+    <value>Auf dieser Karte {0}T Siege: {1}%, {2}CT Siege: {3}%, {4}Noch nie gespielt</value>
+  </data>
+  <data name="MapStatsLastPlayed" xml:space="preserve">
+    <value>Auf dieser Karte {0}T Siege: {1}%, {2}CT Siege: {3}%, {4}Zuletzt vor {5} Tag(en) gespielt</value>
+  </data>
+  <data name="TeamsEqual" xml:space="preserve">
+    <value>Teams sind ausgeglichen</value>
+  </data>
+  <data name="CTStronger" xml:space="preserve">
+    <value>CT {0}% stärker</value>
+  </data>
+  <data name="TStronger" xml:space="preserve">
+    <value>T {0}% stärker</value>
+  </data>
+  <data name="TeamScores" xml:space="preserve">
+    <value>Teamwertungen: {0}</value>
+  </data>
+</root>

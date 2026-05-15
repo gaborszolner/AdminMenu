@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+
+  <data name="NotAdminError" xml:space="preserve"><value>Вы не являетесь администратором.</value></data>
+  <data name="MainMenuTitle" xml:space="preserve"><value>Выберите действие</value></data>
+  <data name="MenuBan" xml:space="preserve"><value>Бан</value></data>
+  <data name="MenuKick" xml:space="preserve"><value>Кик</value></data>
+  <data name="MenuKill" xml:space="preserve"><value>Убить</value></data>
+  <data name="MenuSlap" xml:space="preserve"><value>Шлёпнуть</value></data>
+  <data name="MenuDropWeapon" xml:space="preserve"><value>Выбросить оружие</value></data>
+  <data name="MenuSetTeam" xml:space="preserve"><value>Назначить команду</value></data>
+  <data name="MenuRename" xml:space="preserve"><value>Переименовать</value></data>
+  <data name="MenuMute" xml:space="preserve"><value>Заглушить</value></data>
+  <data name="MenuUnMute" xml:space="preserve"><value>Разглушить</value></data>
+  <data name="MenuWeaponRestrict" xml:space="preserve"><value>Ограничение оружия</value></data>
+  <data name="MenuRespawn" xml:space="preserve"><value>Возродить</value></data>
+  <data name="MenuSetAdmin" xml:space="preserve"><value>Назначить админа</value></data>
+  <data name="MenuSetHP" xml:space="preserve"><value>Установить HP</value></data>
+  <data name="MenuChangeMap" xml:space="preserve"><value>Сменить карту</value></data>
+  <data name="MenuTeamShuffle" xml:space="preserve"><value>Перемешать команды</value></data>
+  <data name="MenuBotHandle" xml:space="preserve"><value>Управление ботами</value></data>
+  <data name="ChoosePlayer" xml:space="preserve"><value>Выберите игрока</value></data>
+  <data name="ActionDeniedHigherAdmin" xml:space="preserve"><value>Вы не можете выполнять действия с {0}, так как у него уровень администратора выше.</value></data>
+  <data name="PlayerBannedFromServer" xml:space="preserve"><value>{0} забанен на этом сервере. (Имя при бане: {1})</value></data>
+  <data name="TypeHelpHint" xml:space="preserve"><value>Введите !help для просмотра доступных команд.</value></data>
+  <data name="JoinSuffixAdmin" xml:space="preserve"><value>(Администратор)</value></data>
+  <data name="JoinSuffixNotAdmin" xml:space="preserve"><value>(Не администратор)</value></data>
+  <data name="SteamIdDisplay" xml:space="preserve"><value>SteamID2 : {0}</value></data>
+  <data name="RestrictedWeaponsOnMap" xml:space="preserve"><value>Запрещённое оружие на карте {0}: {1}</value></data>
+  <data name="HelpCommandsAdmin" xml:space="preserve"><value>Доступные команды: !admin, !admins, !mysteamid, !thetime, !weapons, !help. Только для Level 3 admin: !status, !reload</value></data>
+  <data name="HelpCommandsPlayer" xml:space="preserve"><value>Доступные команды: !admin, !admins, !mysteamid, !thetime, !weapons, !help</value></data>
+  <data name="AdminsOnlinePrefix" xml:space="preserve"><value>Администраторы онлайн: </value></data>
+  <data name="ConfigsReloaded" xml:space="preserve"><value>Конфиги перезагружены.</value></data>
+  <data name="AutoShuffleCurrentDiff" xml:space="preserve"><value>Текущая разница</value></data>
+  <data name="AutoShuffleActivated" xml:space="preserve"><value>автоматическое перемешивание команд активировано</value></data>
+  <data name="RenameExpired" xml:space="preserve"><value>Запрос на переименование истёк.</value></data>
+  <data name="TargetDisconnected" xml:space="preserve"><value>Игрок отключился.</value></data>
+  <data name="RenameApplyError" xml:space="preserve"><value>Ошибка применения переименования: {0}</value></data>
+  <data name="PlayerRenamed" xml:space="preserve"><value>{0} переименован в {1} администратором {2}.</value></data>
+  <data name="RenameStartError" xml:space="preserve"><value>Не удалось начать переименование: отсутствует SteamID.</value></data>
+  <data name="RenamePrompt" xml:space="preserve"><value>Введите новое имя для {0} в чате в течение 30 секунд.</value></data>
+  <data name="BanMenuTitle" xml:space="preserve"><value>Срок бана?</value></data>
+  <data name="Ban1Min" xml:space="preserve"><value>1 мин</value></data>
+  <data name="Ban10Min" xml:space="preserve"><value>10 мин</value></data>
+  <data name="Ban1Day" xml:space="preserve"><value>1 день</value></data>
+  <data name="Ban1Week" xml:space="preserve"><value>1 неделя</value></data>
+  <data name="BanPermanent" xml:space="preserve"><value>Навсегда</value></data>
+  <data name="PlayerBanned" xml:space="preserve"><value>{0} забанен администратором {1} до {2}.</value></data>
+  <data name="PlayerKicked" xml:space="preserve"><value>{0} кикнут администратором {1}.</value></data>
+  <data name="PlayerKilled" xml:space="preserve"><value>{0} убит администратором {1}.</value></data>
+  <data name="PlayerMuted" xml:space="preserve"><value>{0} заглушен администратором {1}.</value></data>
+  <data name="PlayerUnmuted" xml:space="preserve"><value>{0} разглушен администратором {1}.</value></data>
+  <data name="PlayerSlapped" xml:space="preserve"><value>{0} получил шлепок от {1}.</value></data>
+  <data name="PlayerRespawned" xml:space="preserve"><value>{0} возрождён администратором {1}.</value></data>
+  <data name="PlayerDroppedWeapon" xml:space="preserve"><value>{0} выбросил оружие: {1}</value></data>
+  <data name="SetHPMenuTitle" xml:space="preserve"><value>Установить HP для всех</value></data>
+  <data name="HPSetForAll" xml:space="preserve"><value>Администратор {0} установил HP {1} для всех.</value></data>
+  <data name="ChooseTeam" xml:space="preserve"><value>Выберите команду</value></data>
+  <data name="TeamTerrorist" xml:space="preserve"><value>Террорист</value></data>
+  <data name="TeamTerroristRespawn" xml:space="preserve"><value>Террорист + Возрождение</value></data>
+  <data name="TeamCounterTerrorist" xml:space="preserve"><value>КонтрТеррорист</value></data>
+  <data name="TeamCounterTerroristRespawn" xml:space="preserve"><value>КонтрТеррорист + Возрождение</value></data>
+  <data name="TeamSpectator" xml:space="preserve"><value>Наблюдатель</value></data>
+  <data name="PlayerAssignedTerrorist" xml:space="preserve"><value>{0} назначен в команду Террористов администратором {1}.</value></data>
+  <data name="PlayerAssignedTerroristRespawn" xml:space="preserve"><value>{0} назначен в команду Террористов и возрождён администратором {1}.</value></data>
+  <data name="PlayerAssignedCT" xml:space="preserve"><value>{0} назначен в команду КонтрТеррористов администратором {1}.</value></data>
+  <data name="PlayerAssignedCTRespawn" xml:space="preserve"><value>{0} назначен в команду КонтрТеррористов и возрождён администратором {1}.</value></data>
+  <data name="PlayerAssignedSpectator" xml:space="preserve"><value>{0} назначен в Наблюдатели администратором {1}.</value></data>
+  <data name="SetAdminMenuTitle" xml:space="preserve"><value>Установить уровень администратора для {0}</value></data>
+  <data name="AdminLevel1" xml:space="preserve"><value>Уровень 1 (Низший)</value></data>
+  <data name="AdminLevel2" xml:space="preserve"><value>Уровень 2</value></data>
+  <data name="AdminLevel3" xml:space="preserve"><value>Уровень 3 (Высший)</value></data>
+  <data name="AdminLevelDelete" xml:space="preserve"><value>Удалить администратора</value></data>
+  <data name="AdminLevelSet" xml:space="preserve"><value>Ваш уровень администратора установлен на {0}.</value></data>
+  <data name="ChooseMap" xml:space="preserve"><value>Выберите карту</value></data>
+  <data name="MapChangeInitiated" xml:space="preserve"><value>Смена карты инициирована администратором {0}.</value></data>
+  <data name="BotMenuTitle" xml:space="preserve"><value>Выберите действие с ботами</value></data>
+  <data name="BotKickAll" xml:space="preserve"><value>Выгнать всех</value></data>
+  <data name="BotAddT" xml:space="preserve"><value>Добавить T</value></data>
+  <data name="BotAddCT" xml:space="preserve"><value>Добавить CT</value></data>
+  <data name="AllBotsKicked" xml:space="preserve"><value>Все боты выгнаны администратором {0}.</value></data>
+  <data name="TerroristBotAdded" xml:space="preserve"><value>Бот-террорист добавлен администратором {0}.</value></data>
+  <data name="CTBotAdded" xml:space="preserve"><value>Бот-КонтрТеррорист добавлен администратором {0}.</value></data>
+  <data name="WeaponRestrictMenuTitle" xml:space="preserve"><value>Выберите действие</value></data>
+  <data name="RestrictThisMap" xml:space="preserve"><value>Запретить - эта карта</value></data>
+  <data name="UnrestrictThisMap" xml:space="preserve"><value>Разрешить - эта карта</value></data>
+  <data name="RestrictAllMaps" xml:space="preserve"><value>Запретить - все карты</value></data>
+  <data name="UnrestrictAllMaps" xml:space="preserve"><value>Разрешить - все карты</value></data>
+  <data name="ShowRestrictedWeapons" xml:space="preserve"><value>Показать запрещённое оружие</value></data>
+  <data name="ChooseWeapon" xml:space="preserve"><value>Выберите оружие</value></data>
+  <data name="UnrestrictAllFirst" xml:space="preserve"><value>Сначала разрешите на всех картах.</value></data>
+  <data name="WeaponNotRestricted" xml:space="preserve"><value>{0} не запрещено на карте {1}.</value></data>
+  <data name="WeaponUnrestricted" xml:space="preserve"><value>{0} разрешено на карте {1} администратором {2}.</value></data>
+  <data name="WeaponRestricted" xml:space="preserve"><value>{0} запрещено на карте {1} администратором {2}.</value></data>
+  <data name="NoRestrictedWeapon" xml:space="preserve"><value>Нет запрещённого оружия.</value></data>
+  <data name="WeaponForbiddenWarning" xml:space="preserve"><value>ВНИМАНИЕ: Вы используете ЗАПРЕЩЁННОЕ оружие: {0}.</value></data>
+  <data name="WeaponCannotUse" xml:space="preserve"><value>Вы не можете использовать {0}.</value></data>
+  <data name="ReviveProgressStart" xml:space="preserve"><value>Возрождение {0}... {1}с</value></data>
+  <data name="ReviveProgressBar" xml:space="preserve"><value>Возрождение {0}... [{1}] {2}с</value></data>
+  <data name="ReviveSuccessful" xml:space="preserve"><value>Возрождение успешно!</value></data>
+  <data name="PlayerRevived" xml:space="preserve"><value>{0} возродил {1} с {2} HP!</value></data>
+</root>

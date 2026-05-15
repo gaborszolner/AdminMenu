@@ -10,7 +10,7 @@ namespace AdminMenu
         {
             ShowPlayerListMenu(adminPlayer, true, true, (CCSPlayerController targetPlayer) =>
             {
-                Server.PrintToChatAll($"{PluginPrefix} {targetPlayer.PlayerName} has been killed by {adminPlayer.PlayerName}.");
+                Server.PrintToChatAll($"{PluginPrefix} {Msg.Get("PlayerKilled", targetPlayer.PlayerName, adminPlayer.PlayerName)}");
                 targetPlayer.CommitSuicide(true, true);
                 MenuManager.GetActiveMenu(adminPlayer)?.Close();
             });

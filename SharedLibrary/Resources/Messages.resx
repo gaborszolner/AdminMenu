@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+
+  <!-- Map statistics: {0}=ChatColors.Red, {1}=T win%, {2}=ChatColors.Blue, {3}=CT win%, {4}=ChatColors.Green -->
+  <data name="MapStatsNeverPlayed" xml:space="preserve">
+    <value>On this map {0} T win: {1}%, {2}CT win: {3}%, {4}Never played before</value>
+  </data>
+  <!-- Map statistics: {0}=ChatColors.Red, {1}=T win%, {2}=ChatColors.Blue, {3}=CT win%, {4}=ChatColors.Green, {5}=days passed -->
+  <data name="MapStatsLastPlayed" xml:space="preserve">
+    <value>On this map {0} T win: {1}%, {2}CT win: {3}%, {4}Last played {5} day(s) ago</value>
+  </data>
+  <data name="TeamsEqual" xml:space="preserve">
+    <value>Teams are equal</value>
+  </data>
+  <!-- {0}=percent difference -->
+  <data name="CTStronger" xml:space="preserve">
+    <value>CT {0}% stronger</value>
+  </data>
+  <!-- {0}=percent difference -->
+  <data name="TStronger" xml:space="preserve">
+    <value>T {0}% stronger</value>
+  </data>
+  <!-- {0}=comparison text with color -->
+  <data name="TeamScores" xml:space="preserve">
+    <value>Team Scores: {0}</value>
+  </data>
+</root>

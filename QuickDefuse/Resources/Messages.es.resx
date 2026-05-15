@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+
+  <data name="WireMenuTitle" xml:space="preserve">
+    <value>Elige un cable en {0}s</value>
+  </data>
+  <data name="WireGreen" xml:space="preserve">
+    <value>Verde</value>
+  </data>
+  <data name="WireYellow" xml:space="preserve">
+    <value>Amarillo</value>
+  </data>
+  <data name="WireRed" xml:space="preserve">
+    <value>Rojo</value>
+  </data>
+  <data name="WireBlue" xml:space="preserve">
+    <value>Azul</value>
+  </data>
+  <data name="WireRandom" xml:space="preserve">
+    <value>Aleatorio</value>
+  </data>
+  <data name="WireChosen" xml:space="preserve">
+    <value>¡Elegiste {0}!</value>
+  </data>
+  <data name="BombDefusable" xml:space="preserve">
+    <value>La bomba puede desactivarse cortando el cable correcto.</value>
+  </data>
+  <data name="BombDefusedSuccess" xml:space="preserve">
+    <value>¡La bomba fue desactivada cortando el cable {0}!</value>
+  </data>
+  <data name="BombDefusedFailed" xml:space="preserve">
+    <value>Se cortó el cable {0}, pero el cable correcto era {1}</value>
+  </data>
+  <data name="WeaponChangedPrimary" xml:space="preserve">
+    <value>El jugador cambió el arma {0} a principal, cortando el cable verde</value>
+  </data>
+  <data name="WeaponChangedSecondary" xml:space="preserve">
+    <value>El jugador cambió el arma {0} a secundaria, cortando el cable amarillo</value>
+  </data>
+  <data name="WeaponChangedKnife" xml:space="preserve">
+    <value>El jugador cambió el arma {0} a cuchillo, cortando el cable rojo</value>
+  </data>
+  <data name="WeaponChangedGrenade" xml:space="preserve">
+    <value>El jugador cambió el arma {0} a granada, cortando el cable azul</value>
+  </data>
+</root>

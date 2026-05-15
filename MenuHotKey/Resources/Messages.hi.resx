@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+
+  <data name="BindInstruction1" xml:space="preserve">
+    <value>क्विक मेनू उपयोग करने के लिए बटन बाइंड करें।</value>
+  </data>
+  <data name="BindInstruction2" xml:space="preserve">
+    <value>उदाहरण: मेनू विकल्प 3 को Numpad 3 से बाइंड करने के लिए कंसोल में टाइप करें: bind kp_3 "3"</value>
+  </data>
+</root>

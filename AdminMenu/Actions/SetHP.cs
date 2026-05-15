@@ -9,7 +9,7 @@ namespace AdminMenu
     {
         private void SetHPAction(CCSPlayerController adminPlayer, ChatMenuOption option)
         {
-            var setHPMenu = new CenterHtmlMenu($"Set HP level for everyone", this);
+            var setHPMenu = new CenterHtmlMenu(Msg.Get("SetHPMenuTitle"), this);
             setHPMenu.AddMenuOption("1", (controller, _) => { SetHP(adminPlayer, 1); });
             setHPMenu.AddMenuOption("10", (controller, _) => { SetHP(adminPlayer, 10); });
             setHPMenu.AddMenuOption("50", (controller, _) => { SetHP(adminPlayer, 50); });
@@ -37,7 +37,7 @@ namespace AdminMenu
                     Utilities.SetStateChanged(pawn, "CBaseEntity", "m_iHealth");
                 }
             }
-            Server.PrintToChatAll($"Admin {adminPlayer.PlayerName} set HP to {hp} for everyone.");
+            Server.PrintToChatAll(Msg.Get("HPSetForAll", adminPlayer.PlayerName, hp));
             MenuManager.GetActiveMenu(adminPlayer)?.Close();
         }
 

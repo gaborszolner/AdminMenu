@@ -33,6 +33,7 @@ namespace GameStatistic
             RegisterEventHandler<EventStartHalftime>(OnStartHalftime);
             _mapStatFilePath = Path.Combine(ModuleDirectory, StatisticHelper.MapStatFileName);
             _config = Config.LoadConfig(Path.Combine(ModuleDirectory, "config.json"));
+            SharedLibrary.Localizer.Initialize(_config.Language);
         }
 
         public HookResult OnPlayerChat(EventPlayerChat @event, GameEventInfo info)
@@ -70,7 +71,7 @@ namespace GameStatistic
             }
             else if (@event?.Text.Trim().ToLower() is "!help")
             {
-                Server.PrintToChatAll($"{PluginPrefix} Available commands: !mapstat, !mystat, !top, !bottom, !teamstat, !chance, !help");
+                Server.PrintToChatAll($"{PluginPrefix} {Msg.Get("HelpCommands")}");
             }
 
             return HookResult.Continue;
@@ -92,6 +93,7 @@ namespace GameStatistic
         {
             _isWarmup = true;
             _config = Config.LoadConfig(Path.Combine(ModuleDirectory, "config.json"));
+            SharedLibrary.Localizer.Initialize(_config.Language);
             _mapStatFilePath = Path.Combine(ModuleDirectory, StatisticHelper.MapStatFileName);
             return HookResult.Continue;
         }
@@ -194,8 +196,8 @@ namespace GameStatistic
             if (playerSteamId is not null && storedStats.ContainsKey(playerSteamId))
             {
                 var playerEntry = storedStats[playerSteamId];
-                player?.PrintToChat($"In the last {_config.DateRangeForStatisticsInMonth} months:");
-                player?.PrintToChat($"Kill:{playerEntry?.Kill}, Dead:{playerEntry?.Dead}, Assist:{playerEntry?.Assister}, SelfKill:{playerEntry?.SelfKill}, TeamKill:{playerEntry?.TeamKill}");
+                player?.PrintToChat(Msg.Get("PlayerStatHeader", _config.DateRangeForStatisticsInMonth));
+                player?.PrintToChat(Msg.Get("PlayerStatDetails", playerEntry?.Kill, playerEntry?.Dead, playerEntry?.Assister, playerEntry?.SelfKill, playerEntry?.TeamKill));
             }
         }
 
@@ -236,7 +238,7 @@ namespace GameStatistic
                 {
                     if (storedStats[i].Value.Identity == player.AuthorizedSteamID?.SteamId2)
                     {
-                        player.PrintToChat($"{PluginPrefix} Your current position is {i + 1}");
+                        player.PrintToChat(Msg.Get("CurrentPosition", i + 1));
                         break;
                     }
                 }

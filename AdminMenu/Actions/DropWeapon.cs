@@ -12,7 +12,7 @@ namespace AdminMenu
             {
                 string? weaponName = targetPlayer.Pawn.Value?.WeaponServices?.ActiveWeapon?.Value?.DesignerName;
                 targetPlayer.DropActiveWeapon();
-                Server.PrintToChatAll($"{PluginPrefix} {targetPlayer.PlayerName} has dropped their weapon: {weaponName}");
+                Server.PrintToChatAll($"{PluginPrefix} {Msg.Get("PlayerDroppedWeapon", targetPlayer.PlayerName, weaponName)}");
             });
         }
     }

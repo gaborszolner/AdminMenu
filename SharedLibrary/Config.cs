@@ -27,6 +27,8 @@ namespace SharedLibrary
 
         public int ReviveHP { get; set; } = 10;
 
+        public string Language { get; set; } = "en";
+
         public static Config LoadConfig(string configFile)
         {
             Config? config = null;

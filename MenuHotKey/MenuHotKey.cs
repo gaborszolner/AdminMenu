@@ -3,6 +3,7 @@ using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Commands;
 using CounterStrikeSharp.API.Modules.Events;
 using CounterStrikeSharp.API.Modules.Menu;
+using SharedLibrary;
 
 namespace MenuHotKey
 {
@@ -18,6 +19,9 @@ namespace MenuHotKey
 
         public override void Load(bool hotReload)
         {
+            var config = Config.LoadConfig(Path.Combine(ModuleDirectory, "config.json"));
+            SharedLibrary.Localizer.Initialize(config.Language);
+
             RegisterEventHandler<EventPlayerConnect>(OnPlayerConnectFull);
             AddCommandListener("1", OnKeyPress);
             AddCommandListener("2", OnKeyPress);
@@ -39,8 +43,8 @@ namespace MenuHotKey
                 return HookResult.Continue;
             }
 
-            player?.PrintToChat("To use the quick menu, you need to bind the buttons.");
-            player?.PrintToChat("For example, to bind menu option 3 to Numpad 3, type to console: bind kp_3 \"3\"");
+            player?.PrintToChat(Msg.Get("BindInstruction1"));
+            player?.PrintToChat(Msg.Get("BindInstruction2"));
 
             return HookResult.Continue;
         }

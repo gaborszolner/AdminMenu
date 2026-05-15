@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+
+  <data name="WireMenuTitle" xml:space="preserve">
+    <value>Wähle einen Draht in {0}s</value>
+  </data>
+  <data name="WireGreen" xml:space="preserve">
+    <value>Grün</value>
+  </data>
+  <data name="WireYellow" xml:space="preserve">
+    <value>Gelb</value>
+  </data>
+  <data name="WireRed" xml:space="preserve">
+    <value>Rot</value>
+  </data>
+  <data name="WireBlue" xml:space="preserve">
+    <value>Blau</value>
+  </data>
+  <data name="WireRandom" xml:space="preserve">
+    <value>Zufällig</value>
+  </data>
+  <data name="WireChosen" xml:space="preserve">
+    <value>Du hast {0} gewählt!</value>
+  </data>
+  <data name="BombDefusable" xml:space="preserve">
+    <value>Die Bombe kann durch Durchtrennen des richtigen Drahtes entschärft werden.</value>
+  </data>
+  <data name="BombDefusedSuccess" xml:space="preserve">
+    <value>Die Bombe wurde durch Durchtrennen des {0} Drahtes entschärft!</value>
+  </data>
+  <data name="BombDefusedFailed" xml:space="preserve">
+    <value>Der durchschnittene Draht war {0}, aber der richtige Draht war {1}</value>
+  </data>
+  <data name="WeaponChangedPrimary" xml:space="preserve">
+    <value>Spieler wechselte Waffe {0} zu Primär, grünen Draht durchtrennt</value>
+  </data>
+  <data name="WeaponChangedSecondary" xml:space="preserve">
+    <value>Spieler wechselte Waffe {0} zu Sekundär, gelben Draht durchtrennt</value>
+  </data>
+  <data name="WeaponChangedKnife" xml:space="preserve">
+    <value>Spieler wechselte Waffe {0} zu Messer, roten Draht durchtrennt</value>
+  </data>
+  <data name="WeaponChangedGrenade" xml:space="preserve">
+    <value>Spieler wechselte Waffe {0} zu Granate, blauen Draht durchtrennt</value>
+  </data>
+</root>

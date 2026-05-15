@@ -10,7 +10,7 @@ namespace AdminMenu
         private void ChangeMapAction(CCSPlayerController player, ChatMenuOption option)
         {
             Dictionary<string, string> mapList = GetMaps(_mapListFilePath);
-            var mapMenu = new CenterHtmlMenu($"Choose map", this);
+            var mapMenu = new CenterHtmlMenu(Msg.Get("ChooseMap"), this);
             foreach (var map in mapList)
             {
                 mapMenu.AddMenuOption(map.Key, (CCSPlayerController player, ChatMenuOption menuOption) =>
@@ -29,7 +29,7 @@ namespace AdminMenu
                     }
                 });
             }
-            Server.PrintToChatAll($"{PluginPrefix} Map change initiated by {player.PlayerName}.");
+            Server.PrintToChatAll($"{PluginPrefix} {Msg.Get("MapChangeInitiated", player.PlayerName)}");
             MenuManager.OpenCenterHtmlMenu(this, player, mapMenu);
         }
 

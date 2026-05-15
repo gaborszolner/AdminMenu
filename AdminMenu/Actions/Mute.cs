@@ -11,7 +11,7 @@ namespace AdminMenu
         {
             ShowPlayerListMenu(adminPlayer, false, false, (CCSPlayerController targetPlayer) =>
             {
-                Server.PrintToChatAll($"{targetPlayer.PlayerName} has been muted by {adminPlayer.PlayerName}.");
+                Server.PrintToChatAll($"{Msg.Get("PlayerMuted", targetPlayer.PlayerName, adminPlayer.PlayerName)}");
                 targetPlayer.VoiceFlags = targetPlayer.VoiceFlags |= VoiceFlags.Muted;
                 MenuManager.GetActiveMenu(adminPlayer)?.Close();
                 Logger?.LogInformation($"{PluginPrefix} {targetPlayer.PlayerName} has been muted by {adminPlayer.PlayerName}.");

@@ -12,7 +12,7 @@ namespace AdminMenu
             {
                 if (adminPlayer?.AuthorizedSteamID == null)
                 {
-                    adminPlayer?.PrintToChat("Unable to start rename: missing SteamID.");
+                    adminPlayer?.PrintToChat(Msg.Get("RenameStartError"));
                     return;
                 }
 
@@ -31,7 +31,7 @@ namespace AdminMenu
                     };
                 }
 
-                adminPlayer.PrintToChat($"{PluginPrefix} Type the new name for {targetPlayer.PlayerName} in chat within 30 seconds.");
+                adminPlayer.PrintToChat($"{PluginPrefix} {Msg.Get("RenamePrompt", targetPlayer.PlayerName)}");
                 MenuManager.GetActiveMenu(adminPlayer)?.Close();
             });
         }

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+
+  <data name="MapStatsNeverPlayed" xml:space="preserve">
+    <value>Ezen a térképen {0} T győzelem: {1}%, {2}CT győzelem: {3}%, {4}Sosem játszottunk</value>
+  </data>
+  <data name="MapStatsLastPlayed" xml:space="preserve">
+    <value>Ezen a térképen {0} T győzelem: {1}%, {2}CT győzelem: {3}%, {4}Utoljára játszva {5} napja</value>
+  </data>
+  <data name="TeamsEqual" xml:space="preserve">
+    <value>Kiegyenlített csapatok</value>
+  </data>
+  <data name="CTStronger" xml:space="preserve">
+    <value>CT {0}%-kal erősebb</value>
+  </data>
+  <data name="TStronger" xml:space="preserve">
+    <value>T {0}%-kal erősebb</value>
+  </data>
+  <data name="TeamScores" xml:space="preserve">
+    <value>Csapatpontok: {0}</value>
+  </data>
+</root>

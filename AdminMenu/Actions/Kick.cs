@@ -12,7 +12,7 @@ namespace AdminMenu
         {
             ShowPlayerListMenu(adminPlayer, false, false, (CCSPlayerController targetPlayer) =>
             {
-                Server.PrintToChatAll($"{PluginPrefix} {targetPlayer.PlayerName} has been kicked by {adminPlayer.PlayerName}.");
+                Server.PrintToChatAll($"{PluginPrefix} {Msg.Get("PlayerKicked", targetPlayer.PlayerName, adminPlayer.PlayerName)}");
                 targetPlayer.Disconnect(NetworkDisconnectionReason.NETWORK_DISCONNECT_KICKED);
                 MenuManager.GetActiveMenu(adminPlayer)?.Close();
                 Logger?.LogInformation($"{PluginPrefix} {targetPlayer.PlayerName} has been kicked by {adminPlayer.PlayerName}.");

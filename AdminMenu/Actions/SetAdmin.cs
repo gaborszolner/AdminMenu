@@ -11,20 +11,20 @@ namespace AdminMenu
         {
             ShowPlayerListMenu(adminPlayer, false, false, (CCSPlayerController targetPlayer) =>
             {
-                var setAdminMenu = new CenterHtmlMenu($"Set admin level for {targetPlayer.PlayerName}", this);
-                setAdminMenu.AddMenuOption("Level 1 (Lowest)", (controller, _) =>
+                var setAdminMenu = new CenterHtmlMenu(Msg.Get("SetAdminMenuTitle", targetPlayer.PlayerName), this);
+                setAdminMenu.AddMenuOption(Msg.Get("AdminLevel1"), (controller, _) =>
                 {
                     SetAdminLevel(adminPlayer, targetPlayer, 1);
                 });
-                setAdminMenu.AddMenuOption("Level 2", (controller, _) =>
+                setAdminMenu.AddMenuOption(Msg.Get("AdminLevel2"), (controller, _) =>
                 {
                     SetAdminLevel(adminPlayer, targetPlayer, 2);
                 });
-                setAdminMenu.AddMenuOption("Level 3 (Highest)", (controller, _) =>
+                setAdminMenu.AddMenuOption(Msg.Get("AdminLevel3"), (controller, _) =>
                 {
                     SetAdminLevel(adminPlayer, targetPlayer, 3);
                 });
-                setAdminMenu.AddMenuOption("Delete admin", (controller, _) =>
+                setAdminMenu.AddMenuOption(Msg.Get("AdminLevelDelete"), (controller, _) =>
                 {
                     SetAdminLevel(adminPlayer, targetPlayer, 0);
                 });
@@ -42,7 +42,7 @@ namespace AdminMenu
 
             UpdateAdminConfig(targetPlayer, adminLevel);
 
-            targetPlayer.PrintToChat($"Your admin level has been set to {adminLevel}.");
+            targetPlayer.PrintToChat(Msg.Get("AdminLevelSet", adminLevel));
             MenuManager.GetActiveMenu(adminPlayer)?.Close();
         }
 

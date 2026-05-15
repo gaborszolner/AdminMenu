@@ -53,6 +53,7 @@ namespace AdminMenu
             _weaponRestrictFilePath = Path.Combine(ModuleDirectory, "..", "..", "configs", "weaponRestrict.json");
             _mapListFilePath = Path.Combine(ModuleDirectory, "..", "RockTheVote", "maplist.txt");
             _config = Config.LoadConfig(Path.Combine(ModuleDirectory, "config.json"));
+            SharedLibrary.Localizer.Initialize(_config.Language);
 
             _adminEntry = Utils.LoadDataFromFile<AdminEntry>(_adminsFilePath);
             _bannedEntry = Utils.LoadDataFromFile<BannedEntry>(_bannedFilePath);
@@ -137,7 +138,7 @@ namespace AdminMenu
                 _config.AutoTeamShuffleOnRoundStart &&
                 _config.AutoTeamShuffleMinDifferentPercentage <= currentDifferentPercentage)
             {
-                Server.PrintToChatAll($"{PluginPrefix} {ChatColors.Yellow}Current diff is {ChatColors.Red}{currentDifferentPercentage:F2}%{ChatColors.Yellow}, auto team shuffle activated");
+                Server.PrintToChatAll($"{PluginPrefix} {ChatColors.Yellow}{Msg.Get("AutoShuffleCurrentDiff")} {ChatColors.Red}{currentDifferentPercentage:F2}%{ChatColors.Yellow}, {Msg.Get("AutoShuffleActivated")}");
                 TeamShuffleAction(null, null);
                 StatisticHelper.PrintTeamStat(StatisticHelper.LoadMonthsStats(_playerStatDirectory, _config.DateRangeForStatisticsInMonth));
             }
@@ -149,6 +150,7 @@ namespace AdminMenu
         {
             _isWarmup = true;
             _config = Config.LoadConfig(Path.Combine(ModuleDirectory, "config.json"));
+            SharedLibrary.Localizer.Initialize(_config.Language);
             return HookResult.Continue;
         }
 
@@ -175,7 +177,7 @@ namespace AdminMenu
 
             if (IsBanned(player, out string oldName))
             {
-                Server.PrintToChatAll($"{PluginPrefix} {player.PlayerName} banned from this server. (Banned name: {oldName})");
+                Server.PrintToChatAll($"{PluginPrefix} {Msg.Get("PlayerBannedFromServer", player.PlayerName, oldName)}");
                 player.Disconnect(NetworkDisconnectionReason.NETWORK_DISCONNECT_KICKBANADDED);
             }
             else
@@ -186,16 +188,16 @@ namespace AdminMenu
                     var adminLevel = GetAdminLevel(player);
                     if (adminLevel > 1)
                     {
-                        welcomeMessage += $" (Admin)";
+                        welcomeMessage += $" {Msg.Get("JoinSuffixAdmin")}";
                     }
                     else
                     {
-                        welcomeMessage += $" (Not admin)";
+                        welcomeMessage += $" {Msg.Get("JoinSuffixNotAdmin")}";
                     }
 
                     Logger?.LogInformation($"Player connect: {player.PlayerName} - SteamID2: {player.AuthorizedSteamID?.SteamId2} - AdminLevel: {adminLevel}");
                     Server.PrintToChatAll(welcomeMessage);
-                    player.PrintToChat($"{PluginPrefix} Type !help to see available commands.");
+                    player.PrintToChat($"{PluginPrefix} {Msg.Get("TypeHelpHint")}");
                 }
             }
 
@@ -229,7 +231,7 @@ namespace AdminMenu
             }
             else if (@event?.Text.Trim().ToLower() is "!mysteamid")
             {
-                player?.PrintToChat($"SteamID2 : {player?.AuthorizedSteamID?.SteamId2}");
+                player?.PrintToChat(Msg.Get("SteamIdDisplay", player?.AuthorizedSteamID?.SteamId2 ?? string.Empty));
             }
             else if (@event?.Text.Trim().ToLower() is "!thetime")
             {
@@ -239,7 +241,7 @@ namespace AdminMenu
             {
                 string mapName = Server.MapName.Trim() ?? string.Empty;
                 string weaponList = GetRestrictedWeapons(mapName);
-                Server.PrintToChatAll($"{PluginPrefix} Restricted weapon on map {mapName}: {weaponList.Replace("weapon_", "")}");
+                Server.PrintToChatAll($"{PluginPrefix} {Msg.Get("RestrictedWeaponsOnMap", mapName, weaponList.Replace("weapon_", ""))}");
             }
             else if (@event?.Text.Trim().ToLower() is "!status")
             {
@@ -255,11 +257,11 @@ namespace AdminMenu
 
                 if (adminLevel > 2)
                 {
-                    Server.PrintToChatAll($"{PluginPrefix} Available commands: !admin, !admins, !mysteamid, !thetime, !weapons, !help. Only for Level 3 admin: !status, !reload");
+                    player?.PrintToChat($"{PluginPrefix} {Msg.Get("HelpCommandsAdmin")}");
                 }
                 else
                 {
-                    Server.PrintToChatAll($"{PluginPrefix} Available commands: !admin, !admins, !mysteamid, !thetime, !weapons, !help");
+                    player?.PrintToChat($"{PluginPrefix} {Msg.Get("HelpCommandsPlayer")}");
                 }
             }
             return HookResult.Continue;
@@ -362,7 +364,7 @@ namespace AdminMenu
                 _adminEntry = Utils.LoadDataFromFile<AdminEntry>(_adminsFilePath);
                 _bannedEntry = Utils.LoadDataFromFile<BannedEntry>(_bannedFilePath);
                 _config = Config.LoadConfig(Path.Combine(ModuleDirectory, "config.json"));
-                player.PrintToChat($"{PluginPrefix} Configs reloaded.");
+                player.PrintToChat($"{PluginPrefix} {Msg.Get("ConfigsReloaded")}");
             }
         }
 
@@ -383,7 +385,7 @@ namespace AdminMenu
 
         private static void ShowAdmins()
         {
-            string adminList = "Admins online: ";
+            string adminList = Msg.Get("AdminsOnlinePrefix");
             int adminCount = 0;
             foreach (var adminPlayer in PlayerHelper.GetAllPlayers().Where(p => GetAdminLevel(p) > 1))
             {
@@ -413,7 +415,7 @@ namespace AdminMenu
                     {
                         _pendingRename.Remove(pendingRename.AdminSteamId2);
                     }
-                    adminPlayer.PrintToChat($"{PluginPrefix} Rename request expired.");
+                    adminPlayer.PrintToChat($"{PluginPrefix} {Msg.Get("RenameExpired")}");
                     return;
                 }
 
@@ -423,18 +425,18 @@ namespace AdminMenu
                     if (target != null && target.IsValid)
                     {
                         target.PlayerName = newName;
-                        Server.PrintToChatAll($"{PluginPrefix} {pendingRename.OldName} has been renamed to {newName} by {pendingRename.AdminName}.");
+                        Server.PrintToChatAll($"{PluginPrefix} {Msg.Get("PlayerRenamed", pendingRename.OldName, newName, pendingRename.AdminName)}");
                         Logger?.LogInformation($"Player renamed: {pendingRename.OldName} to {newName} by {pendingRename.AdminName} (SteamID2: {pendingRename.TargetSteamId2})");
                     }
                     else
                     {
-                        adminPlayer.PrintToChat($"{PluginPrefix} Target player is no longer connected.");
+                        adminPlayer.PrintToChat($"{PluginPrefix} {Msg.Get("TargetDisconnected")}");
                     }
                 }
                 catch (Exception ex)
                 {
                     Logger?.LogError($"Error applying rename: {ex.Message}");
-                    adminPlayer.PrintToChat($"{PluginPrefix} Error applying rename: {ex.Message}");
+                    adminPlayer.PrintToChat($"{PluginPrefix} {Msg.Get("RenameApplyError", ex.Message)}");
                 }
 
                 lock (_pendingRenameLock)
@@ -454,41 +456,41 @@ namespace AdminMenu
 
             if (adminLevel == 0)
             {
-                adminPlayer.PrintToChat("You are not admin.");
+                adminPlayer.PrintToChat(Msg.Get("NotAdminError"));
                 return;
             }
 
-            var mainMenu = new CenterHtmlMenu($"Choose action", this);
+            var mainMenu = new CenterHtmlMenu(Msg.Get("MainMenuTitle"), this);
             if (adminLevel > 1)
             {
-                mainMenu.AddMenuOption("Ban", BanAction);
-                mainMenu.AddMenuOption("Kick", KickAction);
-                mainMenu.AddMenuOption("Kill", KillAction);
-                mainMenu.AddMenuOption("Slap", SlapAction);
-                mainMenu.AddMenuOption("DropWeapon", DropWeaponAction);
-                mainMenu.AddMenuOption("Set Team", SetTeamAction);
-                mainMenu.AddMenuOption("Rename", RenameAction);
-                mainMenu.AddMenuOption("Mute", MuteAction);
-                mainMenu.AddMenuOption("UnMute", UnMuteAction);
+                mainMenu.AddMenuOption(Msg.Get("MenuBan"), BanAction);
+                mainMenu.AddMenuOption(Msg.Get("MenuKick"), KickAction);
+                mainMenu.AddMenuOption(Msg.Get("MenuKill"), KillAction);
+                mainMenu.AddMenuOption(Msg.Get("MenuSlap"), SlapAction);
+                mainMenu.AddMenuOption(Msg.Get("MenuDropWeapon"), DropWeaponAction);
+                mainMenu.AddMenuOption(Msg.Get("MenuSetTeam"), SetTeamAction);
+                mainMenu.AddMenuOption(Msg.Get("MenuRename"), RenameAction);
+                mainMenu.AddMenuOption(Msg.Get("MenuMute"), MuteAction);
+                mainMenu.AddMenuOption(Msg.Get("MenuUnMute"), UnMuteAction);
             }
             if (adminLevel > 2)
             {
-                mainMenu.AddMenuOption("Weapon (Un)Restrict", WeaponRestrictAction);
-                mainMenu.AddMenuOption("Respawn", RespawnAction);
-                mainMenu.AddMenuOption("Set Admin", SetAdminAction);
-                mainMenu.AddMenuOption("Set HP", SetHPAction);
+                mainMenu.AddMenuOption(Msg.Get("MenuWeaponRestrict"), WeaponRestrictAction);
+                mainMenu.AddMenuOption(Msg.Get("MenuRespawn"), RespawnAction);
+                mainMenu.AddMenuOption(Msg.Get("MenuSetAdmin"), SetAdminAction);
+                mainMenu.AddMenuOption(Msg.Get("MenuSetHP"), SetHPAction);
                 if (File.Exists(_mapListFilePath))
                 {
-                    mainMenu.AddMenuOption("Change map", ChangeMapAction);
+                    mainMenu.AddMenuOption(Msg.Get("MenuChangeMap"), ChangeMapAction);
                 }
                 if (File.Exists(_playerStatFileFullPath))
                 {
-                    mainMenu.AddMenuOption("Team shuffle", TeamShuffleAction);
+                    mainMenu.AddMenuOption(Msg.Get("MenuTeamShuffle"), TeamShuffleAction);
                 }
             }
             if (adminLevel > 0)
             {
-                mainMenu.AddMenuOption("Bot menu", BotHandleAction);
+                mainMenu.AddMenuOption(Msg.Get("MenuBotHandle"), BotHandleAction);
             }
 
             MenuManager.OpenCenterHtmlMenu(this, adminPlayer, mainMenu);
@@ -496,7 +498,7 @@ namespace AdminMenu
 
         private void ShowPlayerListMenu(CCSPlayerController adminPlayer, bool showOnlyAlive, bool showBots, Action<CCSPlayerController> playerAction)
         {
-            var playerListMenu = new CenterHtmlMenu($"Choose a player", this);
+            var playerListMenu = new CenterHtmlMenu(Msg.Get("ChoosePlayer"), this);
             int adminPlayerLevel = GetAdminLevel(adminPlayer);
 
             var players = Utilities
@@ -512,7 +514,7 @@ namespace AdminMenu
                 {
                     if (adminPlayerLevel < GetAdminLevel(player))
                     {
-                        adminPlayer.PrintToCenter($"You cannot perform actions on {player.PlayerName} as they have a higher admin level than you.");
+                        adminPlayer.PrintToCenter(Msg.Get("ActionDeniedHigherAdmin", player.PlayerName));
                     }
                     else
                     {

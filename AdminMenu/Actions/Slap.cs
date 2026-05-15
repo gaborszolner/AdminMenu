@@ -12,7 +12,7 @@ namespace AdminMenu
         {
             ShowPlayerListMenu(adminPlayer, true, true, (CCSPlayerController targetPlayer) =>
             {
-                Server.PrintToChatAll($"{PluginPrefix} {targetPlayer.PlayerName} has been slapped by {adminPlayer.PlayerName}.");
+                Server.PrintToChatAll($"{PluginPrefix} {Msg.Get("PlayerSlapped", targetPlayer.PlayerName, adminPlayer.PlayerName)}");
                 var pawn = targetPlayer.PlayerPawn.Value;
                 if (pawn == null)
                 {

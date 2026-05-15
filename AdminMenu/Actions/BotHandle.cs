@@ -9,21 +9,21 @@ namespace AdminMenu
     {
         private void BotHandleAction(CCSPlayerController adminPlayer, ChatMenuOption option)
         {
-            var botMenu = new CenterHtmlMenu($"Choose bot action", this);
+            var botMenu = new CenterHtmlMenu(Msg.Get("BotMenuTitle"), this);
 
-            botMenu.AddMenuOption("Kick All", (controller, _) =>
+            botMenu.AddMenuOption(Msg.Get("BotKickAll"), (controller, _) =>
             {
-                Server.PrintToChatAll($"{PluginPrefix} All bots have been kicked by {adminPlayer.PlayerName}.");
+                Server.PrintToChatAll($"{PluginPrefix} {Msg.Get("AllBotsKicked", adminPlayer.PlayerName)}");
                 Server.ExecuteCommand("bot_kick all");
             });
-            botMenu.AddMenuOption("Add T", (controller, _) =>
+            botMenu.AddMenuOption(Msg.Get("BotAddT"), (controller, _) =>
             {
-                Server.PrintToChatAll($"{PluginPrefix} Terrorist bot has been added by {adminPlayer.PlayerName}.");
+                Server.PrintToChatAll($"{PluginPrefix} {Msg.Get("TerroristBotAdded", adminPlayer.PlayerName)}");
                 Server.ExecuteCommand("bot_add_t");
             });
-            botMenu.AddMenuOption("Add CT", (controller, _) =>
+            botMenu.AddMenuOption(Msg.Get("BotAddCT"), (controller, _) =>
             {
-                Server.PrintToChatAll($"{PluginPrefix} CounterTerrorist bot has been added by {adminPlayer.PlayerName}.");
+                Server.PrintToChatAll($"{PluginPrefix} {Msg.Get("CTBotAdded", adminPlayer.PlayerName)}");
                 Server.ExecuteCommand("bot_add_ct");
             });
 
