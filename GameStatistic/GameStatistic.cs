@@ -92,6 +92,7 @@ namespace GameStatistic
         {
             _isWarmup = true;
             _config = Config.LoadConfig(Path.Combine(ModuleDirectory, "config.json"));
+            _mapStatFilePath = Path.Combine(ModuleDirectory, StatisticHelper.MapStatFileName);
             return HookResult.Continue;
         }
 

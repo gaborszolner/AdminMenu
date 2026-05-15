@@ -25,7 +25,6 @@ namespace AdminMenu
             foreach (var player in Utilities.GetPlayers()
                 .Where(p => p.IsValid
                          && p.PawnIsAlive
-                         && !p.IsBot
                          && p.Team != CsTeam.Spectator
                          && p.Team != CsTeam.None))
             {
