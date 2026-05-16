@@ -91,6 +91,18 @@ namespace AdminMenu
             if (targetPlayer is not null && targetPlayer.IsValid)
             {
                 _deathTimes[targetPlayer.SteamID] = Utils.GetServerTime();
+
+                var pawn = targetPlayer.PlayerPawn.Value;
+                if (pawn?.AbsOrigin != null)
+                    _deathPositions[targetPlayer.SteamID] = (pawn.AbsOrigin.X, pawn.AbsOrigin.Y, pawn.AbsOrigin.Z);
+
+                if (_config.CanReviveTeammate)
+                {
+                    ulong steamId = targetPlayer.SteamID;
+                    var endTime = Utils.GetServerTime() + TimeSpan.FromSeconds(_config.ReviveDeathWindowSeconds);
+                    _reviveWindowEndTime[steamId] = endTime;
+                    AddTimer(_config.ReviveDeathWindowSeconds, () => NotifyReviveExpiredIfNeeded(steamId, endTime));
+                }
             }
 
             if (_config.MuteAfterDeathInSecounds > 0 && !_isWarmup && targetPlayer is not null && targetPlayer.IsValid && !targetPlayer.IsBot)

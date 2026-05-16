@@ -307,4 +307,7 @@
   <data name="PlayerRevived" xml:space="preserve">
     <value>{0} újraélesztette {1}-t {2} HP-val!</value>
   </data>
+  <data name="ReviveWindowExpired" xml:space="preserve">
+    <value>Már nem lehet újraéleszteni!</value>
+  </data>
 </root>

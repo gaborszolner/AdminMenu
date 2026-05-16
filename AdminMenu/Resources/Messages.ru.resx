@@ -103,4 +103,5 @@
   <data name="ReviveProgressBar" xml:space="preserve"><value>Возрождение {0}... [{1}] {2}с</value></data>
   <data name="ReviveSuccessful" xml:space="preserve"><value>Возрождение успешно!</value></data>
   <data name="PlayerRevived" xml:space="preserve"><value>{0} возродил {1} с {2} HP!</value></data>
+  <data name="ReviveWindowExpired" xml:space="preserve"><value>Вас больше нельзя возродить!</value></data>
 </root>

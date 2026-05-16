@@ -11,11 +11,22 @@ namespace AdminMenu
         private static readonly Dictionary<ulong, (ulong TargetSteamId, DateTime StartTime)> _reviveProgress = new();
 
         public static readonly Dictionary<ulong, DateTime> _deathTimes = new();
+        public static readonly Dictionary<ulong, (float X, float Y, float Z)> _deathPositions = new();
+        private static readonly Dictionary<ulong, DateTime> _reviveWindowEndTime = new();
+        private static readonly Dictionary<ulong, float> _reviveWindowFrozen = new();
+        private static readonly Dictionary<ulong, HashSet<ulong>> _activeReviversForTarget = new();
 
         private const float ReviveMaxRange = 150.0f;  // Source units
         private const float ReviveAimCosThreshold = 0.85f; // ~32° cone
 
-        public static void ResetDeathTimes() => _deathTimes.Clear();
+        public static void ResetDeathTimes()
+        {
+            _deathTimes.Clear();
+            _deathPositions.Clear();
+            _reviveWindowEndTime.Clear();
+            _reviveWindowFrozen.Clear();
+            _activeReviversForTarget.Clear();
+        }
 
         private void OnTickRevive()
         {
@@ -32,6 +43,8 @@ namespace AdminMenu
 
                 if (!isHoldingUse)
                 {
+                    if (_reviveProgress.TryGetValue(player.SteamID, out var oldProg))
+                        RemoveReviver(player.SteamID, oldProg.TargetSteamId);
                     _reviveProgress.Remove(player.SteamID);
                     continue;
                 }
@@ -39,6 +52,8 @@ namespace AdminMenu
                 var target = FindAimedDeadTeammate(player);
                 if (target == null)
                 {
+                    if (_reviveProgress.TryGetValue(player.SteamID, out var oldProg))
+                        RemoveReviver(player.SteamID, oldProg.TargetSteamId);
                     _reviveProgress.Remove(player.SteamID);
                     continue;
                 }
@@ -48,6 +63,8 @@ namespace AdminMenu
                     // Switched aim to a different dead teammate — restart timer
                     if (progress.TargetSteamId != target.SteamID)
                     {
+                        RemoveReviver(player.SteamID, progress.TargetSteamId);
+                        AddReviver(player.SteamID, target.SteamID);
                         _reviveProgress[player.SteamID] = (target.SteamID, Utils.GetServerTime());
                         player.PrintToCenter(Msg.Get("ReviveProgressStart", target.PlayerName, _config.ReviveHoldDurationSeconds));
                     }
@@ -71,6 +88,7 @@ namespace AdminMenu
                 }
                 else
                 {
+                    AddReviver(player.SteamID, target.SteamID);
                     _reviveProgress[player.SteamID] = (target.SteamID, Utils.GetServerTime());
                     player.PrintToCenter(Msg.Get("ReviveProgressStart", target.PlayerName, _config.ReviveHoldDurationSeconds));
                 }
@@ -106,9 +124,12 @@ namespace AdminMenu
                          && p.Team != CsTeam.Spectator
                          && p.Team != CsTeam.None))
             {
-                if (!_deathTimes.TryGetValue(target.SteamID, out DateTime deathTime)
-                    || (float)(Utils.GetServerTime() - deathTime).TotalSeconds > _config.ReviveDeathWindowSeconds)
-                    continue;
+                if (!_reviveWindowFrozen.ContainsKey(target.SteamID))
+                {
+                    if (!_reviveWindowEndTime.TryGetValue(target.SteamID, out var endTime)
+                        || Utils.GetServerTime() > endTime)
+                        continue;
+                }
 
                 var targetPawn = target.PlayerPawn.Value;
                 if (targetPawn?.AbsOrigin == null)
@@ -138,6 +159,9 @@ namespace AdminMenu
             if (!targetPlayer.IsValid || targetPlayer.PawnIsAlive)
                 return;
 
+            _reviveWindowEndTime.Remove(targetPlayer.SteamID);
+            _reviveWindowFrozen.Remove(targetPlayer.SteamID);
+            _activeReviversForTarget.Remove(targetPlayer.SteamID);
             targetPlayer.Respawn();
 
             // Set HP after a short delay so Respawn() has time to fully execute
@@ -153,6 +177,11 @@ namespace AdminMenu
                     {
                         targetPawn.Health = _config.ReviveHP;
                         Utilities.SetStateChanged(targetPawn, "CBaseEntity", "m_iHealth");
+
+                        if (_deathPositions.TryGetValue(targetPlayer.SteamID, out var deathPos))
+                        {
+                            targetPawn.Teleport(new Vector(deathPos.X, deathPos.Y, deathPos.Z));
+                        }
                     }
                 }
                 catch (Exception ex)
@@ -163,6 +192,68 @@ namespace AdminMenu
 
             reviverPlayer.PrintToCenter(Msg.Get("ReviveSuccessful"));
             Server.PrintToChatAll(Msg.Get("PlayerRevived", reviverPlayer.PlayerName, targetPlayer.PlayerName, _config.ReviveHP));
+        }
+
+        private void AddReviver(ulong reviverSteamId, ulong targetSteamId)
+        {
+            if (!_activeReviversForTarget.TryGetValue(targetSteamId, out var set))
+            {
+                set = new HashSet<ulong>();
+                _activeReviversForTarget[targetSteamId] = set;
+            }
+
+            if (set.Count == 0 && _reviveWindowEndTime.TryGetValue(targetSteamId, out var endTime))
+            {
+                float remaining = (float)(endTime - Utils.GetServerTime()).TotalSeconds;
+                _reviveWindowFrozen[targetSteamId] = Math.Max(0f, remaining);
+            }
+
+            set.Add(reviverSteamId);
+        }
+
+        private void RemoveReviver(ulong reviverSteamId, ulong targetSteamId)
+        {
+            if (!_activeReviversForTarget.TryGetValue(targetSteamId, out var set))
+                return;
+
+            set.Remove(reviverSteamId);
+
+            if (set.Count > 0)
+                return;
+
+            _activeReviversForTarget.Remove(targetSteamId);
+
+            if (!_reviveWindowFrozen.TryGetValue(targetSteamId, out float frozenRemaining))
+                return;
+
+            _reviveWindowFrozen.Remove(targetSteamId);
+
+            if (frozenRemaining <= 0)
+                return;
+
+            var newEndTime = Utils.GetServerTime() + TimeSpan.FromSeconds(frozenRemaining);
+            _reviveWindowEndTime[targetSteamId] = newEndTime;
+
+            AddTimer(frozenRemaining, () => NotifyReviveExpiredIfNeeded(targetSteamId, newEndTime));
+        }
+
+        private void NotifyReviveExpiredIfNeeded(ulong steamId, DateTime expectedEndTime)
+        {
+            if (!_reviveWindowEndTime.TryGetValue(steamId, out var currentEndTime) || currentEndTime != expectedEndTime)
+                return;
+
+            if (_reviveWindowFrozen.ContainsKey(steamId))
+                return;
+
+            var target = Utilities.GetPlayers().FirstOrDefault(p => p.IsValid && p.SteamID == steamId && !p.PawnIsAlive);
+            if (target == null)
+                return;
+
+            target.PrintToCenter(Msg.Get("ReviveWindowExpired"));
+
+            _reviveWindowEndTime.Remove(steamId);
+            _deathTimes.Remove(steamId);
+            _deathPositions.Remove(steamId);
         }
     }
 }

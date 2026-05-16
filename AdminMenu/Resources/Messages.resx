@@ -357,4 +357,7 @@
   <data name="PlayerRevived" xml:space="preserve">
     <value>{0} revived {1} with {2} HP!</value>
   </data>
+  <data name="ReviveWindowExpired" xml:space="preserve">
+    <value>You can no longer be revived!</value>
+  </data>
 </root>

@@ -103,4 +103,5 @@
   <data name="ReviveProgressBar" xml:space="preserve"><value>正在复活{0}... [{1}] {2}秒</value></data>
   <data name="ReviveSuccessful" xml:space="preserve"><value>复活成功！</value></data>
   <data name="PlayerRevived" xml:space="preserve"><value>{0}以{2}HP复活了{1}！</value></data>
+  <data name="ReviveWindowExpired" xml:space="preserve"><value>你无法再被复活了！</value></data>
 </root>

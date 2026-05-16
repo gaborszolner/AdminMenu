@@ -103,4 +103,5 @@
   <data name="ReviveProgressBar" xml:space="preserve"><value>{0} को पुनर्जीवित किया जा रहा है... [{1}] {2}s</value></data>
   <data name="ReviveSuccessful" xml:space="preserve"><value>पुनर्जीवन सफल!</value></data>
   <data name="PlayerRevived" xml:space="preserve"><value>{0} ने {1} को {2} HP के साथ पुनर्जीवित किया!</value></data>
+  <data name="ReviveWindowExpired" xml:space="preserve"><value>आपको अब पुनर्जीवित नहीं किया जा सकता!</value></data>
 </root>
