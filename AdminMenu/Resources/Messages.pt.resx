@@ -99,9 +99,4 @@
   <data name="NoRestrictedWeapon" xml:space="preserve"><value>Nenhuma arma restrita.</value></data>
   <data name="WeaponForbiddenWarning" xml:space="preserve"><value>AVISO: Você está usando uma arma PROIBIDA: {0}.</value></data>
   <data name="WeaponCannotUse" xml:space="preserve"><value>Você não pode usar {0}.</value></data>
-  <data name="ReviveProgressStart" xml:space="preserve"><value>Revivendo {0}... {1}s</value></data>
-  <data name="ReviveProgressBar" xml:space="preserve"><value>Revivendo {0}... [{1}] {2}s</value></data>
-  <data name="ReviveSuccessful" xml:space="preserve"><value>Reviver bem-sucedido!</value></data>
-  <data name="PlayerRevived" xml:space="preserve"><value>{0} reviveu {1} com {2} HP!</value></data>
-  <data name="ReviveWindowExpired" xml:space="preserve"><value>Você não pode mais ser revivido!</value></data>
 </root>

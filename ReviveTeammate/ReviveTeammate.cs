@@ -4,35 +4,71 @@ using CounterStrikeSharp.API.Modules.Utils;
 using Microsoft.Extensions.Logging;
 using SharedLibrary;
 
-namespace AdminMenu
+namespace ReviveTeammate
 {
-    public partial class AdminMenu : BasePlugin
+    public class ReviveTeammate : BasePlugin
     {
-        private static readonly Dictionary<ulong, (ulong TargetSteamId, DateTime StartTime)> _reviveProgress = new();
+        public override string ModuleName => "ReviveTeammate";
+        public override string ModuleVersion => "1.0";
+        public override string ModuleAuthor => "Sinistral";
+        public override string ModuleDescription => "Allows alive teammates to revive recently dead players";
 
-        public static readonly Dictionary<ulong, DateTime> _deathTimes = new();
-        public static readonly Dictionary<ulong, (float X, float Y, float Z)> _deathPositions = new();
+        private static readonly Dictionary<ulong, (ulong TargetSteamId, DateTime StartTime)> _reviveProgress = new();
+        private static readonly Dictionary<ulong, DateTime> _deathTimes = new();
+        private static readonly Dictionary<ulong, (float X, float Y, float Z)> _deathPositions = new();
         private static readonly Dictionary<ulong, DateTime> _reviveWindowEndTime = new();
         private static readonly Dictionary<ulong, float> _reviveWindowFrozen = new();
         private static readonly Dictionary<ulong, HashSet<ulong>> _activeReviversForTarget = new();
 
-        private const float ReviveMaxRange = 150.0f;  // Source units
+        private const float ReviveMaxRange = 150.0f;
         private const float ReviveAimCosThreshold = 0.85f; // ~32° cone
 
-        public static void ResetDeathTimes()
+        private static Config _config = new();
+
+        public override void Load(bool hotReload)
         {
+            _config = Config.LoadConfig(Path.Combine(ModuleDirectory, "config.json"));
+            SharedLibrary.Localizer.Initialize(_config.Language);
+
+            RegisterEventHandler<EventPlayerDeath>(OnPlayerDeath);
+            RegisterEventHandler<EventRoundStart>(OnRoundStart);
+            RegisterListener<Listeners.OnTick>(OnTick);
+        }
+
+        private HookResult OnRoundStart(EventRoundStart @event, GameEventInfo info)
+        {
+            _reviveProgress.Clear();
             _deathTimes.Clear();
             _deathPositions.Clear();
             _reviveWindowEndTime.Clear();
             _reviveWindowFrozen.Clear();
             _activeReviversForTarget.Clear();
+            return HookResult.Continue;
         }
 
-        private void OnTickRevive()
+        private HookResult OnPlayerDeath(EventPlayerDeath @event, GameEventInfo info)
         {
-            if(_config.CanReviveTeammate == false)
-                return;
+            var targetPlayer = @event.Userid;
 
+            if (targetPlayer is not null && targetPlayer.IsValid)
+            {
+                _deathTimes[targetPlayer.SteamID] = Utils.GetServerTime();
+
+                var pawn = targetPlayer.PlayerPawn.Value;
+                if (pawn?.AbsOrigin != null)
+                    _deathPositions[targetPlayer.SteamID] = (pawn.AbsOrigin.X, pawn.AbsOrigin.Y, pawn.AbsOrigin.Z);
+
+                ulong steamId = targetPlayer.SteamID;
+                var endTime = Utils.GetServerTime() + TimeSpan.FromSeconds(_config.ReviveDeathWindowSeconds);
+                _reviveWindowEndTime[steamId] = endTime;
+                AddTimer(_config.ReviveDeathWindowSeconds, () => NotifyReviveExpiredIfNeeded(steamId, endTime));
+            }
+
+            return HookResult.Continue;
+        }
+
+        private void OnTick()
+        {
             foreach (var player in Utilities.GetPlayers()
                 .Where(p => p.IsValid
                          && p.PawnIsAlive
@@ -108,7 +144,6 @@ namespace AdminMenu
             float fwdY = (float)(Math.Cos(pitchRad) * Math.Sin(yawRad));
             float fwdZ = (float)(-Math.Sin(pitchRad));
 
-            // Approximate eye position (pawn origin + ~64 units height)
             float eyeX = pawn.AbsOrigin.X;
             float eyeY = pawn.AbsOrigin.Y;
             float eyeZ = pawn.AbsOrigin.Z + 64.0f;

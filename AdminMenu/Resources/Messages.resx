@@ -341,23 +341,4 @@
     <value>You cannot use {0}.</value>
   </data>
 
-  <!-- Revive teammate -->
-  <!-- {0}=target name, {1}=duration seconds -->
-  <data name="ReviveProgressStart" xml:space="preserve">
-    <value>Reviving {0}... {1}s</value>
-  </data>
-  <!-- {0}=target name, {1}=progress bar string, {2}=remaining seconds -->
-  <data name="ReviveProgressBar" xml:space="preserve">
-    <value>Reviving {0}... [{1}] {2}s</value>
-  </data>
-  <data name="ReviveSuccessful" xml:space="preserve">
-    <value>Revive successful!</value>
-  </data>
-  <!-- {0}=reviver name, {1}=target name, {2}=HP amount -->
-  <data name="PlayerRevived" xml:space="preserve">
-    <value>{0} revived {1} with {2} HP!</value>
-  </data>
-  <data name="ReviveWindowExpired" xml:space="preserve">
-    <value>You can no longer be revived!</value>
-  </data>
 </root>

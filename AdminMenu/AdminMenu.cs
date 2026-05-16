@@ -46,7 +46,6 @@ namespace AdminMenu
             RegisterEventHandler<EventItemPickup>(OnItemPickup);
             RegisterEventHandler<EventItemEquip>(OnItemEquip);
             AddCommandListener("!admin", OpenAdminMenu);
-            RegisterListener<Listeners.OnTick>(OnTickRevive);
 
             _adminsFilePath = Path.Combine(ModuleDirectory, "..", "..", "configs", "admins.json");
             _bannedFilePath = Path.Combine(ModuleDirectory, "..", "..", "configs", "banned.json");
@@ -62,7 +61,6 @@ namespace AdminMenu
 
         private HookResult OnRoundStart(EventRoundStart @event, GameEventInfo info)
         {
-            ResetDeathTimes();    
             return HookResult.Continue;
         }
 
@@ -87,23 +85,6 @@ namespace AdminMenu
         private HookResult OnPlayerDeath(EventPlayerDeath @event, GameEventInfo info)
         {
             var targetPlayer = @event.Userid;
-
-            if (targetPlayer is not null && targetPlayer.IsValid)
-            {
-                _deathTimes[targetPlayer.SteamID] = Utils.GetServerTime();
-
-                var pawn = targetPlayer.PlayerPawn.Value;
-                if (pawn?.AbsOrigin != null)
-                    _deathPositions[targetPlayer.SteamID] = (pawn.AbsOrigin.X, pawn.AbsOrigin.Y, pawn.AbsOrigin.Z);
-
-                if (_config.CanReviveTeammate)
-                {
-                    ulong steamId = targetPlayer.SteamID;
-                    var endTime = Utils.GetServerTime() + TimeSpan.FromSeconds(_config.ReviveDeathWindowSeconds);
-                    _reviveWindowEndTime[steamId] = endTime;
-                    AddTimer(_config.ReviveDeathWindowSeconds, () => NotifyReviveExpiredIfNeeded(steamId, endTime));
-                }
-            }
 
             if (_config.MuteAfterDeathInSecounds > 0 && !_isWarmup && targetPlayer is not null && targetPlayer.IsValid && !targetPlayer.IsBot)
             {

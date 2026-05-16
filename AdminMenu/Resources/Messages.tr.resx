@@ -99,9 +99,4 @@
   <data name="NoRestrictedWeapon" xml:space="preserve"><value>Kısıtlı silah yok.</value></data>
   <data name="WeaponForbiddenWarning" xml:space="preserve"><value>UYARI: YASAK bir silah kullanıyorsunuz: {0}.</value></data>
   <data name="WeaponCannotUse" xml:space="preserve"><value>{0} kullanamazsınız.</value></data>
-  <data name="ReviveProgressStart" xml:space="preserve"><value>{0} canlandırılıyor... {1}s</value></data>
-  <data name="ReviveProgressBar" xml:space="preserve"><value>{0} canlandırılıyor... [{1}] {2}s</value></data>
-  <data name="ReviveSuccessful" xml:space="preserve"><value>Canlandırma başarılı!</value></data>
-  <data name="PlayerRevived" xml:space="preserve"><value>{0}, {1}'i {2} HP ile canlandırdı!</value></data>
-  <data name="ReviveWindowExpired" xml:space="preserve"><value>Artık canlandırılamazsınız!</value></data>
 </root>

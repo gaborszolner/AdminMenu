@@ -99,9 +99,4 @@
   <data name="NoRestrictedWeapon" xml:space="preserve"><value>没有限制武器。</value></data>
   <data name="WeaponForbiddenWarning" xml:space="preserve"><value>警告：你正在使用禁止武器：{0}。</value></data>
   <data name="WeaponCannotUse" xml:space="preserve"><value>你不能使用{0}。</value></data>
-  <data name="ReviveProgressStart" xml:space="preserve"><value>正在复活{0}... {1}秒</value></data>
-  <data name="ReviveProgressBar" xml:space="preserve"><value>正在复活{0}... [{1}] {2}秒</value></data>
-  <data name="ReviveSuccessful" xml:space="preserve"><value>复活成功！</value></data>
-  <data name="PlayerRevived" xml:space="preserve"><value>{0}以{2}HP复活了{1}！</value></data>
-  <data name="ReviveWindowExpired" xml:space="preserve"><value>你无法再被复活了！</value></data>
 </root>

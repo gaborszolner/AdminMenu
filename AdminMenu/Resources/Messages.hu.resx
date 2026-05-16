@@ -295,19 +295,4 @@
   <data name="WeaponCannotUse" xml:space="preserve">
     <value>Nem használhatod: {0}.</value>
   </data>
-  <data name="ReviveProgressStart" xml:space="preserve">
-    <value>{0} újraélesztése... {1}mp</value>
-  </data>
-  <data name="ReviveProgressBar" xml:space="preserve">
-    <value>{0} újraélesztése... [{1}] {2}mp</value>
-  </data>
-  <data name="ReviveSuccessful" xml:space="preserve">
-    <value>Sikeres újraélesztés!</value>
-  </data>
-  <data name="PlayerRevived" xml:space="preserve">
-    <value>{0} újraélesztette {1}-t {2} HP-val!</value>
-  </data>
-  <data name="ReviveWindowExpired" xml:space="preserve">
-    <value>Már nem lehet újraéleszteni!</value>
-  </data>
 </root>

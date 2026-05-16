@@ -99,9 +99,4 @@
   <data name="NoRestrictedWeapon" xml:space="preserve"><value>Keine gesperrten Waffen.</value></data>
   <data name="WeaponForbiddenWarning" xml:space="preserve"><value>WARNUNG: Du verwendest eine VERBOTENE Waffe: {0}.</value></data>
   <data name="WeaponCannotUse" xml:space="preserve"><value>Du kannst {0} nicht verwenden.</value></data>
-  <data name="ReviveProgressStart" xml:space="preserve"><value>Wiederbelebung {0}... {1}s</value></data>
-  <data name="ReviveProgressBar" xml:space="preserve"><value>Wiederbelebung {0}... [{1}] {2}s</value></data>
-  <data name="ReviveSuccessful" xml:space="preserve"><value>Wiederbelebung erfolgreich!</value></data>
-  <data name="PlayerRevived" xml:space="preserve"><value>{0} hat {1} mit {2} HP wiederbelebt!</value></data>
-  <data name="ReviveWindowExpired" xml:space="preserve"><value>Du kannst nicht mehr wiederbelebt werden!</value></data>
 </root>
