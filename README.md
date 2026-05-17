@@ -1,124 +1,204 @@
 # CouinterStrikeAddons
 
-Some addons for Counter Strike 2 using CounterStrikeSharp 
-Used stuff:
-<https://docs.cssharp.dev/>
-<https://github.com/roflmuffin/CounterStrikeSharp>
-<https://www.metamodsource.net/downloads.php/?branch=master>
+A collection of plugins for **Counter-Strike 2** servers, built with [CounterStrikeSharp](https://github.com/roflmuffin/CounterStrikeSharp).
 
-# requirements:  
-- **CounterStrike2** game server.
-- **counterstrikesharp.api v1.0.367** or later.
+**References:**
+- [CounterStrikeSharp docs](https://docs.cssharp.dev/)
+- [CounterStrikeSharp GitHub](https://github.com/roflmuffin/CounterStrikeSharp)
+- [Metamod:Source](https://www.metamodsource.net/downloads.php/?branch=master)
 
-# installation:  
-Extract the folder to the `...\csgo\addons\counterstrikesharp\plugins\GameStatistic\` directory of the dedicated server.
+## Plugins
 
-
-# AdminMenu
-Implementation of a AdminMenu plugin
-
-This plugin allowes to the admins:
-- ban (with time or permanent)
-- kick
-- kill
-- slap
-- respawn
-- mute/unmuate (manually or automatic after death, configurable)
-- rename any player (write the new name to the chat adfter select this menu item)
-- set team for a player (and respawn if you need)
-- respawn
-- auto rename if player name already exist (Configurable)
-- drop weapon
-- change map (RockTheVote addon or its maplist.txt file needed)
-- team shuffle (Configurable. GameStatistic addon stat file needed. See addon here: https://github.com/gaborszolner/GameStatistic)
-- bot add, kick
-- set admin with level
-- weapon (un)restrict - current map or all maps
-- welcome or ban message after connect (configurable)
-
-There are 3 level for admins, lower can't use action on higher admins.
-
----
-# installation:  
-Extract the folder to the `...\csgo\addons\counterstrikesharp\plugins\AdminMenu\` directory of the dedicated server.
-- Uses ..\csgo\addons\counterstrikesharp\configs\admins.json and ..\csgo\addons\counterstrikesharp\configs\banned.json files, these saves the admin and banned players. See example files in the solution.
-- For changemap it uses the maplist.txt file, from the RockTheVote addon (https://github.com/abnerfs/cs2-rockthevote)
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-# GameStatistic
-Implementation of a GameStatistic plugin
-  
-This CS2 addon generates statistics for players and maps, but only if there are at least 4 players.
-
-Player statistics:
-  - It tracks kills, deaths, teamkills, selfkills, and assists.
-  - It does not count events during warmup or after the round ends.
-  - Based on these, it creates a ranking (which the adminMenu can use to mix teams fairly by dividing players into two teams).
-  - Usable commands: !top and !mystat.
-
-Map statistics:
-  - It tracks how many times a map has started and how many times it was completed. From this, it can also calculate the RTV percentage.
-  - It tracks how many times the CT and T sides have won on the given map.
-  - Usable commands: !mapstat.
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-# MenuHotKey
-  
-Implementation of a MenuHotKey plugin
-  
-This plugin allowes to choose menu items without type to console !1, !2, !3 ...
-- you have to bind buttons: for example, if you want to bind menu option 3 to Numpad 3, type bind kp_3 "3" into the console.
-- for official key mapping see: https://steamcommunity.com/sharedfiles/filedetails/?id=2498088800
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-# QuickDefuse 
-  
-Implementation of a QuickDefuse Defuse plugin for CS2 using CounterStrikeSharp  
-<https://docs.cssharp.dev/>  
-  
-This plugin allowes defuse the bomb by cut wires (1 - green, 2- yellow, 3 - red, 4 - blue, 5 - random)
-- if cut right wire, the bomb will be defused immediately.
-- if cut wrong wire, the bomb will explode
-- until a wire is chosen after planting, the wire color will be random.
-- you can choose the color in chat by typing, for example, !1.
-- It is STRONGLY recommended to use the MenuHotkey plugin from my repository. With it, you can instantly select a wire in the pop-up menu. (and it works with every menu)
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-# CounterStrike2 Map Switch Plugin
-
-This plugin is designed for **CounterStrike2** to automatically switch to a specified map after the server starts. The map is selected from a `startMap.txt` file, which contains the map name and map ID. The plugin waits for 3 seconds after the server starts and then switches to the map specified in the `startMap.txt` file.
-
-## Features
-
-- **Automatic Map Switch**: After the server starts, the plugin reads the `startMap.txt` file and switches to the map defined within it.
-- **Configurable File**: The `startMap.txt` file contains a list of map names and their corresponding map IDs, formatted as `mapname:mapid`.
-- **Delay**: The plugin waits for 3 seconds after the server starts before switching the map.
+|              Plugin                 | Version |                        Description                       |
+|-------------------------------------|---------|----------------------------------------------------------|
+| [AdminMenu](#adminmenu)             |   2.1   | In-game admin management menu                            |
+| [GameStatistic](#gamestatistic)     |   2.0   | Player and map statistics tracking                       |
+| [MenuHotKey](#menuhotkey)           |   1.0   | Keyboard hotkeys for all in-game menus                   |
+| [QuickDefuse](#quickdefuse)         |   1.0   | Defuse the bomb by cutting the correct wire              |
+| [ReviveTeammate](#reviveteammate)   |   1.0   | Revive dead teammates by holding USE near them           |
+| [StartMap](#startmap)               |   1.0   | Automatically switch to a configured map on server start |
 
 ## Requirements
 
-- A `startMap.txt` file located in the appropriate directory (typically the root directory of your server).
+- **Counter-Strike 2** dedicated game server
+- **CounterStrikeSharp.API v1.0.367** or later
+- **.NET 8.0** runtime
 
 ## Installation
 
-1. Download the plugin files.
-2. Place the plugin in the server's plugin directory.
-3. Ensure the `startMap.txt` file is in the correct location, containing the map name and ID pairs in the format `mapname:mapid`. For example: de_dolls:3501880673
-4. Restart the server or load the plugin as per your server configuration.
+Each plugin is installed independently. Extract the plugin folder into the corresponding subdirectory:
 
-## How It Works
+```
+...\csgo\addons\counterstrikesharp\plugins\<PluginName>\
+```
 
-1. When the server starts, the plugin waits for 3 seconds.
-2. It then reads the `startMap.txt` file to retrieve the map name and ID.
-3. The plugin switches to the specified map
+See each plugin's section below for specific installation notes.
+
+---
+
+# AdminMenu
+
+An in-game admin menu accessible via the `!admin` chat command.
+
+**Features — admins can:**
+- Ban a player (timed or permanent)
+- Kick a player
+- Kill a player
+- Slap a player
+- Respawn a player
+- Mute / unmute a player (manually, or automatically after death — configurable)
+- Rename any player (type the new name in chat after selecting this menu item)
+- Set a player's team (with optional respawn)
+- Auto-rename players if their name is already taken (configurable)
+- Drop a player's weapon
+- Change map (requires the [RockTheVote](https://github.com/abnerfs/cs2-rockthevote) addon or its `maplist.txt`)
+- Team shuffle (configurable; requires the GameStatistic stat file to balance teams by skill)
+- Add / kick bots
+- Set admin level for a player
+- Weapon (un)restrict — for the current map or all maps
+- Welcome message or ban message shown on connect (configurable)
+
+**Admin levels:** There are 3 levels. Admins cannot perform actions on players with a higher admin level than their own.
+
+**Commands:** `!admin`
+
+## Installation
+
+1. Extract the `AdminMenu` folder to `...\csgo\addons\counterstrikesharp\plugins\AdminMenu\`.
+2. The plugin uses the following config files (created automatically on first run if missing):
+   - `...\csgo\addons\counterstrikesharp\configs\admins.json` — admin list
+   - `...\csgo\addons\counterstrikesharp\configs\banned.json` — banned players list
+   - `...\csgo\addons\counterstrikesharp\configs\weaponRestrict.json` — weapon restrictions
+3. For the **change map** feature, place the `maplist.txt` from [RockTheVote](https://github.com/abnerfs/cs2-rockthevote) in `...\csgo\addons\counterstrikesharp\plugins\RockTheVote\maplist.txt`.
+4. See the `Example/` folder in the plugin directory for sample config files.
+
+---
+
+# GameStatistic
+
+Tracks player and map statistics. Statistics are only recorded when at least 4 (configurable) non-spectator players are present.
+
+**Player statistics:**
+- Tracks kills, deaths, team kills, self-kills, and assists
+- Events during warmup or after round end are not counted
+- Builds a ranking used by AdminMenu to perform skill-balanced team shuffles
+
+**Map statistics:**
+- Tracks how many times a map has been started and completed (used to calculate RTV rate)
+- Tracks CT and T side win counts per map
+- Displayed automatically at halftime and warmup end
+
+**Commands:**
+
+|   Command   |             Description             |
+|-------------|-------------------------------------|
+| `!top`      | Show the top players by ranking     |
+| `!bottom`   | Show the bottom players by ranking  |
+| `!mystat`   | Show your own statistics            |
+| `!mapstat`  | Show statistics for the current map |
+| `!teamstat` | Show team statistics                |
+| `!chance`   | Show win chance estimates per team  |
+| `!help`     | List available commands             |
+
+## Installation
+
+Extract the `GameStatistic` folder to `...\csgo\addons\counterstrikesharp\plugins\GameStatistic\`.
+
+---
+
+# MenuHotKey
+
+Allows players to select in-game menu items using bound keyboard keys instead of typing `!1`, `!2`, etc. in chat. Works with every CounterStrikeSharp menu, including AdminMenu and QuickDefuse.
+
+**Setup:** Bind number keys in the CS2 console. For example, to bind Numpad 3 to menu option 3:
+```
+bind kp_3 "3"
+```
+
+For the full key name reference, see the [Steam key mapping guide](https://steamcommunity.com/sharedfiles/filedetails/?id=2498088800).
+
+## Installation
+
+Extract the `MenuHotKey` folder to `...\csgo\addons\counterstrikesharp\plugins\MenuHotKey\`.
+
+---
+
+# QuickDefuse
+
+Adds a wire-cutting minigame for defusing the bomb. When a CT starts defusing, a menu appears with 5 wire colour options. Choosing the correct wire defuses the bomb instantly; choosing the wrong one detonates it immediately.
+
+**Wires:**
+| Option | Colour |
+|--------|--------|
+|  `!1`  | Green  |
+|  `!2`  | Yellow |
+|  `!3`  | Red    |
+|  `!4`  | Blue   |
+|  `!5`  | Random |
+
+**Notes:**
+- The correct wire is randomised each time the bomb is planted.
+- The wire colour menu appears as soon as a CT begins defusing.
+- It is **strongly recommended** to use the [MenuHotKey](#menuhotkey) plugin alongside this one so the wire can be selected instantly from the pop-up menu.
+
+## Installation
+
+Extract the `QuickDefuse` folder to `...\csgo\addons\counterstrikesharp\plugins\QuickDefuse\`.
+
+---
+
+# ReviveTeammate
+
+Allows alive teammates to revive recently killed players without waiting for the next round.
+
+**How it works:**
+1. After a player dies, there is a configurable time window during which they can be revived.
+2. An alive teammate stands close to the death position, aims at the dead player's body, and **holds the USE key**.
+3. A progress bar is shown on screen. After holding for the configured duration, the dead player is respawned with a small amount of HP (configurable).
+4. If the revivers stops aiming or moves out of range, the progress resets.
+
+**Configurable options (in `config.json`):**
+
+|            Option            | Default |               Description                    |
+|------------------------------|---------|----------------------------------------------|
+| `ReviveHoldDurationSeconds`  | `10.0`  | How long to hold USE to complete the revive  |
+| `ReviveDeathWindowSeconds`   | `30.0`  | How long after death a player can be revived |
+| `ReviveHP`                   | `10`    | HP the revived player is spawned with        |
+| `CanReviveTeammate`          | `true`  | Enable or disable the feature                |
+
+## Installation
+
+Extract the `ReviveTeammate` folder to `...\csgo\addons\counterstrikesharp\plugins\ReviveTeammate\`.
+
+---
+
+# StartMap
+
+Automatically switches the server to a configured map shortly after startup. Supports official maps, workshop maps by ID, and workshop maps by name.
+
+**How it works:**
+1. On server load, the plugin reads `startMap.txt` from its plugin directory.
+2. After a short delay, it switches to the specified map using the appropriate server command (`map`, `host_workshop_map`, or `ds_workshop_changelevel`).
+
+**`startMap.txt` format:**
+```
+mapname:workshopid
+```
+Example:
+```
+de_dolls:3501880673
+```
+- If the map name is a valid built-in map, it uses `map <name>`.
+- If a workshop ID is provided, it uses `host_workshop_map <id>`.
+- Otherwise, it falls back to `ds_workshop_changelevel <name>`.
+
+## Installation
+
+1. Extract the `StartMap` folder to `...\csgo\addons\counterstrikesharp\plugins\StartMap\`.
+2. Edit `startMap.txt` with the desired map name and workshop ID.
+
+---
+
+# SharedLibrary
+
+An internal shared library used by all plugins in this solution. It provides common utilities including configuration loading, localisation (multi-language support), player helpers, statistic helpers, and weapon helpers. It is not a standalone plugin and does not need to be installed separately.
