@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+
+  <!-- Shown before listing targets the dying player hit -->
+  <data name="DealtHeader" xml:space="preserve">
+    <value>Damage dealt:</value>
+  </data>
+
+  <!-- Shown before listing attackers who hit the dying player -->
+  <data name="ReceivedHeader" xml:space="preserve">
+    <value>Damage received:</value>
+  </data>
+
+  <!-- Unit label for damage amount, e.g. "87 hp" -->
+  <data name="Dmg" xml:space="preserve">
+    <value>hp</value>
+  </data>
+
+  <!-- Unit label for hit count, e.g. "3 hits" -->
+  <data name="Hits" xml:space="preserve">
+    <value>hits</value>
+  </data>
+
+  <!-- Suffix appended to the attacker line who landed the killing blow -->
+  <data name="KilledYou" xml:space="preserve">
+    <value>★ killed you</value>
+  </data>
+
+</root>
