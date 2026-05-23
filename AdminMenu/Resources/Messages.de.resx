@@ -29,10 +29,10 @@
   <data name="TypeHelpHint" xml:space="preserve"><value>Tippe !help, um verfügbare Befehle zu sehen.</value></data>
   <data name="JoinSuffixAdmin" xml:space="preserve"><value>(Admin)</value></data>
   <data name="JoinSuffixNotAdmin" xml:space="preserve"><value>(Kein Admin)</value></data>
-  <data name="SteamIdDisplay" xml:space="preserve"><value>SteamID2 : {0}</value></data>
+  <data name="SteamIdDisplay" xml:space="preserve"><value>SteamID2: {0} | SteamID64: {1}</value></data>
   <data name="RestrictedWeaponsOnMap" xml:space="preserve"><value>Gesperrte Waffe auf Karte {0}: {1}</value></data>
-  <data name="HelpCommandsAdmin" xml:space="preserve"><value>Verfügbare Befehle: !admin, !admins, !mysteamid, !thetime, !weapons, !help. Nur für Level 3 Admin: !status, !reload</value></data>
-  <data name="HelpCommandsPlayer" xml:space="preserve"><value>Verfügbare Befehle: !admin, !admins, !mysteamid, !thetime, !weapons, !help</value></data>
+  <data name="HelpCommandsAdmin" xml:space="preserve"><value>Verfügbare Befehle: !admin, !admins, !mysteamid, !thetime, !weapons, !currentmap, !help. Nur für Level 3 Admin: !status, !reload</value></data>
+  <data name="HelpCommandsPlayer" xml:space="preserve"><value>Verfügbare Befehle: !admin, !admins, !mysteamid, !thetime, !weapons, !currentmap, !help</value></data>
   <data name="AdminsOnlinePrefix" xml:space="preserve"><value>Admins online: </value></data>
   <data name="ConfigsReloaded" xml:space="preserve"><value>Konfigurationen neu geladen.</value></data>
   <data name="AutoShuffleCurrentDiff" xml:space="preserve"><value>Aktuelle Differenz ist</value></data>

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
   <resheader name="version"><value>2.0</value></resheader>
@@ -9,4 +9,5 @@
   <data name="ReviveSuccessful" xml:space="preserve"><value>पुनर्जीवन सफल!</value></data>
   <data name="PlayerRevived" xml:space="preserve"><value>{0} ने {1} को {2} HP के साथ पुनर्जीवित किया!</value></data>
   <data name="ReviveWindowExpired" xml:space="preserve"><value>आपको अब पुनर्जीवित नहीं किया जा सकता!</value></data>
+  <data name="ConfigsReloaded" xml:space="preserve"><value>कोन्फ़िग रीलोड हो गए।</value></data>
 </root>

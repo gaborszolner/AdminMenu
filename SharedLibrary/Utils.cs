@@ -100,5 +100,15 @@ namespace SharedLibrary
                 Server.PrintToConsole($"Error writing to file {fileName}");
             }
         }
+
+        /// <summary>
+        /// Normalizes a Steam2 ID to always use the STEAM_0 universe prefix.
+        /// CS2 servers may return STEAM_1:X:Y at runtime while stored data uses STEAM_0:X:Y.
+        /// Both refer to the same account and are interchangeable.
+        /// </summary>
+        public static string NormalizeSteamId2(string steamId2)
+        {
+            return steamId2.Replace("STEAM_1:", "STEAM_0:");
+        }
     }
 }

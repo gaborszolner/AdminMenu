@@ -31,4 +31,7 @@
   <data name="ReviveWindowExpired" xml:space="preserve">
     <value>You can no longer be revived!</value>
   </data>
+  <data name="ConfigsReloaded" xml:space="preserve">
+    <value>Configs reloaded.</value>
+  </data>
 </root>

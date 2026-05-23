@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
   <resheader name="version"><value>2.0</value></resheader>
@@ -29,10 +29,10 @@
   <data name="TypeHelpHint" xml:space="preserve"><value>Введіть !help для перегляду доступних команд.</value></data>
   <data name="JoinSuffixAdmin" xml:space="preserve"><value>(Адміністратор)</value></data>
   <data name="JoinSuffixNotAdmin" xml:space="preserve"><value>(Не адміністратор)</value></data>
-  <data name="SteamIdDisplay" xml:space="preserve"><value>SteamID2 : {0}</value></data>
+  <data name="SteamIdDisplay" xml:space="preserve"><value>SteamID2: {0} | SteamID64: {1}</value></data>
   <data name="RestrictedWeaponsOnMap" xml:space="preserve"><value>Заборонена зброя на карті {0}: {1}</value></data>
-  <data name="HelpCommandsAdmin" xml:space="preserve"><value>Доступні команди: !admin, !admins, !mysteamid, !thetime, !weapons, !help. Лише для Level 3 admin: !status, !reload</value></data>
-  <data name="HelpCommandsPlayer" xml:space="preserve"><value>Доступні команди: !admin, !admins, !mysteamid, !thetime, !weapons, !help</value></data>
+  <data name="HelpCommandsAdmin" xml:space="preserve"><value>Доступні команди: !admin, !admins, !mysteamid, !thetime, !weapons, !currentmap, !help. Лише для Level 3 admin: !status, !reload</value></data>
+  <data name="HelpCommandsPlayer" xml:space="preserve"><value>Доступні команди: !admin, !admins, !mysteamid, !thetime, !weapons, !currentmap, !help</value></data>
   <data name="AdminsOnlinePrefix" xml:space="preserve"><value>Адміністратори онлайн: </value></data>
   <data name="ConfigsReloaded" xml:space="preserve"><value>Конфіги перезавантажені.</value></data>
   <data name="AutoShuffleCurrentDiff" xml:space="preserve"><value>Поточна різниця</value></data>

@@ -18,9 +18,9 @@ namespace AdminMenu
 
                 var adminSteam2 = adminPlayer.AuthorizedSteamID.SteamId2;
 
-                _pendingRename ??= [];
                 lock (_pendingRenameLock)
                 {
+                    _pendingRename ??= [];
                     _pendingRename[adminSteam2] = new PendingRenameEntry
                     {
                         TargetSteamId2 = targetPlayer.AuthorizedSteamID?.SteamId2 ?? string.Empty,

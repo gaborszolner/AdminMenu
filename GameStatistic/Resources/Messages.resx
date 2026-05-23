@@ -28,4 +28,7 @@
   <data name="CurrentPosition" xml:space="preserve">
     <value>Your current position is {0}</value>
   </data>
+  <data name="ConfigsReloaded" xml:space="preserve">
+    <value>Configs reloaded.</value>
+  </data>
 </root>

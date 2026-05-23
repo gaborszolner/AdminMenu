@@ -54,7 +54,7 @@ namespace AdminMenu
                 {
                     if (_weaponRestrictEntry[weapon].Maps.Contains(unrestrictMapName))
                     {
-                        if (_weaponRestrictEntry[weapon].Maps.First() == "*")
+                        if (_weaponRestrictEntry[weapon].Maps.Length > 0 && _weaponRestrictEntry[weapon].Maps[0] == "*")
                         {
                             adminPlayer.PrintToChat($"{PluginPrefix} {Msg.Get("UnrestrictAllFirst")}");
                             return;
@@ -98,7 +98,7 @@ namespace AdminMenu
                 }
                 else
                 {
-                    if (!_weaponRestrictEntry[weapon].Maps.Contains(restrictMapName) && _weaponRestrictEntry[weapon].Maps.First() != "*")
+                    if (!_weaponRestrictEntry[weapon].Maps.Contains(restrictMapName) && (_weaponRestrictEntry[weapon].Maps.Length == 0 || _weaponRestrictEntry[weapon].Maps[0] != "*"))
                     {
                         _weaponRestrictEntry[weapon].Maps = _weaponRestrictEntry[weapon].Maps.Append(restrictMapName).ToArray();
                     }

@@ -73,6 +73,16 @@ namespace GameStatistic
             {
                 Server.PrintToChatAll($"{PluginPrefix} {Msg.Get("HelpCommands")}");
             }
+            else if (@event?.Text.Trim().ToLower() is "!reload")
+            {
+                string adminsFilePath = Path.Combine(ModuleDirectory, "..", "..", "configs", "admins.json");
+                if (PlayerHelper.GetAdminLevel(player, adminsFilePath) > 2)
+                {
+                    _config = Config.LoadConfig(Path.Combine(ModuleDirectory, "config.json"));
+                    SharedLibrary.Localizer.Initialize(_config.Language);
+                    player.PrintToChat($"{PluginPrefix} {Msg.Get("ConfigsReloaded")}");
+                }
+            }
 
             return HookResult.Continue;
         }
@@ -122,9 +132,9 @@ namespace GameStatistic
                 return HookResult.Continue;
             }
 
-            var attackerSteamId = attacker.AuthorizedSteamID.SteamId2;
-            var victimSteamId = victim.AuthorizedSteamID.SteamId2;
-            var assisterSteamId = assister?.AuthorizedSteamID?.SteamId2;
+            var attackerSteamId = Utils.NormalizeSteamId2(attacker.AuthorizedSteamID.SteamId2);
+            var victimSteamId = Utils.NormalizeSteamId2(victim.AuthorizedSteamID.SteamId2);
+            var assisterSteamId = assister?.AuthorizedSteamID?.SteamId2 is string aid ? Utils.NormalizeSteamId2(aid) : null;
 
             if (assister is not null && assister.AuthorizedSteamID is not null && assisterSteamId is not null)
             {
@@ -192,7 +202,7 @@ namespace GameStatistic
                 StatisticHelper.LoadMonthsStats(ModuleDirectory, _config.DateRangeForStatisticsInMonth)
                 ?? [];
 
-            var playerSteamId = player.AuthorizedSteamID?.SteamId2;
+            var playerSteamId = player.AuthorizedSteamID?.SteamId2 is string sid ? Utils.NormalizeSteamId2(sid) : null;
             if (playerSteamId is not null && storedStats.ContainsKey(playerSteamId))
             {
                 var playerEntry = storedStats[playerSteamId];
@@ -236,7 +246,7 @@ namespace GameStatistic
 
                 for (int i = 0; i < storedStats.Count - 1; i++)
                 {
-                    if (storedStats[i].Value.Identity == player.AuthorizedSteamID?.SteamId2)
+                    if (storedStats[i].Key == Utils.NormalizeSteamId2(player.AuthorizedSteamID?.SteamId2 ?? string.Empty))
                     {
                         player.PrintToChat(Msg.Get("CurrentPosition", i + 1));
                         break;
@@ -284,6 +294,7 @@ namespace GameStatistic
                 if (storedStats.ContainsKey(kvp.Key))
                 {
                     var existing = storedStats[kvp.Key];
+                    existing.Identity = kvp.Key;
                     existing.Kill += kvp.Value.Kill;
                     existing.Dead += kvp.Value.Dead;
                     existing.Assister += kvp.Value.Assister;

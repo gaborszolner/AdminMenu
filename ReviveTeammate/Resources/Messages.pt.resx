@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
   <resheader name="version"><value>2.0</value></resheader>
@@ -9,4 +9,5 @@
   <data name="ReviveSuccessful" xml:space="preserve"><value>Reviver bem-sucedido!</value></data>
   <data name="PlayerRevived" xml:space="preserve"><value>{0} reviveu {1} com {2} HP!</value></data>
   <data name="ReviveWindowExpired" xml:space="preserve"><value>Você não pode mais ser revivido!</value></data>
+  <data name="ConfigsReloaded" xml:space="preserve"><value>Configurações recarregadas.</value></data>
 </root>

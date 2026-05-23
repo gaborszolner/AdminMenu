@@ -33,6 +33,7 @@ namespace AdminMenu
         private static Config _config = new();
         private static Dictionary<string, PendingRenameEntry>? _pendingRename = [];
         private static readonly object _pendingRenameLock = new();
+        private static readonly object _dictionaryLock = new();
 
         public override void Load(bool hotReload)
         {
@@ -41,7 +42,6 @@ namespace AdminMenu
             RegisterEventHandler<EventPlayerSpawned>(OnPlayerSpawned);
             RegisterEventHandler<EventPlayerChat>(OnPlayerChat);
             RegisterEventHandler<EventRoundAnnounceWarmup>(OnRoundAnnounceWarmup);
-            RegisterEventHandler<EventRoundStart>(OnRoundStart);
             RegisterEventHandler<EventWarmupEnd>(OnWarmupEnd);
             RegisterEventHandler<EventItemPickup>(OnItemPickup);
             RegisterEventHandler<EventItemEquip>(OnItemEquip);
@@ -57,11 +57,6 @@ namespace AdminMenu
             _adminEntry = Utils.LoadDataFromFile<AdminEntry>(_adminsFilePath);
             _bannedEntry = Utils.LoadDataFromFile<BannedEntry>(_bannedFilePath);
             _weaponRestrictEntry = Utils.LoadDataFromFile<WeaponRestrictEntry>(_weaponRestrictFilePath);
-        }
-
-        private HookResult OnRoundStart(EventRoundStart @event, GameEventInfo info)
-        {
-            return HookResult.Continue;
         }
 
         private HookResult OnPlayerSpawned(EventPlayerSpawned @event, GameEventInfo info)
@@ -90,7 +85,7 @@ namespace AdminMenu
             {
                 var originalVoiceFlag = targetPlayer.VoiceFlags;
                 targetPlayer.VoiceFlags |= VoiceFlags.Muted;
-                AddTimer(_config.MuteAfterDeathInSecounds / 1000.0f, () =>
+                AddTimer(_config.MuteAfterDeathInSecounds, () =>
                 {
                     try
                     {
@@ -142,7 +137,10 @@ namespace AdminMenu
         private HookResult OnRoundAnnounceWarmup(EventRoundAnnounceWarmup @event, GameEventInfo info)
         {
             _isWarmup = true;
-            _config = Config.LoadConfig(Path.Combine(ModuleDirectory, "config.json"));
+            lock (_dictionaryLock)
+            {
+                _config = Config.LoadConfig(Path.Combine(ModuleDirectory, "config.json"));
+            }
             SharedLibrary.Localizer.Initialize(_config.Language);
             return HookResult.Continue;
         }
@@ -224,7 +222,7 @@ namespace AdminMenu
             }
             else if (@event?.Text.Trim().ToLower() is "!mysteamid")
             {
-                player?.PrintToChat(Msg.Get("SteamIdDisplay", player?.AuthorizedSteamID?.SteamId2 ?? string.Empty));
+                player?.PrintToChat(Msg.Get("SteamIdDisplay", player?.AuthorizedSteamID?.SteamId2 ?? string.Empty, player?.SteamID.ToString() ?? string.Empty));
             }
             else if (@event?.Text.Trim().ToLower() is "!thetime")
             {
@@ -239,6 +237,10 @@ namespace AdminMenu
             else if (@event?.Text.Trim().ToLower() is "!status")
             {
                 LogStatuses(player);
+            }
+            else if (@event?.Text.Trim().ToLower() is "!currentmap")
+            {
+                player?.PrintToChat(Server.MapName.Trim() ?? string.Empty);
             }
             else if (@event?.Text.Trim().ToLower() is "!reload")
             {
@@ -288,7 +290,13 @@ namespace AdminMenu
             }
             else
             {
-                return _adminEntry[steamId].Level;
+                var entry = _adminEntry[steamId];
+                if (entry.Identity != steamId)
+                {
+                    entry.Identity = steamId;
+                    Utils.WriteToFile(_adminEntry, _adminsFilePath);
+                }
+                return entry.Level;
             }
         }
 
@@ -311,7 +319,7 @@ namespace AdminMenu
                     possibleBanned = _bannedEntry[steamId];
                     if (possibleBanned.Expiration < Utils.GetServerTime())
                     {
-                        _bannedEntry.Remove(possibleBanned.Identity);
+                        _bannedEntry.Remove(steamId);
                         Utils.WriteToFile(_bannedEntry, _bannedFilePath);
                         return false;
                     }
@@ -353,10 +361,13 @@ namespace AdminMenu
             int adminLevel = GetAdminLevel(player);
             if (adminLevel > 2)
             {
-                _weaponRestrictEntry = Utils.LoadDataFromFile<WeaponRestrictEntry>(_weaponRestrictFilePath);
-                _adminEntry = Utils.LoadDataFromFile<AdminEntry>(_adminsFilePath);
-                _bannedEntry = Utils.LoadDataFromFile<BannedEntry>(_bannedFilePath);
-                _config = Config.LoadConfig(Path.Combine(ModuleDirectory, "config.json"));
+                lock (_dictionaryLock)
+                {
+                    _weaponRestrictEntry = Utils.LoadDataFromFile<WeaponRestrictEntry>(_weaponRestrictFilePath);
+                    _adminEntry = Utils.LoadDataFromFile<AdminEntry>(_adminsFilePath);
+                    _bannedEntry = Utils.LoadDataFromFile<BannedEntry>(_bannedFilePath);
+                    _config = Config.LoadConfig(Path.Combine(ModuleDirectory, "config.json"));
+                }
                 player.PrintToChat($"{PluginPrefix} {Msg.Get("ConfigsReloaded")}");
             }
         }

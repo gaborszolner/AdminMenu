@@ -24,8 +24,10 @@ namespace SharedLibrary
 
             return players
                .Select(p => p.AuthorizedSteamID?.SteamId2)
-               .Where(id => id is not null && storedStats.ContainsKey(id))
-               .Sum(id => storedStats[id!].Score);
+               .Where(id => id is not null)
+               .Select(id => Utils.NormalizeSteamId2(id!))
+               .Where(id => storedStats.ContainsKey(id))
+               .Sum(id => storedStats[id].Score);
         }
 
         public static Dictionary<string, PlayerStatEntry> LoadMonthsStats(string playerStatFilesBasePath, int month)
@@ -49,7 +51,7 @@ namespace SharedLibrary
                     if (!result.TryGetValue(identity, out var existing))
                     {
                         result[identity] = new PlayerStatEntry(
-                            entry.Identity,
+                            identity,
                             entry.Name,
                             entry.Kill,
                             entry.Dead,

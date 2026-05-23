@@ -78,8 +78,8 @@ namespace AdminMenu
                 };
 
                 _bannedEntry ??= [];
-                _bannedEntry.Add(steamId, newEntry);
-                bannedList.Add(steamId, newEntry);
+                _bannedEntry[steamId] = newEntry;
+                bannedList[steamId] = newEntry;
                 Utils.WriteToFile(bannedList, _bannedFilePath);
 
                 player.Disconnect(NetworkDisconnectionReason.NETWORK_DISCONNECT_KICKBANADDED);

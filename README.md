@@ -9,14 +9,14 @@ A collection of plugins for **Counter-Strike 2** servers, built with [CounterStr
 
 ## Plugins
 
-|              Plugin                 | Version |                        Description                       |
-|-------------------------------------|---------|----------------------------------------------------------|
-| [AdminMenu](#adminmenu)             |   2.1   | In-game admin management menu                            |
-| [GameStatistic](#gamestatistic)     |   2.0   | Player and map statistics tracking                       |
-| [MenuHotKey](#menuhotkey)           |   1.0   | Keyboard hotkeys for all in-game menus                   |
-| [QuickDefuse](#quickdefuse)         |   1.0   | Defuse the bomb by cutting the correct wire              |
-| [ReviveTeammate](#reviveteammate)   |   1.0   | Revive dead teammates by holding USE near them           |
-| [StartMap](#startmap)               |   1.0   | Automatically switch to a configured map on server start |
+| Plugin | Version | Description |
+|---|---|---|
+| [AdminMenu](#adminmenu) | 2.1 | In-game admin management menu |
+| [GameStatistic](#gamestatistic) | 2.0 | Player and map statistics tracking |
+| [MenuHotKey](#menuhotkey) | 1.0 | Keyboard hotkeys for all in-game menus |
+| [QuickDefuse](#quickdefuse) | 1.0 | Defuse the bomb by cutting the correct wire |
+| [ReviveTeammate](#reviveteammate) | 1.0 | Revive dead teammates by holding USE near them |
+| [StartMap](#startmap) | 1.0 | Automatically switch to a configured map on server start |
 
 ## Requirements
 
@@ -90,15 +90,15 @@ Tracks player and map statistics. Statistics are only recorded when at least 4 (
 
 **Commands:**
 
-|   Command   |             Description             |
-|-------------|-------------------------------------|
-| `!top`      | Show the top players by ranking     |
-| `!bottom`   | Show the bottom players by ranking  |
-| `!mystat`   | Show your own statistics            |
-| `!mapstat`  | Show statistics for the current map |
-| `!teamstat` | Show team statistics                |
-| `!chance`   | Show win chance estimates per team  |
-| `!help`     | List available commands             |
+| Command | Description |
+|---|---|
+| `!top` | Show the top players by ranking |
+| `!bottom` | Show the bottom players by ranking |
+| `!mystat` | Show your own statistics |
+| `!mapstat` | Show statistics for the current map |
+| `!teamstat` | Show team statistics |
+| `!chance` | Show win chance estimates per team |
+| `!help` | List available commands |
 
 ## Installation
 
@@ -129,12 +129,12 @@ Adds a wire-cutting minigame for defusing the bomb. When a CT starts defusing, a
 
 **Wires:**
 | Option | Colour |
-|--------|--------|
-|  `!1`  | Green  |
-|  `!2`  | Yellow |
-|  `!3`  | Red    |
-|  `!4`  | Blue   |
-|  `!5`  | Random |
+|---|---|
+| `!1` | Green |
+| `!2` | Yellow |
+| `!3` | Red |
+| `!4` | Blue |
+| `!5` | Random |
 
 **Notes:**
 - The correct wire is randomised each time the bomb is planted.
@@ -159,12 +159,12 @@ Allows alive teammates to revive recently killed players without waiting for the
 
 **Configurable options (in `config.json`):**
 
-|            Option            | Default |               Description                    |
-|------------------------------|---------|----------------------------------------------|
-| `ReviveHoldDurationSeconds`  | `10.0`  | How long to hold USE to complete the revive  |
-| `ReviveDeathWindowSeconds`   | `30.0`  | How long after death a player can be revived |
-| `ReviveHP`                   | `10`    | HP the revived player is spawned with        |
-| `CanReviveTeammate`          | `true`  | Enable or disable the feature                |
+| Option | Default | Description |
+|---|---|---|
+| `ReviveHoldDurationSeconds` | `10.0` | How long to hold USE to complete the revive |
+| `ReviveDeathWindowSeconds` | `30.0` | How long after death a player can be revived |
+| `ReviveHP` | `10` | HP the revived player is spawned with |
+| `CanReviveTeammate` | `true` | Enable or disable the feature |
 
 ## Installation
 

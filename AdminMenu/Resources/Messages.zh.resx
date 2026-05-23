@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
   <resheader name="version"><value>2.0</value></resheader>
@@ -29,10 +29,10 @@
   <data name="TypeHelpHint" xml:space="preserve"><value>输入!help查看可用命令。</value></data>
   <data name="JoinSuffixAdmin" xml:space="preserve"><value>（管理员）</value></data>
   <data name="JoinSuffixNotAdmin" xml:space="preserve"><value>（非管理员）</value></data>
-  <data name="SteamIdDisplay" xml:space="preserve"><value>SteamID2 : {0}</value></data>
+  <data name="SteamIdDisplay" xml:space="preserve"><value>SteamID2: {0} | SteamID64: {1}</value></data>
   <data name="RestrictedWeaponsOnMap" xml:space="preserve"><value>地图{0}限制武器: {1}</value></data>
-  <data name="HelpCommandsAdmin" xml:space="preserve"><value>可用命令: !admin, !admins, !mysteamid, !thetime, !weapons, !help. 仅限3级管理员: !status, !reload</value></data>
-  <data name="HelpCommandsPlayer" xml:space="preserve"><value>可用命令: !admin, !admins, !mysteamid, !thetime, !weapons, !help</value></data>
+  <data name="HelpCommandsAdmin" xml:space="preserve"><value>可用命令: !admin, !admins, !mysteamid, !thetime, !weapons, !currentmap, !help. 仅限3级管理员: !status, !reload</value></data>
+  <data name="HelpCommandsPlayer" xml:space="preserve"><value>可用命令: !admin, !admins, !mysteamid, !thetime, !weapons, !currentmap, !help</value></data>
   <data name="AdminsOnlinePrefix" xml:space="preserve"><value>在线管理员: </value></data>
   <data name="ConfigsReloaded" xml:space="preserve"><value>配置已重新加载。</value></data>
   <data name="AutoShuffleCurrentDiff" xml:space="preserve"><value>当前差距为</value></data>

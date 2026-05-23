@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
   <resheader name="version"><value>2.0</value></resheader>
@@ -17,4 +17,5 @@
   <data name="CurrentPosition" xml:space="preserve">
     <value>आपकी वर्तमान स्थिति {0} है</value>
   </data>
+  <data name="ConfigsReloaded" xml:space="preserve"><value>कोन्फ़िग रीलोड हो गए।</value></data>
 </root>

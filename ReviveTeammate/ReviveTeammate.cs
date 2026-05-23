@@ -1,8 +1,10 @@
 using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
+using CounterStrikeSharp.API.Modules.Events;
 using CounterStrikeSharp.API.Modules.Utils;
 using Microsoft.Extensions.Logging;
 using SharedLibrary;
+using System.Drawing;
 
 namespace ReviveTeammate
 {
@@ -13,16 +15,23 @@ namespace ReviveTeammate
         public override string ModuleAuthor => "Sinistral";
         public override string ModuleDescription => "Allows alive teammates to revive recently dead players";
 
+        public readonly string PluginPrefix = "[ReviveTeammate]";
+
         private static readonly Dictionary<ulong, (ulong TargetSteamId, DateTime StartTime)> _reviveProgress = new();
         private static readonly Dictionary<ulong, DateTime> _deathTimes = new();
         private static readonly Dictionary<ulong, (float X, float Y, float Z)> _deathPositions = new();
         private static readonly Dictionary<ulong, DateTime> _reviveWindowEndTime = new();
         private static readonly Dictionary<ulong, float> _reviveWindowFrozen = new();
         private static readonly Dictionary<ulong, HashSet<ulong>> _activeReviversForTarget = new();
+        private static readonly HashSet<ulong> _revivedThisRound = new();
+        private static readonly Dictionary<ulong, CPointWorldText> _deathMarkers = new();
+        private static readonly Dictionary<ulong, CsTeam> _deathTeams = new();
+        private static readonly Dictionary<ulong, int> _lastMarkerSeconds = new();
 
         private const float ReviveMaxRange = 150.0f;
         private const float ReviveAimCosThreshold = 0.85f; // ~32° cone
 
+        private static bool _isWarmup = false;
         private static Config _config = new();
 
         public override void Load(bool hotReload)
@@ -31,8 +40,35 @@ namespace ReviveTeammate
             SharedLibrary.Localizer.Initialize(_config.Language);
 
             RegisterEventHandler<EventPlayerDeath>(OnPlayerDeath);
+            RegisterEventHandler<EventPlayerChat>(OnPlayerChat);
             RegisterEventHandler<EventRoundStart>(OnRoundStart);
+            RegisterEventHandler<EventRoundAnnounceWarmup>(OnRoundAnnounceWarmup);
+            RegisterEventHandler<EventWarmupEnd>(OnWarmupEnd);
             RegisterListener<Listeners.OnTick>(OnTick);
+            RegisterListener<Listeners.CheckTransmit>(OnCheckTransmit);
+        }
+
+        public HookResult OnPlayerChat(EventPlayerChat @event, GameEventInfo info)
+        {
+            var player = Utilities.GetPlayerFromUserid(@event.Userid);
+
+            if (player is null || !player.IsValid)
+            {
+                return HookResult.Continue;
+            }
+
+            if (@event?.Text.Trim().ToLower() is "!reload")
+            {
+                string adminsFilePath = Path.Combine(ModuleDirectory, "..", "..", "configs", "admins.json");
+                if (PlayerHelper.GetAdminLevel(player, adminsFilePath) > 2)
+                {
+                    _config = Config.LoadConfig(Path.Combine(ModuleDirectory, "config.json"));
+                    SharedLibrary.Localizer.Initialize(_config.Language);
+                    player.PrintToChat($"{PluginPrefix} {Msg.Get("ConfigsReloaded")}");
+                }
+            }
+
+            return HookResult.Continue;
         }
 
         private HookResult OnRoundStart(EventRoundStart @event, GameEventInfo info)
@@ -43,6 +79,12 @@ namespace ReviveTeammate
             _reviveWindowEndTime.Clear();
             _reviveWindowFrozen.Clear();
             _activeReviversForTarget.Clear();
+            _revivedThisRound.Clear();
+            foreach (var marker in _deathMarkers.Values)
+                if (marker.IsValid) marker.Remove();
+            _deathMarkers.Clear();
+            _deathTeams.Clear();
+            _lastMarkerSeconds.Clear();
             return HookResult.Continue;
         }
 
@@ -62,6 +104,9 @@ namespace ReviveTeammate
                 var endTime = Utils.GetServerTime() + TimeSpan.FromSeconds(_config.ReviveDeathWindowSeconds);
                 _reviveWindowEndTime[steamId] = endTime;
                 AddTimer(_config.ReviveDeathWindowSeconds, () => NotifyReviveExpiredIfNeeded(steamId, endTime));
+                _deathTeams[steamId] = targetPlayer.Team;
+                if (!_isWarmup && !_revivedThisRound.Contains(steamId))
+                    CreateDeathMarker(steamId);
             }
 
             return HookResult.Continue;
@@ -69,11 +114,14 @@ namespace ReviveTeammate
 
         private void OnTick()
         {
+            UpdateDeathMarkers();
+
             foreach (var player in Utilities.GetPlayers()
                 .Where(p => p.IsValid
                          && p.PawnIsAlive
                          && p.Team != CsTeam.Spectator
-                         && p.Team != CsTeam.None))
+                         && p.Team != CsTeam.None)
+                .ToList())
             {
                 bool isHoldingUse = (player.Buttons & PlayerButtons.Use) != 0;
 
@@ -159,6 +207,9 @@ namespace ReviveTeammate
                          && p.Team != CsTeam.Spectator
                          && p.Team != CsTeam.None))
             {
+                if (_revivedThisRound.Contains(target.SteamID))
+                    continue;
+
                 if (!_reviveWindowFrozen.ContainsKey(target.SteamID))
                 {
                     if (!_reviveWindowEndTime.TryGetValue(target.SteamID, out var endTime)
@@ -197,6 +248,8 @@ namespace ReviveTeammate
             _reviveWindowEndTime.Remove(targetPlayer.SteamID);
             _reviveWindowFrozen.Remove(targetPlayer.SteamID);
             _activeReviversForTarget.Remove(targetPlayer.SteamID);
+            _revivedThisRound.Add(targetPlayer.SteamID);
+            RemoveDeathMarker(targetPlayer.SteamID);
             targetPlayer.Respawn();
 
             // Set HP after a short delay so Respawn() has time to fully execute
@@ -286,9 +339,119 @@ namespace ReviveTeammate
 
             target.PrintToCenter(Msg.Get("ReviveWindowExpired"));
 
+            RemoveDeathMarker(steamId);
             _reviveWindowEndTime.Remove(steamId);
             _deathTimes.Remove(steamId);
             _deathPositions.Remove(steamId);
+        }
+
+        private void CreateDeathMarker(ulong steamId)
+        {
+            if (!_deathPositions.TryGetValue(steamId, out var pos))
+                return;
+            if (!_reviveWindowEndTime.TryGetValue(steamId, out var endTime))
+                return;
+
+            var deadPlayer = Utilities.GetPlayers().FirstOrDefault(p => p.IsValid && p.SteamID == steamId);
+            int seconds = (int)Math.Ceiling((endTime - Utils.GetServerTime()).TotalSeconds);
+
+            var marker = Utilities.CreateEntityByName<CPointWorldText>("point_worldtext");
+            if (marker == null || !marker.IsValid)
+                return;
+
+            marker.MessageText = $"{seconds}s";
+            marker.Enabled = true;
+            marker.Fullbright = true;
+            marker.WorldUnitsPerPx = 0.25f;
+            marker.FontSize = 40;
+            marker.Color = Color.Yellow;
+            marker.JustifyHorizontal = PointWorldTextJustifyHorizontal_t.POINT_WORLD_TEXT_JUSTIFY_HORIZONTAL_CENTER;
+            marker.JustifyVertical = PointWorldTextJustifyVertical_t.POINT_WORLD_TEXT_JUSTIFY_VERTICAL_CENTER;
+            marker.ReorientMode = PointWorldTextReorientMode_t.POINT_WORLD_TEXT_REORIENT_NONE;
+            marker.DispatchSpawn();
+            marker.Teleport(new Vector(pos.X, pos.Y, pos.Z + 70), new QAngle(0, 90, 90));
+
+            _deathMarkers[steamId] = marker;
+            _lastMarkerSeconds[steamId] = seconds;
+        }
+
+        private void RemoveDeathMarker(ulong steamId)
+        {
+            if (_deathMarkers.TryGetValue(steamId, out var marker))
+            {
+                if (marker.IsValid)
+                    marker.Remove();
+                _deathMarkers.Remove(steamId);
+                _lastMarkerSeconds.Remove(steamId);
+                _deathTeams.Remove(steamId);
+            }
+        }
+
+        private void UpdateDeathMarkers()
+        {
+            foreach (var steamId in _deathMarkers.Keys.ToList())
+            {
+                if (!_deathMarkers.TryGetValue(steamId, out var marker) || !marker.IsValid)
+                {
+                    _deathMarkers.Remove(steamId);
+                    _lastMarkerSeconds.Remove(steamId);
+                    continue;
+                }
+
+                float remaining;
+                if (_reviveWindowFrozen.TryGetValue(steamId, out float frozenRemaining))
+                    remaining = frozenRemaining;
+                else if (_reviveWindowEndTime.TryGetValue(steamId, out var endTime))
+                    remaining = (float)(endTime - Utils.GetServerTime()).TotalSeconds;
+                else
+                {
+                    RemoveDeathMarker(steamId);
+                    continue;
+                }
+
+                int seconds = Math.Max(0, (int)Math.Ceiling(remaining));
+
+                if (!_lastMarkerSeconds.TryGetValue(steamId, out int lastSec) || lastSec != seconds)
+                {
+                    var deadPlayer = Utilities.GetPlayers().FirstOrDefault(p => p.IsValid && p.SteamID == steamId);
+                    marker.MessageText = $"{seconds}s";
+                    Utilities.SetStateChanged(marker, "CPointWorldText", "m_messageText");
+                    _lastMarkerSeconds[steamId] = seconds;
+                }
+            }
+        }
+
+        private HookResult OnRoundAnnounceWarmup(EventRoundAnnounceWarmup @event, GameEventInfo info)
+        {
+            _isWarmup = true;
+            return HookResult.Continue;
+        }
+
+        private HookResult OnWarmupEnd(EventWarmupEnd @event, GameEventInfo info)
+        {
+            _isWarmup = false;
+            return HookResult.Continue;
+        }
+
+        private void OnCheckTransmit(CCheckTransmitInfoList infoList)
+        {
+            if (_deathMarkers.Count == 0)
+                return;
+
+            foreach ((CCheckTransmitInfo info, CCSPlayerController? player) in infoList)
+            {
+                if (player == null || !player.IsValid) continue;
+
+                foreach (var (steamId, marker) in _deathMarkers)
+                {
+                    if (!marker.IsValid) continue;
+
+                    if (!_deathTeams.TryGetValue(steamId, out var deadTeam) || player.Team != deadTeam)
+                    {
+                        info.TransmitEntities.Remove(marker);
+                    }
+                }
+            }
         }
     }
 }

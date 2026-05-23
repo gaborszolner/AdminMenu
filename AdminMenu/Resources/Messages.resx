@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <resheader name="resmimetype">
     <value>text/microsoft-resx</value>
@@ -94,19 +94,19 @@
   </data>
 
   <!-- Chat commands -->
-  <!-- {0}=SteamID2 -->
+  <!-- {0}=SteamID2, {1}=SteamID64 -->
   <data name="SteamIdDisplay" xml:space="preserve">
-    <value>SteamID2 : {0}</value>
+    <value>SteamID2: {0} | SteamID64: {1}</value>
   </data>
   <!-- {0}=map name, {1}=weapon list -->
   <data name="RestrictedWeaponsOnMap" xml:space="preserve">
     <value>Restricted weapon on map {0}: {1}</value>
   </data>
   <data name="HelpCommandsAdmin" xml:space="preserve">
-    <value>Available commands: !admin, !admins, !mysteamid, !thetime, !weapons, !help. Only for Level 3 admin: !status, !reload</value>
+    <value>Available commands: !admin, !admins, !mysteamid, !thetime, !weapons, !currentmap, !help. Only for Level 3 admin: !status, !reload</value>
   </data>
   <data name="HelpCommandsPlayer" xml:space="preserve">
-    <value>Available commands: !admin, !admins, !mysteamid, !thetime, !weapons, !help</value>
+    <value>Available commands: !admin, !admins, !mysteamid, !thetime, !weapons, !currentmap, !help</value>
   </data>
   <data name="AdminsOnlinePrefix" xml:space="preserve">
     <value>Admins online: </value>

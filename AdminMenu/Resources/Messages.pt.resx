@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
   <resheader name="version"><value>2.0</value></resheader>
@@ -29,10 +29,10 @@
   <data name="TypeHelpHint" xml:space="preserve"><value>Digite !help para ver os comandos disponíveis.</value></data>
   <data name="JoinSuffixAdmin" xml:space="preserve"><value>(Admin)</value></data>
   <data name="JoinSuffixNotAdmin" xml:space="preserve"><value>(Não admin)</value></data>
-  <data name="SteamIdDisplay" xml:space="preserve"><value>SteamID2 : {0}</value></data>
+  <data name="SteamIdDisplay" xml:space="preserve"><value>SteamID2: {0} | SteamID64: {1}</value></data>
   <data name="RestrictedWeaponsOnMap" xml:space="preserve"><value>Arma restrita no mapa {0}: {1}</value></data>
-  <data name="HelpCommandsAdmin" xml:space="preserve"><value>Comandos disponíveis: !admin, !admins, !mysteamid, !thetime, !weapons, !help. Apenas para Level 3 admin: !status, !reload</value></data>
-  <data name="HelpCommandsPlayer" xml:space="preserve"><value>Comandos disponíveis: !admin, !admins, !mysteamid, !thetime, !weapons, !help</value></data>
+  <data name="HelpCommandsAdmin" xml:space="preserve"><value>Comandos disponíveis: !admin, !admins, !mysteamid, !thetime, !weapons, !currentmap, !help. Apenas para Level 3 admin: !status, !reload</value></data>
+  <data name="HelpCommandsPlayer" xml:space="preserve"><value>Comandos disponíveis: !admin, !admins, !mysteamid, !thetime, !weapons, !currentmap, !help</value></data>
   <data name="AdminsOnlinePrefix" xml:space="preserve"><value>Admins online: </value></data>
   <data name="ConfigsReloaded" xml:space="preserve"><value>Configurações recarregadas.</value></data>
   <data name="AutoShuffleCurrentDiff" xml:space="preserve"><value>A diferença atual é</value></data>

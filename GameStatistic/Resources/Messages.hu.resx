@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <resheader name="resmimetype">
     <value>text/microsoft-resx</value>
@@ -25,4 +25,5 @@
   <data name="CurrentPosition" xml:space="preserve">
     <value>Jelenlegi pozíciód: {0}</value>
   </data>
+  <data name="ConfigsReloaded" xml:space="preserve"><value>Konfigurációk újratöltve.</value></data>
 </root>

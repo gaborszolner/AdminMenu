@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
   <resheader name="version"><value>2.0</value></resheader>
@@ -9,4 +9,5 @@
   <data name="ReviveSuccessful" xml:space="preserve"><value>Sikeres újraélesztés!</value></data>
   <data name="PlayerRevived" xml:space="preserve"><value>{0} újraélesztette {1}-t {2} HP-val!</value></data>
   <data name="ReviveWindowExpired" xml:space="preserve"><value>Már nem lehet újraéleszteni!</value></data>
+  <data name="ConfigsReloaded" xml:space="preserve"><value>Konfigurációk újratöltve.</value></data>
 </root>

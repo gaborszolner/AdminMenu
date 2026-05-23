@@ -55,7 +55,7 @@ namespace AdminMenu
                 {
                     try
                     {
-                        var t = PlayerHelper.GetAllPlayers().First(p => p.AuthorizedSteamID?.SteamId2 == tPlayerSteamId2);
+                        var t = PlayerHelper.GetAllPlayers().FirstOrDefault(p => p.AuthorizedSteamID?.SteamId2 == tPlayerSteamId2);
                         if (t?.IsValid == true)
                         {
                             t.SwitchTeam(CsTeam.Terrorist);
@@ -69,7 +69,7 @@ namespace AdminMenu
                 {
                     try
                     {
-                        var ct = PlayerHelper.GetAllPlayers().First(p => p.AuthorizedSteamID?.SteamId2 == ctPlayerSteamId2);
+                        var ct = PlayerHelper.GetAllPlayers().FirstOrDefault(p => p.AuthorizedSteamID?.SteamId2 == ctPlayerSteamId2);
                         if (ct?.IsValid == true)
                         {
                             ct.SwitchTeam(CsTeam.CounterTerrorist);

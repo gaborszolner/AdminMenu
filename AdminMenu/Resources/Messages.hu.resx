@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <resheader name="resmimetype">
     <value>text/microsoft-resx</value>
@@ -86,16 +86,16 @@
     <value>(Nem admin)</value>
   </data>
   <data name="SteamIdDisplay" xml:space="preserve">
-    <value>SteamID2 : {0}</value>
+    <value>SteamID2: {0} | SteamID64: {1}</value>
   </data>
   <data name="RestrictedWeaponsOnMap" xml:space="preserve">
     <value>Tiltott fegyver a(z) {0} térképen: {1}</value>
   </data>
   <data name="HelpCommandsAdmin" xml:space="preserve">
-    <value>Elérhető parancsok: !admin, !admins, !mysteamid, !thetime, !weapons, !help. Csak Level 3 adminnak: !status, !reload</value>
+    <value>Elérhető parancsok: !admin, !admins, !mysteamid, !thetime, !weapons, !currentmap, !help. Csak Level 3 adminnak: !status, !reload</value>
   </data>
   <data name="HelpCommandsPlayer" xml:space="preserve">
-    <value>Elérhető parancsok: !admin, !admins, !mysteamid, !thetime, !weapons, !help</value>
+    <value>Elérhető parancsok: !admin, !admins, !mysteamid, !thetime, !weapons, !currentmap, !help</value>
   </data>
   <data name="AdminsOnlinePrefix" xml:space="preserve">
     <value>Online adminok: </value>
