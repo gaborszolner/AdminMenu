@@ -105,7 +105,7 @@ namespace ReviveTeammate
                 _reviveWindowEndTime[steamId] = endTime;
                 AddTimer(_config.ReviveDeathWindowSeconds, () => NotifyReviveExpiredIfNeeded(steamId, endTime));
                 _deathTeams[steamId] = targetPlayer.Team;
-                if (!_isWarmup && !_revivedThisRound.Contains(steamId))
+                if (!_isWarmup && _config.CanReviveTeammate && !_revivedThisRound.Contains(steamId))
                     CreateDeathMarker(steamId);
             }
 
@@ -114,6 +114,9 @@ namespace ReviveTeammate
 
         private void OnTick()
         {
+            if (!_config.CanReviveTeammate)
+                return;
+
             UpdateDeathMarkers();
 
             foreach (var player in Utilities.GetPlayers()
