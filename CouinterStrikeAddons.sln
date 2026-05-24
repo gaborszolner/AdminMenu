@@ -21,6 +21,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DamageReport", "DamageRepor
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "_unitTests", "_unitTests\_unitTests.csproj", "{45258BEE-A0AA-4DCC-BAA5-F3EFF45B51DB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SiteRestrict", "SiteRestrict\SiteRestrict.csproj", "{6F2A37A0-6019-4FD5-8250-B536A769CF33}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -139,6 +141,18 @@ Global
 		{45258BEE-A0AA-4DCC-BAA5-F3EFF45B51DB}.Release|x64.Build.0 = Release|Any CPU
 		{45258BEE-A0AA-4DCC-BAA5-F3EFF45B51DB}.Release|x86.ActiveCfg = Release|Any CPU
 		{45258BEE-A0AA-4DCC-BAA5-F3EFF45B51DB}.Release|x86.Build.0 = Release|Any CPU
+		{6F2A37A0-6019-4FD5-8250-B536A769CF33}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6F2A37A0-6019-4FD5-8250-B536A769CF33}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6F2A37A0-6019-4FD5-8250-B536A769CF33}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{6F2A37A0-6019-4FD5-8250-B536A769CF33}.Debug|x64.Build.0 = Debug|Any CPU
+		{6F2A37A0-6019-4FD5-8250-B536A769CF33}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{6F2A37A0-6019-4FD5-8250-B536A769CF33}.Debug|x86.Build.0 = Debug|Any CPU
+		{6F2A37A0-6019-4FD5-8250-B536A769CF33}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6F2A37A0-6019-4FD5-8250-B536A769CF33}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6F2A37A0-6019-4FD5-8250-B536A769CF33}.Release|x64.ActiveCfg = Release|Any CPU
+		{6F2A37A0-6019-4FD5-8250-B536A769CF33}.Release|x64.Build.0 = Release|Any CPU
+		{6F2A37A0-6019-4FD5-8250-B536A769CF33}.Release|x86.ActiveCfg = Release|Any CPU
+		{6F2A37A0-6019-4FD5-8250-B536A769CF33}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

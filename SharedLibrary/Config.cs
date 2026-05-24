@@ -21,6 +21,8 @@ namespace SharedLibrary
 
         public bool CanReviveTeammate { get; set; } = true;
 
+        public int MinCTsForSiteRestrict { get; set; } = 4;
+
         public float ReviveHoldDurationSeconds { get; set; } = 10.0f;
 
         public float ReviveDeathWindowSeconds { get; set; } = 30.0f;

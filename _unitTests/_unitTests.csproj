@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\SharedLibrary\SharedLibrary.csproj" />
+    <ProjectReference Include="..\AdminMenu\AdminMenu.csproj" />
   </ItemGroup>
 
   <ItemGroup>

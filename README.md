@@ -12,10 +12,12 @@ A collection of plugins for **Counter-Strike 2** servers, built with [CounterStr
 | Plugin | Version | Description |
 |---|---|---|
 | [AdminMenu](#adminmenu) | 2.1 | In-game admin management menu |
+| [DamageReport](#damagereport) | 1.0 | Shows damage dealt and received to a player upon death |
 | [GameStatistic](#gamestatistic) | 2.0 | Player and map statistics tracking |
 | [MenuHotKey](#menuhotkey) | 1.0 | Keyboard hotkeys for all in-game menus |
 | [QuickDefuse](#quickdefuse) | 1.0 | Defuse the bomb by cutting the correct wire |
 | [ReviveTeammate](#reviveteammate) | 1.0 | Revive dead teammates by holding USE near them |
+| [SiteRestrict](#siterestrict) | 1.0 | Restricts bomb planting to a single random site when CTs are low |
 | [StartMap](#startmap) | 1.0 | Automatically switch to a configured map on server start |
 
 ## Requirements
@@ -196,6 +198,45 @@ de_dolls:3501880673
 
 1. Extract the `StartMap` folder to `...\csgo\addons\counterstrikesharp\plugins\StartMap\`.
 2. Edit `startMap.txt` with the desired map name and workshop ID.
+
+---
+
+# DamageReport
+
+Shows each player a damage summary in chat upon death. Displays how much damage (and how many hits) they dealt to each enemy this round, and how much damage they received from each attacker — with the killer highlighted.
+
+**Notes:**
+- The report is only shown to the player who died, not to all players.
+- Bots receive no report (they cannot read chat).
+- Damage during warmup is not tracked.
+
+## Installation
+
+Extract the `DamageReport` folder to `...\csgo\addons\counterstrikesharp\plugins\DamageReport\`.
+
+---
+
+# SiteRestrict
+
+When the CT team has fewer players than a configurable threshold at the start of a round, the plugin randomly selects one bomb site (A or B) as the only active planting location for that round. Planting at the other site is blocked.
+
+**How it works:**
+1. At the start of each round the CT count is checked.
+2. If CTs are below `MinCTsForSiteRestrict`, one site is chosen at random.
+3. All players receive a center-screen announcement 2 seconds into the round indicating which site is active.
+4. If a T player attempts to plant at the restricted site, their bomb is dropped and they receive an on-screen warning.
+
+**Configurable options (in `config.json`):**
+
+| Option | Default | Description |
+|---|---|---|
+| `MinCTsForSiteRestrict` | `4` | Minimum CT count required; restriction activates below this value |
+
+**Commands:** `!reload` (admin only) — reload the config without restarting the plugin.
+
+## Installation
+
+Extract the `SiteRestrict` folder to `...\csgo\addons\counterstrikesharp\plugins\SiteRestrict\`.
 
 ---
 
