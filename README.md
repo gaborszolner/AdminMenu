@@ -1,4 +1,4 @@
-# CouinterStrikeAddons
+# CounterStrikeAddons
 
 A collection of plugins for **Counter-Strike 2** servers, built with [CounterStrikeSharp](https://github.com/roflmuffin/CounterStrikeSharp).
 
