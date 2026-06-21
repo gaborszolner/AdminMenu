@@ -48,38 +48,6 @@ namespace QuickDefuse
             RegisterEventHandler<EventRoundEnd>(OnRoundEnd);
         }
 
-        private void CutBombWithWeaponChange(string weapon)
-        {
-            var slot = WeaponHelper.GetWeaponSlot("weapon_" + weapon);
-
-            if (slot == WeaponHelper.WeaponSlot.Primary)
-            {
-                Server.PrintToChatAll(Msg.Get("WeaponChangedPrimary", weapon));
-                CutBombWire(Wire.Green);
-            }
-            else if (slot == WeaponHelper.WeaponSlot.Secondary)
-            {
-                Server.PrintToChatAll(Msg.Get("WeaponChangedSecondary", weapon));
-                CutBombWire(Wire.Yellow);
-            }
-            else if (slot == WeaponHelper.WeaponSlot.Knife)
-            {
-                Server.PrintToChatAll(Msg.Get("WeaponChangedKnife", weapon));
-                CutBombWire(Wire.Red);
-            }
-            else if (slot == WeaponHelper.WeaponSlot.Grenade)
-            {
-                Server.PrintToChatAll(Msg.Get("WeaponChangedGrenade", weapon));
-                CutBombWire(Wire.Blue);
-            }
-            else
-            {
-                Server.PrintToConsole($"Unknown weapon {weapon} with slot {slot}");
-                //Logger.LogInformation("Unknown weapon + cut random");
-                CutBombWire((Wire)new Random().Next(1, 5));
-            }
-        }
-
         private HookResult OnRoundEnd(EventRoundEnd @event, GameEventInfo info)
         {
             _isRoundEnded = true;
@@ -303,7 +271,7 @@ namespace QuickDefuse
         {
             if (_triedWire is Wire.NotDefined)
             {
-                CutBombWire(Wire.Green);
+                CutBombWire(Wire.Green, player);
             }
         }
 
@@ -311,7 +279,7 @@ namespace QuickDefuse
         {
             if (_triedWire is Wire.NotDefined)
             {
-                CutBombWire(Wire.Yellow);
+                CutBombWire(Wire.Yellow, player);
             }
         }
 
@@ -319,7 +287,7 @@ namespace QuickDefuse
         {
             if (_triedWire is Wire.NotDefined)
             {
-                CutBombWire(Wire.Red);
+                CutBombWire(Wire.Red, player);
             }
         }
 
@@ -327,7 +295,7 @@ namespace QuickDefuse
         {
             if (_triedWire is Wire.NotDefined)
             {
-                CutBombWire(Wire.Blue);
+                CutBombWire(Wire.Blue, player);
             }
         }
 
@@ -335,11 +303,11 @@ namespace QuickDefuse
         {
             if (_triedWire is Wire.NotDefined)
             {
-                CutBombWire((Wire)new Random().Next(1, 5));
+                CutBombWire((Wire)new Random().Next(1, 5), player);
             }
         }
 
-        private static void CutBombWire(Wire triedWire)
+        private static void CutBombWire(Wire triedWire, CCSPlayerController player)
         {
             if (_plantedBomb is null)
             {
@@ -351,14 +319,16 @@ namespace QuickDefuse
             {
                 Server.NextFrame(() =>
                 {
-                    Server.PrintToChatAll(Msg.Get("BombDefusedSuccess", $"{GetChatColor(_rightWire)}{GetWireName(_rightWire)}{ChatColors.Default}"));
+                    Server.PrintToChatAll($"{player.PlayerName}: " + 
+                        Msg.Get("BombDefusedSuccess", $"{GetChatColor(_rightWire)}{GetWireName(_rightWire)}{ChatColors.Default}"));
                     _plantedBomb.DefuseCountDown = 0;
                     _plantedBomb.BombDefused = true;
                 });
             }
             else
             {
-                Server.PrintToChatAll(Msg.Get("BombDefusedFailed",
+                Server.PrintToChatAll($"{player.PlayerName}: " + 
+                    Msg.Get("BombDefusedFailed",
                     $"{GetChatColor(_triedWire)}{GetWireName(_triedWire)}{ChatColors.Default}",
                     $"{GetChatColor(_rightWire)}{GetWireName(_rightWire)}{ChatColors.Default}"));
                 _plantedBomb.CannotBeDefused = true;
