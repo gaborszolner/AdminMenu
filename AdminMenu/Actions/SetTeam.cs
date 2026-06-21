@@ -1,5 +1,6 @@
 ﻿using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
+using CounterStrikeSharp.API.Modules.Entities.Constants;
 using CounterStrikeSharp.API.Modules.Menu;
 using CounterStrikeSharp.API.Modules.Utils;
 
@@ -24,6 +25,7 @@ namespace AdminMenu
                 (CCSPlayerController controller, ChatMenuOption option) =>
                 {
                     targetPlayer.SwitchTeam(CsTeam.Terrorist);
+                    CheckRoundEndNeeded();
                     Server.PrintToChatAll($"{PluginPrefix} {Msg.Get("PlayerAssignedTerrorist", targetPlayer.PlayerName, adminPlayer.PlayerName)}");
                 });
 
@@ -33,6 +35,7 @@ namespace AdminMenu
                 (CCSPlayerController controller, ChatMenuOption option) =>
                 {
                     targetPlayer.SwitchTeam(CsTeam.Terrorist); targetPlayer.Respawn();
+                    CheckRoundEndNeeded();
                     Server.PrintToChatAll($"{PluginPrefix} {Msg.Get("PlayerAssignedTerroristRespawn", targetPlayer.PlayerName, adminPlayer.PlayerName)}");
                 });
             }
@@ -41,6 +44,7 @@ namespace AdminMenu
                 (CCSPlayerController controller, ChatMenuOption option) =>
                 {
                     targetPlayer.SwitchTeam(CsTeam.CounterTerrorist);
+                    CheckRoundEndNeeded();
                     Server.PrintToChatAll($"{PluginPrefix} {Msg.Get("PlayerAssignedCT", targetPlayer.PlayerName, adminPlayer.PlayerName)}");
                 });
 
@@ -50,6 +54,7 @@ namespace AdminMenu
                 (CCSPlayerController controller, ChatMenuOption option) =>
                 {
                     targetPlayer.SwitchTeam(CsTeam.CounterTerrorist); targetPlayer.Respawn();
+                    CheckRoundEndNeeded();
                     Server.PrintToChatAll($"{PluginPrefix} {Msg.Get("PlayerAssignedCTRespawn", targetPlayer.PlayerName, adminPlayer.PlayerName)}");
                 });
             }
@@ -58,15 +63,36 @@ namespace AdminMenu
                 (CCSPlayerController controller, ChatMenuOption option) =>
                 {
                     targetPlayer.ChangeTeam(CsTeam.Spectator);
+                    CheckRoundEndNeeded();
                     Server.PrintToChatAll($"{PluginPrefix} {Msg.Get("PlayerAssignedSpectator", targetPlayer.PlayerName, adminPlayer.PlayerName)}");
                 });
 
             teamsMenu.PostSelectAction = PostSelectAction.Close;
             MenuManager.OpenCenterHtmlMenu(this, adminPlayer, teamsMenu);
         }
+
+        private static void CheckRoundEndNeeded()
+        {
+            var terroristAlive = Utilities.GetPlayers()
+                .Count(p => p.IsValid && p.Team == CsTeam.Terrorist && p.PawnIsAlive);
+            var counterTerroristAlive = Utilities.GetPlayers()
+                .Count(p => p.IsValid && p.Team == CsTeam.CounterTerrorist && p.PawnIsAlive);
+
+            if (terroristAlive == 0 && counterTerroristAlive > 0)
+            {
+                var gameRulesEntity = Utilities.FindAllEntitiesByDesignerName<CEntityInstance>("cs_gamerules").FirstOrDefault();
+                var gameRules = gameRulesEntity?.As<CCSGameRules>();
+                gameRules?.TerminateRound(0.0f, RoundEndReason.CTsWin);
+                return;
+            }
+
+            if (counterTerroristAlive == 0 && terroristAlive > 0)
+            {
+                var gameRulesEntity = Utilities.FindAllEntitiesByDesignerName<CEntityInstance>("cs_gamerules").FirstOrDefault();
+                var gameRules = gameRulesEntity?.As<CCSGameRules>();
+                gameRules?.TerminateRound(0.0f, RoundEndReason.TerroristsWin);
+                return;
+            }
+        }
     }
 }
-
-
-
-
