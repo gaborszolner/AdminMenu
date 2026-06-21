@@ -73,6 +73,8 @@ namespace AdminMenu
 
         private static void CheckRoundEndNeeded()
         {
+            if (_isWarmup) { return; }
+
             var terroristAlive = Utilities.GetPlayers()
                 .Count(p => p.IsValid && p.Team == CsTeam.Terrorist && p.PawnIsAlive);
             var counterTerroristAlive = Utilities.GetPlayers()
