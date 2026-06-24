@@ -1,6 +1,5 @@
 ﻿using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
-using CounterStrikeSharp.API.Modules.Entities.Constants;
 using CounterStrikeSharp.API.Modules.Menu;
 using CounterStrikeSharp.API.Modules.Utils;
 
@@ -82,17 +81,13 @@ namespace AdminMenu
 
             if (terroristAlive == 0 && counterTerroristAlive > 0)
             {
-                var gameRulesEntity = Utilities.FindAllEntitiesByDesignerName<CEntityInstance>("cs_gamerules").FirstOrDefault();
-                var gameRules = gameRulesEntity?.As<CCSGameRules>();
-                gameRules?.TerminateRound(0.0f, RoundEndReason.CTsWin);
+                Server.ExecuteCommand("cs_terminate_round 16");
                 return;
             }
 
             if (counterTerroristAlive == 0 && terroristAlive > 0)
             {
-                var gameRulesEntity = Utilities.FindAllEntitiesByDesignerName<CEntityInstance>("cs_gamerules").FirstOrDefault();
-                var gameRules = gameRulesEntity?.As<CCSGameRules>();
-                gameRules?.TerminateRound(0.0f, RoundEndReason.TerroristsWin);
+                Server.ExecuteCommand("cs_terminate_round 17");
                 return;
             }
         }

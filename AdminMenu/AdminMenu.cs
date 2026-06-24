@@ -45,7 +45,8 @@ namespace AdminMenu
             RegisterEventHandler<EventWarmupEnd>(OnWarmupEnd);
             RegisterEventHandler<EventItemPickup>(OnItemPickup);
             RegisterEventHandler<EventItemEquip>(OnItemEquip);
-            AddCommandListener("!admin", OpenAdminMenu);
+            AddCommandListener("!admin", (player, args) => { ShowMainMenu(player); return HookResult.Continue; });
+
 
             _adminsFilePath = Path.Combine(ModuleDirectory, "..", "..", "configs", "admins.json");
             _bannedFilePath = Path.Combine(ModuleDirectory, "..", "..", "configs", "banned.json");
@@ -341,21 +342,6 @@ namespace AdminMenu
             }
         }
 
-        private HookResult OpenAdminMenu(CCSPlayerController? adminPlayer, CommandInfo commandInfo)
-        {
-            if (adminPlayer is null || !adminPlayer.IsValid)
-            {
-                return HookResult.Continue;
-            }
-
-            if (commandInfo.GetCommandString is "!admin")
-            {
-                ShowMainMenu(adminPlayer);
-            }
-
-            return HookResult.Continue;
-        }
-
         private void ReloadConfigs(CCSPlayerController player)
         {
             int adminLevel = GetAdminLevel(player);
@@ -454,8 +440,13 @@ namespace AdminMenu
             }
         }
 
-        private void ShowMainMenu(CCSPlayerController adminPlayer)
-        {
+        private void ShowMainMenu(CCSPlayerController? adminPlayer)
+        {   
+            if (adminPlayer is null)
+            {
+                return;
+            }
+
             int adminLevel = GetAdminLevel(adminPlayer);
 
             if (adminLevel == 0)
@@ -476,6 +467,10 @@ namespace AdminMenu
                 mainMenu.AddMenuOption(Msg.Get("MenuRename"), RenameAction);
                 mainMenu.AddMenuOption(Msg.Get("MenuMute"), MuteAction);
                 mainMenu.AddMenuOption(Msg.Get("MenuUnMute"), UnMuteAction);
+                if (File.Exists(_mapListFilePath))
+                {
+                    mainMenu.AddMenuOption(Msg.Get("MenuChangeMap"), ChangeMapAction);
+                }
             }
             if (adminLevel > 2)
             {
@@ -483,10 +478,6 @@ namespace AdminMenu
                 mainMenu.AddMenuOption(Msg.Get("MenuRespawn"), RespawnAction);
                 mainMenu.AddMenuOption(Msg.Get("MenuSetAdmin"), SetAdminAction);
                 mainMenu.AddMenuOption(Msg.Get("MenuSetHP"), SetHPAction);
-                if (File.Exists(_mapListFilePath))
-                {
-                    mainMenu.AddMenuOption(Msg.Get("MenuChangeMap"), ChangeMapAction);
-                }
                 if (File.Exists(_playerStatFileFullPath))
                 {
                     mainMenu.AddMenuOption(Msg.Get("MenuTeamShuffle"), TeamShuffleAction);
