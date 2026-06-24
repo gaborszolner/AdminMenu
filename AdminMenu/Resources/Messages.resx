@@ -341,4 +341,44 @@
     <value>You cannot use {0}.</value>
   </data>
 
+  <!-- Vote -->
+  <data name="VoteWaitCooldown" xml:space="preserve">
+    <value>Wait before starting another vote.</value>
+  </data>
+  <data name="VoteAlreadyInProgress" xml:space="preserve">
+    <value>A vote is already in progress.</value>
+  </data>
+  <data name="VoteFormat" xml:space="preserve">
+    <value>Format: !vote Title, Option1, Option2[, Option3, Option4]</value>
+  </data>
+  <data name="VoteInvalidFormat" xml:space="preserve">
+    <value>Invalid format. Use: !vote Title, Option1, Option2[, Option3, Option4]</value>
+  </data>
+  <data name="VoteNewVote" xml:space="preserve">
+    <value>NEW VOTE</value>
+  </data>
+  <data name="VoteStarted" xml:space="preserve">
+    <value>Vote started! 10 seconds to vote.</value>
+  </data>
+  <!-- {0}=option -->
+  <data name="VoteYouVotedFor" xml:space="preserve">
+    <value>You voted for: {0}</value>
+  </data>
+  <!-- {0}=vote title -->
+  <data name="VoteResults" xml:space="preserve">
+    <value>Vote Results: {0}</value>
+  </data>
+  <!-- {0}=option, {1}=vote count -->
+  <data name="VoteOptionResult" xml:space="preserve">
+    <value>{0}: {1} votes</value>
+  </data>
+  <!-- {0}=tied options -->
+  <data name="VoteTie" xml:space="preserve">
+    <value>Tie: {0}</value>
+  </data>
+  <!-- {0}=winning option -->
+  <data name="VoteWinner" xml:space="preserve">
+    <value>Winner: {0}</value>
+  </data>
+
 </root>

@@ -59,10 +59,30 @@ An in-game admin menu accessible via the `!admin` chat command.
 - Set admin level for a player
 - Weapon (un)restrict — for the current map or all maps
 - Welcome message or ban message shown on connect (configurable)
+- Start a player vote/poll with a custom question and up to 4 options (`!vote` command)
 
 **Admin levels:** There are 3 levels. Admins cannot perform actions on players with a higher admin level than their own.
 
-**Commands:** `!admin`
+**Commands:** `!admin`, `!vote`
+
+### Voting
+
+Any player can start a poll among everyone on the server using the `!vote` chat command.
+
+**Format:**
+```
+!vote Question, Option1, Option2[, Option3, Option4]
+```
+- The text after `!vote` is split by commas. The **first part is always the question** (used as the menu title); the remaining parts are the answer options.
+- Between **2 and 4 options** are supported (3 to 5 comma-separated parts in total).
+
+**How it works:**
+1. A pop-up menu appears for every player, titled with the question and listing the options.
+2. The vote is **active for 10 seconds**. Each player can vote once; selecting an option closes the menu for that player. After the time runs out, any still-open vote menus close automatically.
+3. When the vote ends, the per-option results are printed to chat along with the winner (or a tie if applicable).
+4. After a vote completes, the player who started it must wait 30 seconds before starting another.
+
+It is **strongly recommended** to use the [MenuHotKey](#menuhotkey) plugin alongside this feature so options can be selected instantly from the pop-up menu.
 
 ## Installation
 

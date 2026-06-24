@@ -295,4 +295,38 @@
   <data name="WeaponCannotUse" xml:space="preserve">
     <value>Nem használhatod: {0}.</value>
   </data>
+  <!-- Vote -->
+  <data name="VoteWaitCooldown" xml:space="preserve">
+    <value>Várj, mielőtt új szavazást indítasz.</value>
+  </data>
+  <data name="VoteAlreadyInProgress" xml:space="preserve">
+    <value>Már folyamatban van egy szavazás.</value>
+  </data>
+  <data name="VoteFormat" xml:space="preserve">
+    <value>Formátum: !vote Kérdés, 1. válasz, 2. válasz[, 3. válasz, 4. válasz]</value>
+  </data>
+  <data name="VoteInvalidFormat" xml:space="preserve">
+    <value>Érvénytelen formátum. Használat: !vote Kérdés, 1. válasz, 2. válasz[, 3. válasz, 4. válasz]</value>
+  </data>
+  <data name="VoteNewVote" xml:space="preserve">
+    <value>ÚJ SZAVAZÁS</value>
+  </data>
+  <data name="VoteStarted" xml:space="preserve">
+    <value>Szavazás elindítva! 10 másodperc a szavazásra.</value>
+  </data>
+  <data name="VoteYouVotedFor" xml:space="preserve">
+    <value>A szavazatod: {0}</value>
+  </data>
+  <data name="VoteResults" xml:space="preserve">
+    <value>Szavazás eredménye: {0}</value>
+  </data>
+  <data name="VoteOptionResult" xml:space="preserve">
+    <value>{0}: {1} szavazat</value>
+  </data>
+  <data name="VoteTie" xml:space="preserve">
+    <value>Döntetlen: {0}</value>
+  </data>
+  <data name="VoteWinner" xml:space="preserve">
+    <value>Győztes: {0}</value>
+  </data>
 </root>

@@ -35,6 +35,12 @@ namespace AdminMenu
         private static readonly object _pendingRenameLock = new();
         private static readonly object _dictionaryLock = new();
 
+        // Vote system tracking
+        private static VoteState? _activeVote = null;
+        private static Dictionary<string, int> _voteVoters = []; // SteamID2 -> OptionIndex
+        private static Dictionary<string, long> _voteCooldown = []; // SteamID2 -> CooldownEndTime (ticks)
+        private static readonly object _voteLock = new();
+
         public override void Load(bool hotReload)
         {
             RegisterEventHandler<EventPlayerConnectFull>(OnPlayerConnect);
@@ -238,6 +244,13 @@ namespace AdminMenu
             else if (@event?.Text.Trim().ToLower() is "!status")
             {
                 LogStatuses(player);
+            }
+            else if (@event?.Text.Trim().StartsWith("!vote", StringComparison.CurrentCultureIgnoreCase) == true)
+            {
+                string input = @event.Text.Trim();
+                string voteContent = input.Length > 5 ? input.Substring(5).Trim() : "";
+                StartVote(player, voteContent);
+                return HookResult.Handled;
             }
             else if (@event?.Text.Trim().ToLower() is "!currentmap")
             {

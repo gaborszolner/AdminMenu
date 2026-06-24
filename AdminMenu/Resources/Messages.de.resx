@@ -99,4 +99,15 @@
   <data name="NoRestrictedWeapon" xml:space="preserve"><value>Keine gesperrten Waffen.</value></data>
   <data name="WeaponForbiddenWarning" xml:space="preserve"><value>WARNUNG: Du verwendest eine VERBOTENE Waffe: {0}.</value></data>
   <data name="WeaponCannotUse" xml:space="preserve"><value>Du kannst {0} nicht verwenden.</value></data>
+  <data name="VoteWaitCooldown" xml:space="preserve"><value>Warte, bevor du eine neue Abstimmung startest.</value></data>
+  <data name="VoteAlreadyInProgress" xml:space="preserve"><value>Eine Abstimmung läuft bereits.</value></data>
+  <data name="VoteFormat" xml:space="preserve"><value>Format: !vote Titel, Option1, Option2[, Option3, Option4]</value></data>
+  <data name="VoteInvalidFormat" xml:space="preserve"><value>Ungültiges Format. Verwende: !vote Titel, Option1, Option2[, Option3, Option4]</value></data>
+  <data name="VoteNewVote" xml:space="preserve"><value>NEUE ABSTIMMUNG</value></data>
+  <data name="VoteStarted" xml:space="preserve"><value>Abstimmung gestartet! 10 Sekunden zum Abstimmen.</value></data>
+  <data name="VoteYouVotedFor" xml:space="preserve"><value>Du hast abgestimmt für: {0}</value></data>
+  <data name="VoteResults" xml:space="preserve"><value>Abstimmungsergebnisse: {0}</value></data>
+  <data name="VoteOptionResult" xml:space="preserve"><value>{0}: {1} Stimmen</value></data>
+  <data name="VoteTie" xml:space="preserve"><value>Unentschieden: {0}</value></data>
+  <data name="VoteWinner" xml:space="preserve"><value>Gewinner: {0}</value></data>
 </root>

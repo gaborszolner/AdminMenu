@@ -99,4 +99,15 @@
   <data name="NoRestrictedWeapon" xml:space="preserve"><value>Нет запрещённого оружия.</value></data>
   <data name="WeaponForbiddenWarning" xml:space="preserve"><value>ВНИМАНИЕ: Вы используете ЗАПРЕЩЁННОЕ оружие: {0}.</value></data>
   <data name="WeaponCannotUse" xml:space="preserve"><value>Вы не можете использовать {0}.</value></data>
+  <data name="VoteWaitCooldown" xml:space="preserve"><value>Подождите, прежде чем начинать новое голосование.</value></data>
+  <data name="VoteAlreadyInProgress" xml:space="preserve"><value>Голосование уже идёт.</value></data>
+  <data name="VoteFormat" xml:space="preserve"><value>Формат: !vote Заголовок, Вариант1, Вариант2[, Вариант3, Вариант4]</value></data>
+  <data name="VoteInvalidFormat" xml:space="preserve"><value>Неверный формат. Используйте: !vote Заголовок, Вариант1, Вариант2[, Вариант3, Вариант4]</value></data>
+  <data name="VoteNewVote" xml:space="preserve"><value>НОВОЕ ГОЛОСОВАНИЕ</value></data>
+  <data name="VoteStarted" xml:space="preserve"><value>Голосование началось! 10 секунд на голосование.</value></data>
+  <data name="VoteYouVotedFor" xml:space="preserve"><value>Вы проголосовали за: {0}</value></data>
+  <data name="VoteResults" xml:space="preserve"><value>Результаты голосования: {0}</value></data>
+  <data name="VoteOptionResult" xml:space="preserve"><value>{0}: {1} голосов</value></data>
+  <data name="VoteTie" xml:space="preserve"><value>Ничья: {0}</value></data>
+  <data name="VoteWinner" xml:space="preserve"><value>Победитель: {0}</value></data>
 </root>

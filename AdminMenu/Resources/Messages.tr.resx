@@ -99,4 +99,15 @@
   <data name="NoRestrictedWeapon" xml:space="preserve"><value>Kısıtlı silah yok.</value></data>
   <data name="WeaponForbiddenWarning" xml:space="preserve"><value>UYARI: YASAK bir silah kullanıyorsunuz: {0}.</value></data>
   <data name="WeaponCannotUse" xml:space="preserve"><value>{0} kullanamazsınız.</value></data>
+  <data name="VoteWaitCooldown" xml:space="preserve"><value>Başka bir oylama başlatmadan önce bekleyin.</value></data>
+  <data name="VoteAlreadyInProgress" xml:space="preserve"><value>Zaten bir oylama devam ediyor.</value></data>
+  <data name="VoteFormat" xml:space="preserve"><value>Biçim: !vote Başlık, Seçenek1, Seçenek2[, Seçenek3, Seçenek4]</value></data>
+  <data name="VoteInvalidFormat" xml:space="preserve"><value>Geçersiz biçim. Kullanım: !vote Başlık, Seçenek1, Seçenek2[, Seçenek3, Seçenek4]</value></data>
+  <data name="VoteNewVote" xml:space="preserve"><value>YENİ OYLAMA</value></data>
+  <data name="VoteStarted" xml:space="preserve"><value>Oylama başladı! Oy vermek için 10 saniye.</value></data>
+  <data name="VoteYouVotedFor" xml:space="preserve"><value>Şuna oy verdiniz: {0}</value></data>
+  <data name="VoteResults" xml:space="preserve"><value>Oylama Sonuçları: {0}</value></data>
+  <data name="VoteOptionResult" xml:space="preserve"><value>{0}: {1} oy</value></data>
+  <data name="VoteTie" xml:space="preserve"><value>Beraberlik: {0}</value></data>
+  <data name="VoteWinner" xml:space="preserve"><value>Kazanan: {0}</value></data>
 </root>
