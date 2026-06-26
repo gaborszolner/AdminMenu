@@ -1,6 +1,7 @@
 using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Events;
+using CounterStrikeSharp.API.Modules.Timers;
 using CounterStrikeSharp.API.Modules.Utils;
 using SharedLibrary;
 
@@ -15,15 +16,14 @@ namespace SiteRestrict
 
         public readonly string PluginPrefix = "[SiteRestrict]";
 
-        // World-space AABB of the allowed bomb site trigger (primary check)
         private static (float MinX, float MinY, float MinZ, float MaxX, float MaxY, float MaxZ)? _allowedZone = null;
-        // Fallback centers when Collision bounds are unavailable
         private static (float X, float Y, float Z)? _allowedCenter = null;
         private static (float X, float Y, float Z)? _otherCenter = null;
         private static string _allowedSiteName = "";
         private static bool _isRestricted = false;
         private static bool _isWarmup = false;
         private static Config _config = new();
+        private CounterStrikeSharp.API.Modules.Timers.Timer? _messageTimer = null;
 
         public override void Load(bool hotReload)
         {
@@ -33,6 +33,7 @@ namespace SiteRestrict
             RegisterEventHandler<EventRoundAnnounceWarmup>(OnRoundAnnounceWarmup);
             RegisterEventHandler<EventWarmupEnd>(OnWarmupEnd);
             RegisterEventHandler<EventRoundStart>(OnRoundStart);
+            RegisterEventHandler<EventRoundEnd>(OnRoundEnd);
             RegisterEventHandler<EventBombBeginplant>(OnBombBeginPlant);
             RegisterEventHandler<EventPlayerChat>(OnPlayerChat);
         }
@@ -72,6 +73,7 @@ namespace SiteRestrict
 
         private HookResult OnRoundStart(EventRoundStart @event, GameEventInfo info)
         {
+            StopMessageTimer();
             _allowedZone = null;
             _allowedCenter = null;
             _otherCenter = null;
@@ -126,21 +128,27 @@ namespace SiteRestrict
 
             _isRestricted = true;
 
-            AddTimer(2.0f, () =>
+            _messageTimer = AddTimer(1.0f, () =>
             {
+                if (!_isRestricted)
+                    return;
+
                 foreach (var p in Utilities.GetPlayers().Where(p => p.IsValid))
                     p.PrintToCenter(Msg.Get("SiteAllowed", _allowedSiteName));
-            });
-            AddTimer(5.0f, () =>
-            {
-                foreach (var p in Utilities.GetPlayers().Where(p => p.IsValid))
-                    p.PrintToCenter(Msg.Get("SiteAllowed", _allowedSiteName));
-            });
-            AddTimer(15.0f, () =>
-            {
-                foreach (var p in Utilities.GetPlayers().Where(p => p.IsValid))
-                    p.PrintToCenter(Msg.Get("SiteAllowed", _allowedSiteName));
-            });
+            }, TimerFlags.REPEAT | TimerFlags.STOP_ON_MAPCHANGE);
+        }
+
+        private HookResult OnRoundEnd(EventRoundEnd @event, GameEventInfo info)
+        {
+            StopMessageTimer();
+            _isRestricted = false;
+            return HookResult.Continue;
+        }
+
+        private void StopMessageTimer()
+        {
+            _messageTimer?.Kill();
+            _messageTimer = null;
         }
 
         private HookResult OnBombBeginPlant(EventBombBeginplant @event, GameEventInfo info)
@@ -203,7 +211,6 @@ namespace SiteRestrict
 
             if (siteA == null || siteB == null || siteA.AbsOrigin == null || siteB.AbsOrigin == null)
             {
-                // Fallback: sort by X coordinate
                 var sorted = sites.OrderBy(s => s.AbsOrigin!.X).ToList();
                 if (sorted.Count < 2 || sorted[0].AbsOrigin == null || sorted[1].AbsOrigin == null)
                     return null;
@@ -224,7 +231,7 @@ namespace SiteRestrict
             var mins = site.Collision?.Mins;
             var maxs = site.Collision?.Maxs;
             if (mins == null || maxs == null) return null;
-            // Sanity check: reject degenerate (zero-size) bounds
+
             if (MathF.Abs(maxs.X - mins.X) < 1f && MathF.Abs(maxs.Y - mins.Y) < 1f) return null;
             return (
                 origin.X + mins.X, origin.Y + mins.Y, origin.Z + mins.Z,

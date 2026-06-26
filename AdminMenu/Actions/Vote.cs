@@ -16,6 +16,12 @@ namespace AdminMenu
                 return;
             }
 
+            if (GetAdminLevel(player) < 1) 
+            {
+                player.PrintToChat(Msg.Get("NotAdminError"));
+                return;
+            }
+
             var steamId = player.AuthorizedSteamID.SteamId2;
 
             if (string.IsNullOrWhiteSpace(voteContent))

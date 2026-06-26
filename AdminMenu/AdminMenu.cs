@@ -262,9 +262,7 @@ namespace AdminMenu
             }
             else if (@event?.Text.Trim().ToLower() is "!help")
             {
-                int adminLevel = GetAdminLevel(player);
-
-                if (adminLevel > 2)
+                if (GetAdminLevel(player) > 2)
                 {
                     player?.PrintToChat($"{PluginPrefix} {Msg.Get("HelpCommandsAdmin")}");
                 }
@@ -357,8 +355,7 @@ namespace AdminMenu
 
         private void ReloadConfigs(CCSPlayerController player)
         {
-            int adminLevel = GetAdminLevel(player);
-            if (adminLevel > 2)
+            if (GetAdminLevel(player) > 2)
             {
                 lock (_dictionaryLock)
                 {
