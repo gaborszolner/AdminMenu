@@ -73,7 +73,6 @@ namespace SiteRestrict
 
         private HookResult OnRoundStart(EventRoundStart @event, GameEventInfo info)
         {
-            StopMessageTimer();
             _allowedZone = null;
             _allowedCenter = null;
             _otherCenter = null;
@@ -149,6 +148,13 @@ namespace SiteRestrict
         {
             _messageTimer?.Kill();
             _messageTimer = null;
+            ClearCenterMessages();
+        }
+
+        private static void ClearCenterMessages()
+        {
+            foreach (var p in Utilities.GetPlayers().Where(p => p.IsValid))
+                p.PrintToCenter(" ");
         }
 
         private HookResult OnBombBeginPlant(EventBombBeginplant @event, GameEventInfo info)
