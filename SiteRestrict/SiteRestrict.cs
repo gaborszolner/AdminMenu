@@ -1,6 +1,7 @@
 using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Events;
+using CounterStrikeSharp.API.Modules.Menu;
 using CounterStrikeSharp.API.Modules.Timers;
 using CounterStrikeSharp.API.Modules.Utils;
 using SharedLibrary;
@@ -23,11 +24,15 @@ namespace SiteRestrict
         private static bool _isRestricted = false;
         private static bool _isWarmup = false;
         private static Config _config = new();
+        private static SiteSwitchConfig _switchConfig = new();
         private CounterStrikeSharp.API.Modules.Timers.Timer? _messageTimer = null;
+
+        private string SwitchConfigPath => Path.Combine(ModuleDirectory, "site_switch.json");
 
         public override void Load(bool hotReload)
         {
             _config = Config.LoadConfig(Path.Combine(ModuleDirectory, "config.json"));
+            _switchConfig = SiteSwitchConfig.Load(SwitchConfigPath);
             SharedLibrary.Localizer.Initialize(_config.Language);
 
             RegisterEventHandler<EventRoundAnnounceWarmup>(OnRoundAnnounceWarmup);
@@ -57,9 +62,11 @@ namespace SiteRestrict
             if (player is null || !player.IsValid)
                 return HookResult.Continue;
 
-            if (@event?.Text.Trim().ToLower() is "!reload")
+            string command = @event?.Text.Trim().ToLower() ?? "";
+            string adminsFilePath = Path.Combine(ModuleDirectory, "..", "..", "configs", "admins.json");
+
+            if (command is "!reload")
             {
-                string adminsFilePath = Path.Combine(ModuleDirectory, "..", "..", "configs", "admins.json");
                 if (PlayerHelper.GetAdminLevel(player, adminsFilePath) > 2)
                 {
                     _config = Config.LoadConfig(Path.Combine(ModuleDirectory, "config.json"));
@@ -67,8 +74,47 @@ namespace SiteRestrict
                     player.PrintToChat($"{PluginPrefix} {Msg.Get("ConfigsReloaded")}");
                 }
             }
+            else if (command is "!siterestrict")
+            {
+                if (PlayerHelper.GetAdminLevel(player, adminsFilePath) >= 3)
+                    OpenAdminMenu(player);
+                else
+                    player.PrintToChat($"{PluginPrefix} {Msg.Get("NoPermission")}");
+            }
 
             return HookResult.Continue;
+        }
+
+        private void OpenAdminMenu(CCSPlayerController player)
+        {
+            var menu = new CenterHtmlMenu(Msg.Get("AdminMenuTitle"), this);
+
+            menu.AddMenuOption(Msg.Get("MenuSwitchSites"), (controller, option) =>
+            {
+                if (controller is null || !controller.IsValid)
+                    return;
+
+                string mapName = Server.MapName;
+                bool nowSwapped = _switchConfig.Toggle(mapName);
+                _switchConfig.Save(SwitchConfigPath);
+
+                if (_isRestricted && !string.IsNullOrEmpty(_allowedSiteName))
+                {
+                    _allowedSiteName = _allowedSiteName == "A" ? "B" : "A";
+
+                    foreach (var p in Utilities.GetPlayers().Where(p => p.IsValid))
+                        p.PrintToCenter(Msg.Get("SiteAllowed", _allowedSiteName));
+                }
+
+                string message = nowSwapped
+                    ? Msg.Get("SitesSwitchedOn", mapName)
+                    : Msg.Get("SitesSwitchedOff", mapName);
+
+                controller.PrintToChat($"{PluginPrefix} {message}");
+                MenuManager.CloseActiveMenu(controller);
+            });
+
+            MenuManager.OpenCenterHtmlMenu(this, player, menu);
         }
 
         private HookResult OnRoundStart(EventRoundStart @event, GameEventInfo info)
@@ -97,7 +143,7 @@ namespace SiteRestrict
             if (ctCount >= _config.MinCTsForSiteRestrict)
                 return;
 
-            var sites = Utilities.FindAllEntitiesByDesignerName<CBaseEntity>("func_bomb_target")
+            var sites = Utilities.FindAllEntitiesByDesignerName<CBombTarget>("func_bomb_target")
                 .Where(e => e.IsValid && e.AbsOrigin != null)
                 .ToList();
 
@@ -109,6 +155,9 @@ namespace SiteRestrict
                 return;
 
             var (nameA, zoneA, centerA, nameB, zoneB, centerB) = identified.Value;
+
+            if (_switchConfig.IsSwapped(Server.MapName))
+                (nameA, nameB) = (nameB, nameA);
 
             if (Random.Shared.Next(2) == 0)
             {
@@ -202,25 +251,27 @@ namespace SiteRestrict
             string nameB,
             (float MinX, float MinY, float MinZ, float MaxX, float MaxY, float MaxZ)? zoneB,
             (float X, float Y, float Z) centerB
-        )? IdentifySites(List<CBaseEntity> sites)
+        )? IdentifySites(List<CBombTarget> sites)
         {
-            CBaseEntity? siteA = null, siteB = null;
+            var validSites = sites.Where(s => s.AbsOrigin != null).ToList();
 
-            foreach (var site in sites)
+            var aSites = validSites.Where(s => !s.IsBombSiteB).ToList();
+            var bSites = validSites.Where(s => s.IsBombSiteB).ToList();
+
+            CBombTarget siteA;
+            CBombTarget siteB;
+
+            if (aSites.Count == 1 && bSites.Count == 1)
             {
-                string entityName = (site.Entity?.Name ?? "").ToLower();
-                if (entityName.Contains("_a") || entityName.EndsWith("a"))
-                    siteA = site;
-                else if (entityName.Contains("_b") || entityName.EndsWith("b"))
-                    siteB = site;
+                siteA = aSites.First();
+                siteB = bSites.First();
             }
-
-            if (siteA == null || siteB == null || siteA.AbsOrigin == null || siteB.AbsOrigin == null)
+            else
             {
-                var sorted = sites.OrderBy(s => s.AbsOrigin!.X).ToList();
-                if (sorted.Count < 2 || sorted[0].AbsOrigin == null || sorted[1].AbsOrigin == null)
+                var sorted = validSites.OrderBy(s => s.AbsOrigin!.X).ToList();
+                if (sorted.Count < 2)
                     return null;
-                siteA = sorted[0];
+                siteA = sorted.First();
                 siteB = sorted[1];
             }
 
