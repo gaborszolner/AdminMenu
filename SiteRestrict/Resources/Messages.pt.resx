@@ -22,4 +22,21 @@
   <data name="ConfigsReloaded" xml:space="preserve">
     <value>Configurações recarregadas!</value>
   </data>
+  <data name="AdminMenuTitle" xml:space="preserve">
+    <value>Menu de administração do SiteRestrict</value>
+  </data>
+  <data name="MenuSwitchSites" xml:space="preserve">
+    <value>Trocar bombsites (A &lt;-&gt; B)</value>
+  </data>
+  <!-- {0}=map name -->
+  <data name="SitesSwitchedOn" xml:space="preserve">
+    <value>Os rótulos de bombsite A/B agora estão TROCADOS em {0}.</value>
+  </data>
+  <!-- {0}=map name -->
+  <data name="SitesSwitchedOff" xml:space="preserve">
+    <value>Os rótulos de bombsite A/B voltaram ao NORMAL em {0}.</value>
+  </data>
+  <data name="NoPermission" xml:space="preserve">
+    <value>Você não tem permissão para usar este comando.</value>
+  </data>
 </root>

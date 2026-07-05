@@ -22,4 +22,21 @@
   <data name="ConfigsReloaded" xml:space="preserve">
     <value>Konfiguráció újratöltve!</value>
   </data>
+  <data name="AdminMenuTitle" xml:space="preserve">
+    <value>SiteRestrict Admin Menü</value>
+  </data>
+  <data name="MenuSwitchSites" xml:space="preserve">
+    <value>Bombahelyek cseréje (A &lt;-&gt; B)</value>
+  </data>
+  <!-- {0}=map name -->
+  <data name="SitesSwitchedOn" xml:space="preserve">
+    <value>Az A/B bombahely címkék mostantól FEL VANNAK CSERÉLVE a(z) {0} pályán.</value>
+  </data>
+  <!-- {0}=map name -->
+  <data name="SitesSwitchedOff" xml:space="preserve">
+    <value>Az A/B bombahely címkék visszaálltak NORMÁL állapotba a(z) {0} pályán.</value>
+  </data>
+  <data name="NoPermission" xml:space="preserve">
+    <value>Nincs jogosultságod a parancs használatához.</value>
+  </data>
 </root>

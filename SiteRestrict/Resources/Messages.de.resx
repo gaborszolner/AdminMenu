@@ -22,4 +22,21 @@
   <data name="ConfigsReloaded" xml:space="preserve">
     <value>Konfiguration neu geladen!</value>
   </data>
+  <data name="AdminMenuTitle" xml:space="preserve">
+    <value>SiteRestrict Admin-Menü</value>
+  </data>
+  <data name="MenuSwitchSites" xml:space="preserve">
+    <value>Bombsites tauschen (A &lt;-&gt; B)</value>
+  </data>
+  <!-- {0}=map name -->
+  <data name="SitesSwitchedOn" xml:space="preserve">
+    <value>Bombsite A/B-Bezeichnungen sind jetzt GETAUSCHT auf {0}.</value>
+  </data>
+  <!-- {0}=map name -->
+  <data name="SitesSwitchedOff" xml:space="preserve">
+    <value>Bombsite A/B-Bezeichnungen sind wieder NORMAL auf {0}.</value>
+  </data>
+  <data name="NoPermission" xml:space="preserve">
+    <value>Du hast keine Berechtigung, diesen Befehl zu verwenden.</value>
+  </data>
 </root>

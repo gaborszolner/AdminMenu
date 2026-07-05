@@ -22,4 +22,21 @@
   <data name="ConfigsReloaded" xml:space="preserve">
     <value>Yapılandırmalar yeniden yüklendi!</value>
   </data>
+  <data name="AdminMenuTitle" xml:space="preserve">
+    <value>SiteRestrict Yönetici Menüsü</value>
+  </data>
+  <data name="MenuSwitchSites" xml:space="preserve">
+    <value>Bomba bölgelerini değiştir (A &lt;-&gt; B)</value>
+  </data>
+  <!-- {0}=map name -->
+  <data name="SitesSwitchedOn" xml:space="preserve">
+    <value>A/B bomba bölgesi etiketleri artık {0} haritasında DEĞİŞTİRİLDİ.</value>
+  </data>
+  <!-- {0}=map name -->
+  <data name="SitesSwitchedOff" xml:space="preserve">
+    <value>A/B bomba bölgesi etiketleri {0} haritasında tekrar NORMALE döndü.</value>
+  </data>
+  <data name="NoPermission" xml:space="preserve">
+    <value>Bu komutu kullanma izniniz yok.</value>
+  </data>
 </root>

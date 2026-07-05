@@ -22,4 +22,21 @@
   <data name="ConfigsReloaded" xml:space="preserve">
     <value>Конфигурация перезагружена!</value>
   </data>
+  <data name="AdminMenuTitle" xml:space="preserve">
+    <value>Меню администратора SiteRestrict</value>
+  </data>
+  <data name="MenuSwitchSites" xml:space="preserve">
+    <value>Поменять точки закладки (A &lt;-&gt; B)</value>
+  </data>
+  <!-- {0}=map name -->
+  <data name="SitesSwitchedOn" xml:space="preserve">
+    <value>Метки точек A/B теперь ПОМЕНЯНЫ на карте {0}.</value>
+  </data>
+  <!-- {0}=map name -->
+  <data name="SitesSwitchedOff" xml:space="preserve">
+    <value>Метки точек A/B снова В НОРМЕ на карте {0}.</value>
+  </data>
+  <data name="NoPermission" xml:space="preserve">
+    <value>У вас нет прав для использования этой команды.</value>
+  </data>
 </root>

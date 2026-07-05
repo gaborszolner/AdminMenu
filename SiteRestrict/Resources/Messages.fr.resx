@@ -22,4 +22,21 @@
   <data name="ConfigsReloaded" xml:space="preserve">
     <value>Configurations rechargées!</value>
   </data>
+  <data name="AdminMenuTitle" xml:space="preserve">
+    <value>Menu d'administration SiteRestrict</value>
+  </data>
+  <data name="MenuSwitchSites" xml:space="preserve">
+    <value>Changer les sites de bombe (A &lt;-&gt; B)</value>
+  </data>
+  <!-- {0}=map name -->
+  <data name="SitesSwitchedOn" xml:space="preserve">
+    <value>Les étiquettes des sites A/B sont maintenant ÉCHANGÉES sur {0}.</value>
+  </data>
+  <!-- {0}=map name -->
+  <data name="SitesSwitchedOff" xml:space="preserve">
+    <value>Les étiquettes des sites A/B sont de nouveau NORMALES sur {0}.</value>
+  </data>
+  <data name="NoPermission" xml:space="preserve">
+    <value>Vous n'avez pas la permission d'utiliser cette commande.</value>
+  </data>
 </root>
