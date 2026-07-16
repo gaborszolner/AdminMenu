@@ -263,3 +263,12 @@ Extract the `SiteRestrict` folder to `...\csgo\addons\counterstrikesharp\plugins
 # SharedLibrary
 
 An internal shared library used by all plugins in this solution. It provides common utilities including configuration loading, localisation (multi-language support), player helpers, statistic helpers, and weapon helpers. It is not a standalone plugin and does not need to be installed separately.
+
+------------------------
+------------------------
+------------------------
+# Donate
+
+If you enjoy my work and would like to support what I do, I'd truly appreciate it. 
+You can do so here: https://revolut.me/gaborszolner
+
