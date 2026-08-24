@@ -15,6 +15,8 @@ namespace SharedLibrary
 
         public int MinimumPlayerCountToStatistic { get; set; } = 4;
 
+        public bool EnableTopBottomCommand { get; set; } = true;
+
         public bool AllowSameName { get; set; } = true;
 
         public int MuteAfterDeathInSecounds { get; set; } = 0;

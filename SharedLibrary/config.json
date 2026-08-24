@@ -3,6 +3,7 @@
   "AutoTeamShuffleMinDifferentPercentage": 25,
   "AutoTeamShuffleOnRoundStart": true,
   "DateRangeForStatisticsInMonth": 3,
+  "EnableTopBottomCommand": false,
   "AllowSameName": false,
   "MuteAfterDeathInSecounds": 0,
   "MinimumPlayerCountToStatistic": 4,

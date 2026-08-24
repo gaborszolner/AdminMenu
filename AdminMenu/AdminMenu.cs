@@ -1,7 +1,6 @@
 ﻿using AdminMenu.Entries;
 using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
-using CounterStrikeSharp.API.Modules.Commands;
 using CounterStrikeSharp.API.Modules.Events;
 using CounterStrikeSharp.API.Modules.Menu;
 using CounterStrikeSharp.API.Modules.Utils;
@@ -173,6 +172,8 @@ namespace AdminMenu
                 return HookResult.Continue;
             }
 
+            CheckPlayerSteamId(player, 0);
+
             if (IsBanned(player, out string oldName))
             {
                 Server.PrintToChatAll($"{PluginPrefix} {Msg.Get("PlayerBannedFromServer", player.PlayerName, oldName)}");
@@ -200,6 +201,28 @@ namespace AdminMenu
             }
 
             return HookResult.Continue;
+        }
+
+        private void CheckPlayerSteamId(CCSPlayerController player, int attempts)
+        {
+            if (player == null || !player.IsValid)
+            {
+                return;
+            }
+
+            if (!string.IsNullOrWhiteSpace(player.AuthorizedSteamID?.SteamId2))
+            {
+                return;
+            }
+
+            if (attempts >= 5)
+            {
+                Server.PrintToChatAll($"{PluginPrefix} Player has no steam: {player.PlayerName}");
+                player.Disconnect(NetworkDisconnectionReason.NETWORK_DISCONNECT_KICKED_NOSTEAMLOGIN);
+                return;
+            }
+
+            AddTimer(1.0f, () => CheckPlayerSteamId(player, attempts + 1));
         }
 
         public HookResult OnPlayerChat(EventPlayerChat @event, GameEventInfo info)
@@ -451,7 +474,7 @@ namespace AdminMenu
         }
 
         private void ShowMainMenu(CCSPlayerController? adminPlayer)
-        {   
+        {
             if (adminPlayer is null)
             {
                 return;

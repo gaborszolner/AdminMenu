@@ -120,7 +120,7 @@ namespace QuickDefuse
                 MenuManager.CloseActiveMenu(player);
                 if (isPlant)
                 {
-                    player.PrintToChat(Msg.Get("WireChosen", GetWireName(_rightWire)));
+                    PrintYouChose(player, _rightWire);
                 }
             });
         }

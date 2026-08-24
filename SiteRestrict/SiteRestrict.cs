@@ -176,6 +176,7 @@ namespace SiteRestrict
 
             _isRestricted = true;
 
+            Server.PrintToChatAll(Msg.Get("SiteAllowed", _allowedSiteName));
             _messageTimer = AddTimer(1.0f, () =>
             {
                 if (!_isRestricted)
@@ -290,9 +291,12 @@ namespace SiteRestrict
             if (mins == null || maxs == null) return null;
 
             if (MathF.Abs(maxs.X - mins.X) < 1f && MathF.Abs(maxs.Y - mins.Y) < 1f) return null;
+
+            const float buffer = 20.0f; // adjust if needed (units depend on map scale)
+
             return (
-                origin.X + mins.X, origin.Y + mins.Y, origin.Z + mins.Z,
-                origin.X + maxs.X, origin.Y + maxs.Y, origin.Z + maxs.Z
+                origin.X + mins.X - buffer, origin.Y + mins.Y - buffer, origin.Z + mins.Z - buffer,
+                origin.X + maxs.X + buffer, origin.Y + maxs.Y + buffer, origin.Z + maxs.Z + buffer
             );
         }
 

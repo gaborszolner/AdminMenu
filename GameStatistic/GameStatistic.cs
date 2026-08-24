@@ -53,11 +53,11 @@ namespace GameStatistic
             {
                 PrintPlayerStat(player);
             }
-            else if (@event?.Text.Trim().ToLower() is "!top")
+            else if (@event?.Text.Trim().ToLower() is "!top" && _config.EnableTopBottomCommand)
             {
                 PrintTop(player);
             }
-            else if (@event?.Text.Trim().ToLower() is "!bottom")
+            else if (@event?.Text.Trim().ToLower() is "!bottom" && _config.EnableTopBottomCommand)
             {
                 PrintTop(player, true);
             }
