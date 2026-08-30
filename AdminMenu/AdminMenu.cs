@@ -229,8 +229,9 @@ namespace AdminMenu
         {
             var player = Utilities.GetPlayerFromUserid(@event.Userid);
 
-            if (player is null || player.AuthorizedSteamID is null)
+            if (player?.AuthorizedSteamID is null || !player.IsValid)
             {
+                player?.Disconnect(NetworkDisconnectionReason.NETWORK_DISCONNECT_KICKED);
                 return HookResult.Continue;
             }
 
