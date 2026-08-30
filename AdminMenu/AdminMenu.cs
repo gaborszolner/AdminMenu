@@ -229,10 +229,10 @@ namespace AdminMenu
         {
             var player = Utilities.GetPlayerFromUserid(@event.Userid);
 
-            if (player?.AuthorizedSteamID is null || !player.IsValid)
+            if (player == null || !player.IsValid || player.AuthorizedSteamID == null) // not connected but still sending chat messages, its a spambot
             {
                 player?.Disconnect(NetworkDisconnectionReason.NETWORK_DISCONNECT_KICKED);
-                return HookResult.Continue;
+                return HookResult.Handled;
             }
 
             if (_pendingRename is not null &&
