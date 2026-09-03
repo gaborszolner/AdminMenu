@@ -60,6 +60,7 @@ An in-game admin menu accessible via the `!admin` chat command.
 - Weapon (un)restrict — for the current map or all maps
 - Welcome message or ban message shown on connect (configurable)
 - Start a player vote/poll with a custom question and up to 4 options (`!vote` command)
+- Block spammers
 
 **Admin levels:** There are 3 levels. Admins cannot perform actions on players with a higher admin level than their own.
 
@@ -252,7 +253,9 @@ When the CT team has fewer players than a configurable threshold at the start of
 |---|---|---|
 | `MinCTsForSiteRestrict` | `4` | Minimum CT count required; restriction activates below this value |
 
-**Commands:** `!reload` (admin only) — reload the config without restarting the plugin.
+**Commands:**
+- `!reload` (admin only) — reload the config without restarting the plugin.
+- `!siterestrict` (admin level 3+) — open the SiteRestrict admin menu. From the menu you can toggle/force which site (A or B) is allowed for the current map (useful for troubleshooting maps or forcing a site when automatic detection fails). The toggle is saved per-map in `site_switch.json` located in the plugin folder.
 
 ## Installation
 
