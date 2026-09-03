@@ -43,6 +43,7 @@ namespace AdminMenu
         public override void Load(bool hotReload)
         {
             RegisterEventHandler<EventPlayerConnectFull>(OnPlayerConnect);
+            RegisterEventHandler<EventPlayerDisconnect>(OnPlayerDisconnect);
             RegisterEventHandler<EventPlayerDeath>(OnPlayerDeath);
             RegisterEventHandler<EventPlayerSpawned>(OnPlayerSpawned);
             RegisterEventHandler<EventPlayerChat>(OnPlayerChat);
@@ -63,6 +64,15 @@ namespace AdminMenu
             _adminEntry = Utils.LoadDataFromFile<AdminEntry>(_adminsFilePath);
             _bannedEntry = Utils.LoadDataFromFile<BannedEntry>(_bannedFilePath);
             _weaponRestrictEntry = Utils.LoadDataFromFile<WeaponRestrictEntry>(_weaponRestrictFilePath);
+        }
+
+        private HookResult OnPlayerDisconnect(EventPlayerDisconnect @event, GameEventInfo info)
+        {
+            if (@event.Userid is null) // This user is spamming
+            {
+                info.DontBroadcast = true;
+            }
+            return HookResult.Continue;
         }
 
         private HookResult OnPlayerSpawned(EventPlayerSpawned @event, GameEventInfo info)
