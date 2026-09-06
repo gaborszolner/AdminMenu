@@ -45,7 +45,7 @@ namespace AdminMenu
 
         public override void Load(bool hotReload)
         {
-            RegisterEventHandler<EventPlayerConnect>(OnPlayerConnect, HookMode.Pre);
+            RegisterEventHandler<EventPlayerConnect>(OnPlayerConnect);
             RegisterEventHandler<EventPlayerConnectFull>(OnPlayerConnectFull);
             RegisterEventHandler<EventPlayerDisconnect>(OnPlayerDisconnect, HookMode.Pre);
             RegisterEventHandler<EventPlayerDeath>(OnPlayerDeath);
@@ -87,8 +87,7 @@ namespace AdminMenu
 
         private bool IsSpammer(CCSPlayerController? player)
         {
-            if (player is null || !player.IsValid || player.AuthorizedSteamID is null ||
-                (player?.PlayerName is not null && Regex.Matches(player.PlayerName, "\r?\n").Count >= 2))
+            if (player?.PlayerName is not null && Regex.Matches(player.PlayerName, "\r?\n").Count >= 2)
             {
                 return true;
             }
@@ -193,7 +192,6 @@ namespace AdminMenu
             return HookResult.Continue;
         }
 
-        [GameEventHandler(HookMode.Pre)]
         private HookResult OnPlayerConnect(EventPlayerConnect @event, GameEventInfo info)
         {
             var player = @event.Userid;
