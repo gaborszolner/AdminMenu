@@ -1,12 +1,15 @@
 ﻿using AdminMenu.Entries;
 using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
+using CounterStrikeSharp.API.Core.Attributes.Registration;
 using CounterStrikeSharp.API.Modules.Events;
 using CounterStrikeSharp.API.Modules.Menu;
 using CounterStrikeSharp.API.Modules.Utils;
 using CounterStrikeSharp.API.ValveConstants.Protobuf;
 using Microsoft.Extensions.Logging;
 using SharedLibrary;
+using System.Numerics;
+using System.Text.RegularExpressions;
 
 namespace AdminMenu
 {
@@ -42,8 +45,9 @@ namespace AdminMenu
 
         public override void Load(bool hotReload)
         {
-            RegisterEventHandler<EventPlayerConnectFull>(OnPlayerConnect);
-            RegisterEventHandler<EventPlayerDisconnect>(OnPlayerDisconnect);
+            RegisterEventHandler<EventPlayerConnect>(OnPlayerConnect, HookMode.Pre);
+            RegisterEventHandler<EventPlayerConnectFull>(OnPlayerConnectFull);
+            RegisterEventHandler<EventPlayerDisconnect>(OnPlayerDisconnect, HookMode.Pre);
             RegisterEventHandler<EventPlayerDeath>(OnPlayerDeath);
             RegisterEventHandler<EventPlayerSpawned>(OnPlayerSpawned);
             RegisterEventHandler<EventPlayerChat>(OnPlayerChat);
@@ -66,13 +70,29 @@ namespace AdminMenu
             _weaponRestrictEntry = Utils.LoadDataFromFile<WeaponRestrictEntry>(_weaponRestrictFilePath);
         }
 
+
+        [GameEventHandler(HookMode.Pre)]
         private HookResult OnPlayerDisconnect(EventPlayerDisconnect @event, GameEventInfo info)
         {
-            if (@event.Userid is null) // This user is spamming
+            var playerName = @event.Userid?.PlayerName.Trim().Replace("\r", "").Replace("\n", "");
+            Logger?.LogInformation($"Player disconnect: {playerName} - SteamID2: {@event.Userid?.AuthorizedSteamID?.SteamId2}");
+            
+            if (IsSpammer(@event.Userid)) // This user is spamming
             {
+                Logger?.LogInformation($"Player is a spammer: {playerName}");
                 info.DontBroadcast = true;
             }
             return HookResult.Continue;
+        }
+
+        private bool IsSpammer(CCSPlayerController? player)
+        {
+            if (player is null || !player.IsValid || player.AuthorizedSteamID is null ||
+                (player?.PlayerName is not null && Regex.Matches(player.PlayerName, "\r?\n").Count >= 2))
+            {
+                return true;
+            }
+            return false;
         }
 
         private HookResult OnPlayerSpawned(EventPlayerSpawned @event, GameEventInfo info)
@@ -173,7 +193,19 @@ namespace AdminMenu
             return HookResult.Continue;
         }
 
-        private HookResult OnPlayerConnect(EventPlayerConnectFull @event, GameEventInfo info)
+        [GameEventHandler(HookMode.Pre)]
+        private HookResult OnPlayerConnect(EventPlayerConnect @event, GameEventInfo info)
+        {
+            var player = @event.Userid;
+
+            if (IsSpammer(player))
+            {
+                player?.Disconnect(NetworkDisconnectionReason.NETWORK_DISCONNECT_KICKBANADDED);
+            }
+            return HookResult.Continue;
+        }
+
+        private HookResult OnPlayerConnectFull(EventPlayerConnectFull @event, GameEventInfo info)
         {
             var player = @event.Userid;
 
@@ -239,7 +271,7 @@ namespace AdminMenu
         {
             var player = Utilities.GetPlayerFromUserid(@event.Userid);
 
-            if (player == null || !player.IsValid || player.AuthorizedSteamID == null) // not connected but still sending chat messages, its a spambot
+            if (IsSpammer(player))
             {
                 player?.Disconnect(NetworkDisconnectionReason.NETWORK_DISCONNECT_KICKED);
                 return HookResult.Handled;
